@@ -16,17 +16,101 @@ Next.js arayüz, NestJS API, Prisma ve PostgreSQL içeren tam yığın bir SaaS 
 - **Docker ile çalıştırmak için:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Compose dahil)
 - **Yerel geliştirme için (isteğe bağlı):** Node.js 22+ ve yerelde erişilebilir PostgreSQL
 
-## Projeyi Docker ile ayağa kaldırma
+## Projeyi ayağa kaldırma (adım adım)
 
-Depoyu klonladıktan sonra **proje kökünde** (`docker-compose.yml` dosyasının olduğu dizinde):
+Aşağıdaki **üç seçenekten** birini kullanın: **tamamını Docker ile** çalıştırmak en hızlı yoldur; geliştirme için sıklıkla **yalnızca veritabanını Docker’da** bırakıp API ve Next.js’i yerelde çalıştırırsınız (Seçenek 2).
+
+### Seçenek 1 — Her şey Docker’da (web + API + PostgreSQL)
+
+1. Bilgisayarınızda **Docker Desktop**’ın çalıştığından emin olun.
+2. Depoyu klonlayın ve **proje kök dizinine** girin (`docker-compose.yml` bu dizinde olmalıdır).
+3. _(İsteğe bağlı, önerilir — üretim dışı paylaşımlı ortamlar için)_ kök dizinde `.env` oluşturup güçlü bir `JWT_SECRET` tanımlayın; `docker-compose.yml` içinde `${JWT_SECRET:-...}` ile okunur. Tanımlamazsanız Compose’daki güvenlik **amacıyla değiştirilmesi gereken** varsayılan değer kullanılır.
+4. Proje kökünde şu komutu çalıştırın:
+
+   ```bash
+   docker compose up --build
+   ```
+
+   İlk seferde imajlar oluşur; `api` konteyneri açılınca **`prisma migrate deploy`** ile şema güncellenir. Loglarda üç servisin ayakta olduğunu doğrulayın.
+5. Bir tarayıcıda **web** adresini açın: [http://localhost:3000](http://localhost:3000).
+6. API’nin ayakta olduğunu doğrulamak için [http://localhost:3500](http://localhost:3500) adresine gidin — metin çıktısı (ör. karşılama) görmelisiniz. İsterseniz terminalde:
+
+   ```bash
+   curl http://localhost:3500/
+   ```
+
+7. İşiniz bitince konteynerları durdurmak için terminalde `Ctrl+C`; arka planda çalıştırdıysanız proje kökünde:
+
+   ```bash
+   docker compose down
+   ```
+
+**Not:** Compose içinde API için varsayılanlar tanımlıdır: `JWT_SECRET`, `JWT_ACCESS_EXPIRES_IN`, `REFRESH_TOKEN_EXPIRES_DAYS`.
+
+### Seçenek 2 — API ve Next.js yerelde, PostgreSQL Docker’da (tipik geliştirme)
+
+1. Docker Desktop çalışıyorken **sadece veritabanı servisini** proje kökünden başlatın:
+
+   ```bash
+   docker compose up -d db
+   ```
+
+   Postgres’in hazır olduğundan emin olun (birkaç saniye sürebilir). İsterseniz: `docker compose ps`.
+
+2. `apps/server` altında `.env` dosyası oluşturun ve en az şunları verin (`docker-compose.yml` ile uyumlu örnek):
+
+   ```env
+   DATABASE_URL="postgresql://postgres:postgres@localhost:5432/devatlas?schema=public"
+   JWT_SECRET="yerelde-gelistirme-icin-uzun-rastgele-bir-metin-en-az-32-karakter"
+   ```
+
+   İsteğe bağlı: `JWT_ACCESS_EXPIRES_IN`, `REFRESH_TOKEN_EXPIRES_DAYS` (sunucunun beklediği isimlerle; ayrıntı için tabloya bakın).
+
+3. Sunucu bağımlılıklarını kurun ve veritabanını güncelleyin:
+
+   ```bash
+   cd apps/server
+   npm install
+   npx prisma generate
+   npx prisma migrate dev
+   ```
+
+   İlk kurulumda `migrate dev` migration’ları uygular; ad sorarsa uygun bir isim verebilirsiniz.
+
+4. API’yi geliştirme modunda başlatın (`PORT` vermezseniz varsayılan **3500**):
+
+   ```bash
+   npm run start:dev
+   ```
+
+5. **Yeni bir terminal** açıp istemci bağımlılıklarını kurun ve Next.js’i çalıştırın:
+
+   ```bash
+   cd apps/client
+   npm install
+   npm run dev
+   ```
+
+   API adresini özelleştirmek isterseniz `apps/client/.env.local` içinde `NEXT_PUBLIC_API_URL=http://localhost:3500` kullanılabilir; tanımlamazsanız istemci zaten varsayılan olarak `http://localhost:3500` kullanır.
+
+6. Web: [http://localhost:3000](http://localhost:3000), API doğrulama: [http://localhost:3500](http://localhost:3500).
+
+### Seçenek 3 — PostgreSQL tamamen yerel (Docker kullanmadan DB)
+
+Docker kullanmak istemiyorsanız, makinenizde **PostgreSQL** kurulu ve `devatlas` adında (veya seçtiğiniz) bir veritabanı oluşturulmuş olmalıdır.
+
+1. `apps/server/.env` içinde `DATABASE_URL` değerini kendi Postgres kullanıcı / şifre / host bilginize göre yazın (`JWT_SECRET` zorunludur).
+2. Yukarıdaki **Seçenek 2**’deki 3–6. adımları aynı şekilde uygulayın (`docker compose` komutları olmadan).
+
+---
+
+## Projeyi Docker ile ayağa kaldırma (kısayol komutları)
+
+Özet olarak proje kökünde tam yığıt için:
 
 ```bash
 docker compose up --build
 ```
-
-İlk çalıştırmada imajlar oluşturulur; API container içinde `prisma migrate deploy` ile migration’lar uygulanır.
-
-API için Compose içinde varsayılanlar tanımlıdır: `JWT_SECRET`, `JWT_ACCESS_EXPIRES_IN`, `REFRESH_TOKEN_EXPIRES_DAYS`. Üretim veya paylaşımlı ortamlarda `JWT_SECRET` değerini mutlaka güçlü ve gizli bir anahtarla değiştirin (ör. kök dizinde `.env` ile `JWT_SECRET=...` vererek Compose değişken genişletmesi kullanılabilir).
 
 ### Erişim adresleri
 
@@ -71,14 +155,9 @@ Kalıcı veriyi de silmek için:
 docker compose down -v
 ```
 
-## Yerel geliştirme (Docker kullanmadan veya sadece DB için Docker)
+## Yerel geliştirme (referans)
 
-Bağımlılıkları **uygulama klasörlerinde** kur:
-
-```bash
-cd apps/server && npm install
-cd ../client && npm install
-```
+Üstteki **Seçenek 2 ve 3** adımları yerel kurulum için yeterlidir. Aşağıda ortam değişkenleri ve Prisma için kısa referans yer alır.
 
 ### Ortam değişkenleri (API)
 
@@ -91,30 +170,7 @@ cd ../client && npm install
 | `JWT_ACCESS_EXPIRES_IN` | İsteğe bağlı; access token süresi (örn. `10m`, `1d`) |
 | `REFRESH_TOKEN_EXPIRES_DAYS` | İsteğe bağlı; refresh token geçerliliği (gün) |
 
-### Veritabanı bağlantı dizesi
-
-- **PostgreSQL aynı makinede (Docker’daki `db` kapalı):** host olarak `localhost` kullanın.
-- **API’yi makinede, Postgres’i `docker compose` ile çalıştırırken:** host olarak `localhost` ve map edilen port `5432` uygundur.
-
-NestJS API’yi geliştirme modunda:
-
-```bash
-cd apps/server
-npm run start:dev
-```
-
-Kod veya modül listesi değiştiyse (ör. auth eklendikten sonra) **`npm run build` yapıp sunucuyu yeniden başlatın** veya `--watch` ile çalıştığınızdan emin olun; eski `dist` veya yenilenmemiş Docker imajı ile çalışan süreçte korumalı uçlara istek atınca `404` görebilirsiniz.
-
-Varsayılan API portu **3500**’dir (`PORT` ortam değişkeni ile değiştirilebilir).
-
-Next.js istemcisi:
-
-```bash
-cd apps/client
-npm run dev
-```
-
-Varsayılan olarak Next geliştirme sunucusu **3000** portundadır.
+İstemci tarafında API tabanı adresi: `NEXT_PUBLIC_API_URL` (varsayılan: `http://localhost:3500` — bkz. `apps/client/src/lib/api/base-url.ts`).
 
 ### Prisma (yerel)
 
