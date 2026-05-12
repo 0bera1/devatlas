@@ -1,15 +1,9 @@
-import {
-  ConflictException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import type { User } from '@prisma/client';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import {
   USER_REPOSITORY,
-  type CreateUserData,
   type IUserRepository,
 } from './interfaces/user-repository.interface';
+import type { PublicUser } from './interfaces/public-user.interface';
 import type { IUsersService } from './interfaces/users-service.interface';
 
 @Injectable()
@@ -19,12 +13,12 @@ export class UsersService implements IUsersService {
     private readonly userRepository: IUserRepository,
   ) {}
 
-  public async getAllUsers(): Promise<User[]> {
+  public async getAllUsers(): Promise<PublicUser[]> {
     return this.userRepository.findAll();
   }
 
-  public async getUserById(id: string): Promise<User | null> {
-    const user: User | null = await this.userRepository.findById(id);
+  public async getUserById(id: string): Promise<PublicUser | null> {
+    const user: PublicUser | null = await this.userRepository.findById(id);
 
     if (user === null) {
       throw new NotFoundException(`User with id "${id}" not found`);
@@ -33,21 +27,7 @@ export class UsersService implements IUsersService {
     return user;
   }
 
-  public async createUser(data: CreateUserData): Promise<User> {
-    const existing: User | null = await this.userRepository.findByEmail(
-      data.email,
-    );
-
-    if (existing !== null) {
-      throw new ConflictException(
-        `User with email "${data.email}" already exists`,
-      );
-    }
-
-    return this.userRepository.create(data);
-  }
-
-  public async deleteUser(id: string): Promise<User> {
+  public async deleteUser(id: string): Promise<PublicUser> {
     await this.getUserById(id);
     return this.userRepository.deleteById(id);
   }

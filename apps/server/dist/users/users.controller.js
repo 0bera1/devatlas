@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
-const create_user_dto_1 = require("./dto/create-user.dto");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const users_service_interface_1 = require("./interfaces/users-service.interface");
 let UsersController = class UsersController {
     usersService;
@@ -26,12 +26,6 @@ let UsersController = class UsersController {
     }
     async getUserById(id) {
         return this.usersService.getUserById(id);
-    }
-    async createUser(dto) {
-        return this.usersService.createUser({
-            email: dto.email,
-            name: dto.name ?? null,
-        });
     }
     async deleteUser(id) {
         return this.usersService.deleteUser(id);
@@ -52,15 +46,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getUserById", null);
 __decorate([
-    (0, common_1.Post)(),
-    (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "createUser", null);
-__decorate([
     (0, common_1.Delete)(':id'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -68,6 +55,7 @@ __decorate([
 ], UsersController.prototype, "deleteUser", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('users'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Inject)(users_service_interface_1.USERS_SERVICE)),
     __metadata("design:paramtypes", [Object])
 ], UsersController);

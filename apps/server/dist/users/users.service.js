@@ -30,13 +30,6 @@ let UsersService = class UsersService {
         }
         return user;
     }
-    async createUser(data) {
-        const existing = await this.userRepository.findByEmail(data.email);
-        if (existing !== null) {
-            throw new common_1.ConflictException(`User with email "${data.email}" already exists`);
-        }
-        return this.userRepository.create(data);
-    }
     async deleteUser(id) {
         await this.getUserById(id);
         return this.userRepository.deleteById(id);

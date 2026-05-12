@@ -1,4 +1,5 @@
-import { Module, Provider } from '@nestjs/common';
+import { Module, Provider, forwardRef } from '@nestjs/common';
+import { AuthModule } from '../auth/auth.module';
 import { USER_REPOSITORY } from './interfaces/user-repository.interface';
 import { USERS_SERVICE } from './interfaces/users-service.interface';
 import { UserRepository } from './user.repository';
@@ -16,8 +17,9 @@ const usersServiceProvider: Provider = {
 };
 
 @Module({
+  imports: [forwardRef(() => AuthModule)],
   controllers: [UsersController],
   providers: [userRepositoryProvider, usersServiceProvider],
-  exports: [USERS_SERVICE],
+  exports: [USERS_SERVICE, USER_REPOSITORY],
 })
 export class UsersModule {}

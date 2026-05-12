@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -7,16 +6,17 @@ import {
   HttpStatus,
   Inject,
   Param,
-  Post,
+  UseGuards,
 } from '@nestjs/common';
-import type { User } from '@prisma/client';
-import { CreateUserDto } from './dto/create-user.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
   USERS_SERVICE,
   type IUsersService,
 } from './interfaces/users-service.interface';
+import type { PublicUser } from './interfaces/public-user.interface';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
   public constructor(
     @Inject(USERS_SERVICE)
@@ -24,26 +24,18 @@ export class UsersController {
   ) {}
 
   @Get()
-  public async getUsers(): Promise<User[]> {
+  public async getUsers(): Promise<PublicUser[]> {
     return this.usersService.getAllUsers();
   }
 
   @Get(':id')
-  public async getUserById(@Param('id') id: string): Promise<User | null> {
+  public async getUserById(@Param('id') id: string): Promise<PublicUser | null> {
     return this.usersService.getUserById(id);
   }
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  public async createUser(@Body() dto: CreateUserDto): Promise<User> {
-    return this.usersService.createUser({
-      email: dto.email,
-      name: dto.name ?? null,
-    });
-  }
-
   @Delete(':id')
-  public async deleteUser(@Param('id') id: string): Promise<User> {
+  @HttpCode(HttpStatus.OK)
+  public async deleteUser(@Param('id') id: string): Promise<PublicUser> {
     return this.usersService.deleteUser(id);
   }
 }

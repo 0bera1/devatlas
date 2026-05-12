@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersModule = void 0;
 const common_1 = require("@nestjs/common");
+const auth_module_1 = require("../auth/auth.module");
 const user_repository_interface_1 = require("./interfaces/user-repository.interface");
 const users_service_interface_1 = require("./interfaces/users-service.interface");
 const user_repository_1 = require("./user.repository");
@@ -26,9 +27,10 @@ let UsersModule = class UsersModule {
 exports.UsersModule = UsersModule;
 exports.UsersModule = UsersModule = __decorate([
     (0, common_1.Module)({
+        imports: [(0, common_1.forwardRef)(() => auth_module_1.AuthModule)],
         controllers: [users_controller_1.UsersController],
         providers: [userRepositoryProvider, usersServiceProvider],
-        exports: [users_service_interface_1.USERS_SERVICE],
+        exports: [users_service_interface_1.USERS_SERVICE, user_repository_interface_1.USER_REPOSITORY],
     })
 ], UsersModule);
 //# sourceMappingURL=users.module.js.map

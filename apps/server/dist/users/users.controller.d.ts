@@ -1,11 +1,9 @@
-import type { User } from '@prisma/client';
-import { CreateUserDto } from './dto/create-user.dto';
 import { type IUsersService } from './interfaces/users-service.interface';
+import type { PublicUser } from './interfaces/public-user.interface';
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: IUsersService);
-    getUsers(): Promise<User[]>;
-    getUserById(id: string): Promise<User | null>;
-    createUser(dto: CreateUserDto): Promise<User>;
-    deleteUser(id: string): Promise<User>;
+    getUsers(): Promise<PublicUser[]>;
+    getUserById(id: string): Promise<PublicUser | null>;
+    deleteUser(id: string): Promise<PublicUser>;
 }

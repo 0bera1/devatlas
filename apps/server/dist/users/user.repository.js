@@ -11,46 +11,69 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var UserRepository_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_interface_1 = require("../prisma/interfaces/prisma-service.interface");
-let UserRepository = class UserRepository {
+const publicUserSelect = {
+    id: true,
+    email: true,
+    name: true,
+    createdAt: true,
+    birthDate: true,
+};
+let UserRepository = UserRepository_1 = class UserRepository {
     prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }
     async findAll() {
         return this.prisma.user.findMany({
+            select: publicUserSelect,
             orderBy: { createdAt: 'desc' },
         });
     }
     async findById(id) {
         return this.prisma.user.findUnique({
             where: { id },
+            select: publicUserSelect,
         });
     }
-    async findByEmail(email) {
+    async findByEmailWithPassword(email) {
         return this.prisma.user.findUnique({
             where: { email },
         });
     }
     async create(data) {
-        return this.prisma.user.create({
+        const created = await this.prisma.user.create({
             data: {
                 email: data.email,
                 name: data.name ?? null,
+                password: data.password,
+                birthDate: data.birthDate,
             },
         });
+        return UserRepository_1.mapToPublicUser(created);
     }
     async deleteById(id) {
-        return this.prisma.user.delete({
+        const removed = await this.prisma.user.delete({
             where: { id },
         });
+        return UserRepository_1.mapToPublicUser(removed);
+    }
+    static mapToPublicUser(user) {
+        return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            createdAt: user.createdAt,
+            birthDate: user.birthDate,
+        };
     }
 };
 exports.UserRepository = UserRepository;
-exports.UserRepository = UserRepository = __decorate([
+exports.UserRepository = UserRepository = UserRepository_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(prisma_service_interface_1.PRISMA_SERVICE)),
     __metadata("design:paramtypes", [Object])
