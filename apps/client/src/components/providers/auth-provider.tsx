@@ -11,11 +11,19 @@ import {
 } from 'react';
 
 const ACCESS_TOKEN_KEY = 'devatlas_access_token';
+const REFRESH_TOKEN_KEY = 'devatlas_refresh_token';
+
+export interface AuthSessionPayload {
+  accessToken: string;
+  refreshToken: string;
+}
 
 export interface AuthContextValue {
   token: string | null;
+  refreshToken: string | null;
   isReady: boolean;
-  setToken: (token: string | null) => void;
+  setSession: (session: AuthSessionPayload) => void;
+  clearSession: () => void;
   logout: () => void;
 }
 
@@ -23,6 +31,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setTokenState] = useState<string | null>(null);
+  const [refreshToken, setRefreshTokenState] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -30,33 +39,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     setTokenState(window.localStorage.getItem(ACCESS_TOKEN_KEY));
+    setRefreshTokenState(window.localStorage.getItem(REFRESH_TOKEN_KEY));
     setIsReady(true);
   }, []);
 
-  const setToken = useCallback((value: string | null) => {
+  const setSession = useCallback((session: AuthSessionPayload) => {
     if (typeof window === 'undefined') {
       return;
     }
-    if (value === null) {
-      window.localStorage.removeItem(ACCESS_TOKEN_KEY);
-    } else {
-      window.localStorage.setItem(ACCESS_TOKEN_KEY, value);
+    window.localStorage.setItem(ACCESS_TOKEN_KEY, session.accessToken);
+    window.localStorage.setItem(REFRESH_TOKEN_KEY, session.refreshToken);
+    setTokenState(session.accessToken);
+    setRefreshTokenState(session.refreshToken);
+  }, []);
+
+  const clearSession = useCallback(() => {
+    if (typeof window === 'undefined') {
+      return;
     }
-    setTokenState(value);
+    window.localStorage.removeItem(ACCESS_TOKEN_KEY);
+    window.localStorage.removeItem(REFRESH_TOKEN_KEY);
+    setTokenState(null);
+    setRefreshTokenState(null);
   }, []);
 
   const logout = useCallback(() => {
-    setToken(null);
-  }, [setToken]);
+    clearSession();
+  }, [clearSession]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
       token,
+      refreshToken,
       isReady,
-      setToken,
+      setSession,
+      clearSession,
       logout,
     }),
-    [token, isReady, setToken, logout],
+    [token, refreshToken, isReady, setSession, clearSession, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

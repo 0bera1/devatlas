@@ -10,8 +10,9 @@ Port `PORT` ortam değişkeni ile değiştirilebilir.
 | Değişken       | Açıklama                                      |
 |----------------|-----------------------------------------------|
 | `DATABASE_URL` | PostgreSQL bağlantı dizesi                    |
-| `JWT_SECRET`   | Token imzalama için güçlü bir gizli anahtar   |
-| `JWT_EXPIRES_IN` | İsteğe bağlı; örn. `1d`, `7d` (varsayılan: `1d`) |
+| `JWT_SECRET`   | Access JWT imzalama için gizli anahtar        |
+| `JWT_ACCESS_EXPIRES_IN` | Access JWT süresi (varsayılan: `10m`)    |
+| `REFRESH_TOKEN_EXPIRES_DAYS` | Refresh token kaç gün geçerli (varsayılan: `7`) |
 
 Veritabanı şemasını güncelledikten sonra Docker veya lokal Postgres açıkken:
 
@@ -40,13 +41,14 @@ npx prisma migrate dev
 }
 ```
 
-**Beklenen cevap:** `201 Created` — gövdede `accessToken` ve `password` alanı olmayan `user` nesnesi.
+**Beklenen cevap:** `201 Created` — `accessToken`, **`refreshToken`**, `password` alanı olmayan `user`.
 
-Başarılı kayıttan sonra `accessToken` değerini ortam değişkeni olarak kaydedin (ör. Postman **Tests** sekmesinde):
+Başarılı kayıttan sonra tokenları kaydedin (ör. Postman **Tests**):
 
 ```javascript
 const json = pm.response.json();
 pm.environment.set("accessToken", json.accessToken);
+pm.environment.set("refreshToken", json.refreshToken);
 ```
 
 ### 2) Giriş (Login)
@@ -63,7 +65,14 @@ pm.environment.set("accessToken", json.accessToken);
 }
 ```
 
-**Beklenen cevap:** `200 OK` — `accessToken` + `user`.
+**Beklenen cevap:** `200 OK` — `accessToken`, **`refreshToken`**, `user`.
+
+### 2b) Access token yenileme (Refresh)
+
+- **Method:** `POST`
+- **URL:** `{{baseUrl}}/auth/refresh`
+- **Body:** `{ "refreshToken": "{{refreshToken}}" }`
+- **Beklenen cevap:** `200 OK` — yeni `accessToken` ve **döndürülen yeni** `refreshToken` (eski refresh geçersiz kalır; istemciyi güncelleyin).
 
 ### 3) Profil (JWT korumalı örnek route)
 
@@ -90,5 +99,5 @@ pm.environment.set("accessToken", json.accessToken);
 
 ## Notlar
 
-- Kayıt ve giriş uçları **JWT gerektirmez**; `users` ve `auth/profile` **JWT ister**.
+- Access JWT süresi varsayılan **10 dakika** (`JWT_ACCESS_EXPIRES_IN`); refresh token süresi **gün** cinsinden (`REFRESH_TOKEN_EXPIRES_DAYS`).
 - `birthDate` gövdesi JSON’da ISO-8601 tarih/saat olarak gönderilmelidir (ValidationPipe `transform: true` ile `Date`’e dönüşür).

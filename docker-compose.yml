@@ -24,6 +24,9 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/devatlas?schema=public
       PORT: "3500"
+      JWT_SECRET: ${JWT_SECRET:-dev-docker-change-me-use-long-secret-key-min-32-chars}
+      JWT_ACCESS_EXPIRES_IN: ${JWT_ACCESS_EXPIRES_IN:-10m}
+      REFRESH_TOKEN_EXPIRES_DAYS: ${REFRESH_TOKEN_EXPIRES_DAYS:-7}
 
   db:
     image: postgres:16

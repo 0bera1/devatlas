@@ -8,6 +8,7 @@ export interface PublicUser {
 
 export interface AuthResponse {
   accessToken: string;
+  refreshToken: string;
   user: PublicUser;
 }
 
@@ -21,4 +22,8 @@ export interface RegisterRequest {
   password: string;
   name?: string;
   birthDate: string;
+}
+
+export interface RefreshRequest {
+  refreshToken: string;
 }

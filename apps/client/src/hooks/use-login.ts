@@ -16,7 +16,7 @@ export interface UseLoginResult {
 
 export function useLogin(): UseLoginResult {
   const router = useRouter();
-  const { setToken } = useAuth();
+  const { setSession } = useAuth();
   const [status, setStatus] = useState<LoginStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -35,12 +35,15 @@ export function useLogin(): UseLoginResult {
         setErrorMessage(result.error);
         return;
       }
-      setToken(result.data.accessToken);
+      setSession({
+        accessToken: result.data.accessToken,
+        refreshToken: result.data.refreshToken,
+      });
       setStatus('idle');
       router.push('/');
       router.refresh();
     },
-    [router, setToken],
+    [router, setSession],
   );
 
   return { submit, status, errorMessage, clearError };

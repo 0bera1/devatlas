@@ -1,3 +1,4 @@
+import { AccessTokenRefreshScheduler } from '@/components/providers/access-token-refresh-scheduler';
 import { AuthProvider } from '@/components/providers/auth-provider';
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -33,7 +34,10 @@ export default function RootLayout({
         className="min-h-full flex flex-col"
         suppressHydrationWarning
       >
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <AccessTokenRefreshScheduler />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

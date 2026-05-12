@@ -28,7 +28,7 @@ function toIsoBirthDate(dateInput: string): string {
 
 export function useRegister(): UseRegisterResult {
   const router = useRouter();
-  const { setToken } = useAuth();
+  const { setSession } = useAuth();
   const [status, setStatus] = useState<RegisterStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -53,12 +53,15 @@ export function useRegister(): UseRegisterResult {
         setErrorMessage(result.error);
         return;
       }
-      setToken(result.data.accessToken);
+      setSession({
+        accessToken: result.data.accessToken,
+        refreshToken: result.data.refreshToken,
+      });
       setStatus('idle');
       router.push('/');
       router.refresh();
     },
-    [router, setToken],
+    [router, setSession],
   );
 
   return { submit, status, errorMessage, clearError };

@@ -4,6 +4,7 @@ export const AUTH_SERVICE: unique symbol = Symbol('AUTH_SERVICE');
 
 export interface AuthResult {
   accessToken: string;
+  refreshToken: string;
   user: PublicUser;
 }
 
@@ -16,4 +17,6 @@ export interface IAuthService {
   ): Promise<AuthResult>;
 
   login(email: string, password: string): Promise<AuthResult>;
+
+  refresh(refreshToken: string): Promise<AuthResult>;
 }

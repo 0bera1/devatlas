@@ -15,10 +15,16 @@ const users_module_1 = require("../users/users.module");
 const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
 const auth_service_interface_1 = require("./interfaces/auth-service.interface");
+const refresh_token_repository_interface_1 = require("./interfaces/refresh-token-repository.interface");
 const jwt_strategy_1 = require("./strategies/jwt.strategy");
+const refresh_token_repository_1 = require("./refresh-token.repository");
 const authServiceProvider = {
     provide: auth_service_interface_1.AUTH_SERVICE,
     useClass: auth_service_1.AuthService,
+};
+const refreshTokenRepositoryProvider = {
+    provide: refresh_token_repository_interface_1.REFRESH_TOKEN_REPOSITORY,
+    useClass: refresh_token_repository_1.RefreshTokenRepository,
 };
 let AuthModule = class AuthModule {
 };
@@ -33,15 +39,15 @@ exports.AuthModule = AuthModule = __decorate([
                 inject: [config_1.ConfigService],
                 useFactory: (configService) => ({
                     secret: configService.getOrThrow('JWT_SECRET'),
-                    signOptions: {
-                        expiresIn: (configService.get('JWT_EXPIRES_IN') ??
-                            '1d'),
-                    },
                 }),
             }),
         ],
         controllers: [auth_controller_1.AuthController],
-        providers: [authServiceProvider, jwt_strategy_1.JwtStrategy],
+        providers: [
+            authServiceProvider,
+            refreshTokenRepositoryProvider,
+            jwt_strategy_1.JwtStrategy,
+        ],
         exports: [auth_service_interface_1.AUTH_SERVICE, jwt_1.JwtModule, passport_1.PassportModule, jwt_strategy_1.JwtStrategy],
     })
 ], AuthModule);

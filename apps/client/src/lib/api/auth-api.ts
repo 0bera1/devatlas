@@ -1,4 +1,9 @@
-import type { AuthResponse, LoginRequest, RegisterRequest } from '@/types/auth';
+import type {
+  AuthResponse,
+  LoginRequest,
+  RefreshRequest,
+  RegisterRequest,
+} from '@/types/auth';
 import { getApiBaseUrl } from '@/lib/api/base-url';
 import { parseApiError } from '@/lib/api/parse-api-error';
 
@@ -44,4 +49,12 @@ export async function registerRequest(
   { ok: true; data: AuthResponse } | { ok: false; error: string }
 > {
   return postJson<AuthResponse>('/auth/register', payload);
+}
+
+export async function refreshRequest(
+  payload: RefreshRequest,
+): Promise<
+  { ok: true; data: AuthResponse } | { ok: false; error: string }
+> {
+  return postJson<AuthResponse>('/auth/refresh', payload);
 }
