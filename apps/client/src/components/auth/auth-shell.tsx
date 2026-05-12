@@ -1,3 +1,7 @@
+'use client';
+
+import { PreferencesControls } from '@/components/preferences/preferences-controls';
+import { useTranslations } from '@/hooks/use-translations';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
@@ -17,16 +21,21 @@ export function AuthShell({
   description,
   children,
   footer,
-}: AuthShellProps) {
+}: AuthShellProps): ReactNode {
+  const { t } = useTranslations();
+
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:px-8">
+    <div className="relative flex min-h-full flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:px-8">
+      <div className="absolute right-4 top-4 z-10 sm:right-6 lg:right-8">
+        <PreferencesControls compact />
+      </div>
       <div className="mx-auto w-full max-w-md space-y-8">
         <div className="text-center">
           <Link
             href="/"
             className="text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
           >
-            ← Ana sayfa
+            {t('auth.backHome')}
           </Link>
           <h1 className="mt-6 font-sans text-3xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
             {title}

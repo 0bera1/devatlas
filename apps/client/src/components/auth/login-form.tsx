@@ -4,12 +4,14 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { AuthTextField } from '@/components/auth/auth-text-field';
 import { useLogin } from '@/hooks/use-login';
+import { useTranslations } from '@/hooks/use-translations';
 
 export function LoginForm() {
+  const { t } = useTranslations();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { submit, status, errorMessage, clearError } = useLogin();
-  const busy = status === 'loading';
+  const busy: boolean = status === 'loading';
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -29,7 +31,7 @@ export function LoginForm() {
       ) : null}
       <AuthTextField
         id="email"
-        label="E-posta"
+        label={t('auth.login.email')}
         type="email"
         autoComplete="email"
         value={email}
@@ -39,7 +41,7 @@ export function LoginForm() {
       />
       <AuthTextField
         id="password"
-        label="Şifre"
+        label={t('auth.login.password')}
         type="password"
         autoComplete="current-password"
         value={password}
@@ -53,7 +55,7 @@ export function LoginForm() {
         disabled={busy}
         className="flex w-full justify-center rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
       >
-        {busy ? 'Giriş yapılıyor…' : 'Giriş yap'}
+        {busy ? t('auth.login.submitting') : t('auth.login.submit')}
       </button>
     </form>
   );

@@ -1,9 +1,11 @@
 'use client';
 
+import { useAuth } from '@/components/providers/auth-provider';
+import { isNetworkFailure } from '@/lib/api/api-error';
+import { registerRequest } from '@/lib/api/auth-api';
+import { useTranslations } from '@/hooks/use-translations';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-import { registerRequest } from '@/lib/api/auth-api';
-import { useAuth } from '@/components/providers/auth-provider';
 
 export type RegisterStatus = 'idle' | 'loading' | 'error';
 
@@ -22,13 +24,14 @@ export interface UseRegisterResult {
 }
 
 function toIsoBirthDate(dateInput: string): string {
-  const parsed = new Date(`${dateInput}T12:00:00`);
+  const parsed: Date = new Date(`${dateInput}T12:00:00`);
   return parsed.toISOString();
 }
 
 export function useRegister(): UseRegisterResult {
   const router = useRouter();
   const { setSession } = useAuth();
+  const { t } = useTranslations();
   const [status, setStatus] = useState<RegisterStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -50,7 +53,9 @@ export function useRegister(): UseRegisterResult {
       const result = await registerRequest(payload);
       if (!result.ok) {
         setStatus('error');
-        setErrorMessage(result.error);
+        setErrorMessage(
+          isNetworkFailure(result) ? t('errors.network') : result.error,
+        );
         return;
       }
       setSession({
@@ -61,7 +66,7 @@ export function useRegister(): UseRegisterResult {
       router.push('/');
       router.refresh();
     },
-    [router, setSession],
+    [router, setSession, t],
   );
 
   return { submit, status, errorMessage, clearError };

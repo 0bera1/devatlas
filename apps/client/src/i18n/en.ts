@@ -1,0 +1,110 @@
+import type { MessageKey } from './tr';
+
+export const enMessages: Record<MessageKey, string> = {
+  'nav.brand': 'DevAtlas',
+  'nav.documents': 'Documents',
+  'nav.login': 'Log in',
+  'nav.register': 'Sign up',
+  'nav.logout': 'Log out',
+  'nav.sessionActive': 'Signed in',
+  'nav.loading': '…',
+
+  'common.loading': 'Loading…',
+
+  'home.title': 'Welcome',
+  'home.introBefore': 'When signed in, use the',
+  'home.introAfterDocs':
+    'page to create and edit your notes. For authentication, use',
+  'home.introBetweenAuth': 'or',
+  'home.introAfterAuth': 'from the menu above.',
+
+  'auth.backHome': '← Home',
+  'auth.login.title': 'Log in',
+  'auth.login.description': 'Continue with your DevAtlas account.',
+  'auth.login.footerText': "Don't have an account?",
+  'auth.login.footerLink': 'Sign up',
+  'auth.login.email': 'Email',
+  'auth.login.password': 'Password',
+  'auth.login.submit': 'Log in',
+  'auth.login.submitting': 'Signing in…',
+
+  'auth.register.title': 'Create account',
+  'auth.register.description':
+    'Register in a few fields; you will be signed in automatically.',
+  'auth.register.footerText': 'Already have an account?',
+  'auth.register.footerLink': 'Log in',
+  'auth.register.passwordHint': 'At least 8 characters.',
+  'auth.register.name': 'Name (optional)',
+  'auth.register.birthDate': 'Date of birth',
+  'auth.register.submit': 'Sign up',
+  'auth.register.submitting': 'Creating account…',
+
+  'documents.list.title': 'Documents',
+  'documents.list.intro':
+    'Browse, search, and open a document to edit. The editor is plain text for now; the roadmap shows what comes next.',
+  'documents.list.refresh': 'Refresh',
+  'documents.list.newDoc': 'New document',
+  'documents.list.titleLabel': 'Title',
+  'documents.list.titlePlaceholder': 'Title…',
+  'documents.list.create': 'Create',
+  'documents.list.creating': 'Creating…',
+  'documents.list.searchSection': 'Search & paging',
+  'documents.list.searchPlaceholder': 'Search in title…',
+  'documents.list.search': 'Search',
+  'documents.list.clear': 'Clear',
+  'documents.list.pageSize': 'Page size',
+  'documents.list.total': 'Total',
+  'documents.list.loadingList': 'Loading list…',
+  'documents.list.empty':
+    'No documents yet, or no search results. Create a new one above.',
+  'documents.list.updated': 'Updated',
+  'documents.list.prev': 'Previous',
+  'documents.list.next': 'Next',
+  'documents.list.page': 'Page',
+
+  'documents.editor.loading': 'Loading…',
+  'documents.editor.loadingDoc': 'Loading document…',
+  'documents.editor.notFound': 'Document not found.',
+  'documents.editor.loadFailed': 'Failed to load',
+  'documents.editor.backToList': 'Back to list',
+  'documents.editor.backDocuments': '← Documents',
+  'documents.editor.lastUpdated': 'Last updated',
+  'documents.editor.titleLabel': 'Title',
+  'documents.editor.saveTitle': 'Save title',
+  'documents.editor.savingTitle': 'Saving…',
+  'documents.editor.content': 'Content',
+  'documents.editor.saveContent': 'Save content',
+  'documents.editor.savingContent': 'Saving…',
+  'documents.editor.contentPlaceholder': 'Write here…',
+  'documents.editor.contentHint':
+    'Auto-save is on the roadmap; for now use Save to send to the API.',
+
+  'roadmap.title': 'Roadmap',
+  'roadmap.intro': 'What turns DevAtlas into a serious SaaS product.',
+  'roadmap.richtext': 'Rich text editor',
+  'roadmap.richtextSub': 'TipTap or Slate',
+  'roadmap.autosave': 'Auto-save',
+  'roadmap.autosaveSub': 'Debounce + API',
+  'roadmap.versioning': 'Versioning',
+  'roadmap.versioningSub': 'Document history',
+  'roadmap.collab': 'Collaboration',
+  'roadmap.collabSub': 'WebSocket / Nest gateway',
+
+  'preferences.language': 'Language',
+  'preferences.theme': 'Theme',
+  'preferences.themeLight': 'Light',
+  'preferences.themeDark': 'Dark',
+  'preferences.themeSystem': 'System',
+
+  'toast.titleSaved': 'Title saved.',
+  'toast.contentSaved': 'Content saved.',
+  'toast.documentCreated': 'Document created.',
+  'validation.titleRequired': 'Title cannot be empty.',
+
+  'errors.network': 'Network error: could not reach the API.',
+
+  'editor.invalidLink': 'Invalid document link.',
+
+  'meta.appTitle': 'DevAtlas',
+  'meta.appDescription': 'DevAtlas application',
+};

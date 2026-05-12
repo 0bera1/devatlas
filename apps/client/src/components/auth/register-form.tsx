@@ -4,14 +4,16 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import { AuthTextField } from '@/components/auth/auth-text-field';
 import { useRegister } from '@/hooks/use-register';
+import { useTranslations } from '@/hooks/use-translations';
 
 export function RegisterForm() {
+  const { t } = useTranslations();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const { submit, status, errorMessage, clearError } = useRegister();
-  const busy = status === 'loading';
+  const busy: boolean = status === 'loading';
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -31,7 +33,7 @@ export function RegisterForm() {
       ) : null}
       <AuthTextField
         id="email"
-        label="E-posta"
+        label={t('auth.login.email')}
         type="email"
         autoComplete="email"
         value={email}
@@ -41,7 +43,7 @@ export function RegisterForm() {
       />
       <AuthTextField
         id="password"
-        label="Şifre"
+        label={t('auth.login.password')}
         type="password"
         autoComplete="new-password"
         value={password}
@@ -51,11 +53,11 @@ export function RegisterForm() {
         minLength={8}
       />
       <p className="-mt-4 text-xs text-zinc-500 dark:text-zinc-400">
-        En az 8 karakter.
+        {t('auth.register.passwordHint')}
       </p>
       <AuthTextField
         id="name"
-        label="Ad (isteğe bağlı)"
+        label={t('auth.register.name')}
         type="text"
         autoComplete="name"
         value={name}
@@ -64,7 +66,7 @@ export function RegisterForm() {
       />
       <AuthTextField
         id="birthDate"
-        label="Doğum tarihi"
+        label={t('auth.register.birthDate')}
         type="date"
         value={birthDate}
         onChange={setBirthDate}
@@ -76,7 +78,7 @@ export function RegisterForm() {
         disabled={busy}
         className="flex w-full justify-center rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
       >
-        {busy ? 'Hesap oluşturuluyor…' : 'Kayıt ol'}
+        {busy ? t('auth.register.submitting') : t('auth.register.submit')}
       </button>
     </form>
   );

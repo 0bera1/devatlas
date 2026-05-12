@@ -1,9 +1,11 @@
 'use client';
 
+import { useAuth } from '@/components/providers/auth-provider';
+import { isNetworkFailure } from '@/lib/api/api-error';
+import { loginRequest } from '@/lib/api/auth-api';
+import { useTranslations } from '@/hooks/use-translations';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
-import { loginRequest } from '@/lib/api/auth-api';
-import { useAuth } from '@/components/providers/auth-provider';
 
 export type LoginStatus = 'idle' | 'loading' | 'error';
 
@@ -17,6 +19,7 @@ export interface UseLoginResult {
 export function useLogin(): UseLoginResult {
   const router = useRouter();
   const { setSession } = useAuth();
+  const { t } = useTranslations();
   const [status, setStatus] = useState<LoginStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -32,7 +35,9 @@ export function useLogin(): UseLoginResult {
       const result = await loginRequest({ email, password });
       if (!result.ok) {
         setStatus('error');
-        setErrorMessage(result.error);
+        setErrorMessage(
+          isNetworkFailure(result) ? t('errors.network') : result.error,
+        );
         return;
       }
       setSession({
@@ -43,7 +48,7 @@ export function useLogin(): UseLoginResult {
       router.push('/');
       router.refresh();
     },
-    [router, setSession],
+    [router, setSession, t],
   );
 
   return { submit, status, errorMessage, clearError };
