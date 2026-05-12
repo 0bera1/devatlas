@@ -2,12 +2,20 @@
 
 export type DocumentVisibility = 'PUBLIC' | 'PRIVATE';
 
+export interface DocumentCategorySummary {
+  id: string;
+  name: string;
+}
+
 export interface DocumentRecord {
   id: string;
   title: string;
   content: string;
   ownerId: string;
   visibility: DocumentVisibility;
+  category: DocumentCategorySummary | null;
+  viewCount: number;
+  favoriteCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -23,6 +31,10 @@ export interface PaginatedDocumentList {
 export interface CreateDocumentBody {
   title: string;
   visibility?: DocumentVisibility;
+  /** Opsiyonel etiketler; boş dizi gönderilmez. */
+  tags?: string[];
+  /** Tek makro kategori (ör. backend); sunucu normalize eder. */
+  categoryName?: string;
 }
 
 export interface UpdateDocumentContentBody {
@@ -32,6 +44,8 @@ export interface UpdateDocumentContentBody {
 export interface PatchDocumentBody {
   title?: string;
   visibility?: DocumentVisibility;
+  /** Boş dize veya null ile kategori kaldırılır (PATCH gövdesi). */
+  categoryName?: string | null;
 }
 
 export interface ListDocumentsQuery {
@@ -48,4 +62,9 @@ export interface PatchDocumentVariables {
 export interface UpdateDocumentContentVariables {
   readonly documentId: string;
   readonly content: string;
+}
+
+export interface RecordDocumentViewResponse {
+  counted: boolean;
+  anonymousId?: string;
 }

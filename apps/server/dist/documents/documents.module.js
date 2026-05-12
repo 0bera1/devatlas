@@ -12,11 +12,17 @@ const auth_module_1 = require("../auth/auth.module");
 const document_repository_1 = require("./document.repository");
 const documents_controller_1 = require("./documents.controller");
 const documents_service_1 = require("./documents.service");
+const engagement_repository_1 = require("./engagement.repository");
 const document_repository_interface_1 = require("./interfaces/document-repository.interface");
 const documents_service_interface_1 = require("./interfaces/documents-service.interface");
+const engagement_repository_interface_1 = require("./interfaces/engagement-repository.interface");
 const documentRepositoryProvider = {
     provide: document_repository_interface_1.DOCUMENT_REPOSITORY,
     useClass: document_repository_1.DocumentRepository,
+};
+const engagementRepositoryProvider = {
+    provide: engagement_repository_interface_1.ENGAGEMENT_REPOSITORY,
+    useClass: engagement_repository_1.EngagementRepository,
 };
 const documentsServiceProvider = {
     provide: documents_service_interface_1.DOCUMENTS_SERVICE,
@@ -29,7 +35,12 @@ exports.DocumentsModule = DocumentsModule = __decorate([
     (0, common_1.Module)({
         imports: [(0, common_1.forwardRef)(() => auth_module_1.AuthModule)],
         controllers: [documents_controller_1.DocumentsController],
-        providers: [documentRepositoryProvider, documentsServiceProvider],
+        providers: [
+            documentRepositoryProvider,
+            engagementRepositoryProvider,
+            documentsServiceProvider,
+        ],
+        exports: [documentsServiceProvider],
     })
 ], DocumentsModule);
 //# sourceMappingURL=documents.module.js.map

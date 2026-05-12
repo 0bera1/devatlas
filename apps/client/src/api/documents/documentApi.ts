@@ -1,13 +1,21 @@
-import { DocumentMethods } from '@/api/MethodNames';
-import {buildDocumentPath,documentHttpVerb,executeJsonRequest} from '@/api/http/execute-request';
+import { DocumentMethods, FeedMethods, SearchMethods } from '@/api/MethodNames';
+import {
+  buildDocumentPath,
+  buildFeedPath,
+  buildSearchPath,
+  documentHttpVerb,
+  executeJsonRequest,
+} from '@/api/http/execute-request';
 import type {
   CreateDocumentBody,
   DocumentRecord,
   ListDocumentsQuery,
   PaginatedDocumentList,
   PatchDocumentBody,
+  RecordDocumentViewResponse,
   UpdateDocumentContentBody,
 } from '@/domains/documentsDomains';
+import type { PublicSearchHit } from '@/domains/searchDomains';
 
 function appendListQuery(basePath: string, query: ListDocumentsQuery): string {
   const params = new URLSearchParams();
@@ -28,18 +36,52 @@ function compactPatch(patch: PatchDocumentBody): Record<string, unknown> {
   if (patch.visibility !== undefined) {
     out.visibility = patch.visibility;
   }
+  if (patch.categoryName !== undefined) {
+    out.categoryName = patch.categoryName;
+  }
   return out;
 }
 
 export const documentApi = {
   /**
-   * GET — halka açık feed (@Public). Kimlik gerekmez.
+   * GET /feed/latest — son herkese açık dokümanlar.
+   */
+  async listFeedLatest(): Promise<DocumentRecord[]> {
+    return executeJsonRequest<DocumentRecord[]>({
+      method: 'GET',
+      path: buildFeedPath(FeedMethods.Latest),
+    });
+  },
+
+  /**
+   * GET /feed/trending — favoriteCount, ardından viewCount azalan.
+   */
+  async listFeedTrending(): Promise<DocumentRecord[]> {
+    return executeJsonRequest<DocumentRecord[]>({
+      method: 'GET',
+      path: buildFeedPath(FeedMethods.Trending),
+    });
+  },
+
+  /**
+   * GET /search?q= — herkese açık dokümanlar (önizleme + yazar).
+   */
+  async searchPublic(trimmedQuery: string): Promise<PublicSearchHit[]> {
+    const q: string = trimmedQuery.trim();
+    if (q.length === 0) {
+      return [];
+    }
+    return executeJsonRequest<PublicSearchHit[]>({
+      method: 'GET',
+      path: buildSearchPath(SearchMethods.PublicDocuments, { q }),
+    });
+  },
+
+  /**
+   * Eski isim; /feed/latest ile aynı sonuç.
    */
   async listPublic(): Promise<DocumentRecord[]> {
-    return executeJsonRequest<DocumentRecord[]>({
-      method: documentHttpVerb(DocumentMethods.PublicFeed),
-      path: buildDocumentPath(DocumentMethods.PublicFeed),
-    });
+    return documentApi.listFeedLatest();
   },
 
   /**
@@ -84,6 +126,21 @@ export const documentApi = {
       method: documentHttpVerb(DocumentMethods.GetById),
       path: buildDocumentPath(DocumentMethods.GetById, { id: documentId }),
       accessToken,
+    });
+  },
+
+  /**
+   * GET /documents/:id/related — aynı kategori + ortak etiket (PUBLIC adaylar).
+   * Özel doküman için Bearer gerekir.
+   */
+  async listRelated(
+    documentId: string,
+    accessToken: string | null | undefined,
+  ): Promise<DocumentRecord[]> {
+    return executeJsonRequest<DocumentRecord[]>({
+      method: documentHttpVerb(DocumentMethods.Related),
+      path: buildDocumentPath(DocumentMethods.Related, { id: documentId }),
+      accessToken: accessToken ?? undefined,
     });
   },
 
@@ -133,6 +190,43 @@ export const documentApi = {
     await executeJsonRequest<void>({
       method: documentHttpVerb(DocumentMethods.Delete),
       path: buildDocumentPath(DocumentMethods.Delete, { id: documentId }),
+      accessToken,
+    });
+  },
+
+  /**
+   * POST /documents/:id/view — PUBLIC doküman görüntülenme (günde bir kez / izleyici).
+   */
+  async recordView(
+    documentId: string,
+    accessToken: string | null | undefined,
+    anonymousId: string | null | undefined,
+  ): Promise<RecordDocumentViewResponse> {
+    const extra: Record<string, string> = {};
+    if (
+      anonymousId !== undefined &&
+      anonymousId !== null &&
+      anonymousId.trim().length > 0
+    ) {
+      extra['X-Anonymous-Id'] = anonymousId.trim();
+    }
+    return executeJsonRequest<RecordDocumentViewResponse>({
+      method: documentHttpVerb(DocumentMethods.RecordView),
+      path: buildDocumentPath(DocumentMethods.RecordView, { id: documentId }),
+      accessToken: accessToken ?? undefined,
+      extraHeaders: Object.keys(extra).length > 0 ? extra : undefined,
+    });
+  },
+
+  /**
+   * POST /documents/:id/favorite — favori + favoriteCount (+1).
+   */
+  async addFavorite(accessToken: string, documentId: string): Promise<void> {
+    await executeJsonRequest<void>({
+      method: documentHttpVerb(DocumentMethods.FavoriteDocument),
+      path: buildDocumentPath(DocumentMethods.FavoriteDocument, {
+        id: documentId,
+      }),
       accessToken,
     });
   },

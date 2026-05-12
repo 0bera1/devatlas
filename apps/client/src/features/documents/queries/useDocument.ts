@@ -50,13 +50,52 @@ export function useDocumentByIdQuery(
 }
 
 /**
- * Halka açık doküman akışı GET /documents/public — token gerekmez.
+ * Halka açık akış GET /feed/latest veya /feed/trending.
+ */
+export function usePublicFeedQuery(
+  mode: 'latest' | 'trending',
+): UseQueryResult<DocumentRecord[], Error> {
+  return useQuery({
+    queryKey:
+      mode === 'latest'
+        ? documentQueryKeys.feedLatest()
+        : documentQueryKeys.feedTrending(),
+    queryFn: async (): Promise<DocumentRecord[]> => {
+      return mode === 'latest'
+        ? documentApi.listFeedLatest()
+        : documentApi.listFeedTrending();
+    },
+  });
+}
+
+/**
+ * @deprecated Doğrudan {@link usePublicFeedQuery}('latest') tercih edin.
  */
 export function usePublicDocumentsQuery(): UseQueryResult<DocumentRecord[], Error> {
   return useQuery({
-    queryKey: documentQueryKeys.publicFeed(),
+    queryKey: documentQueryKeys.feedLatest(),
     queryFn: async (): Promise<DocumentRecord[]> => {
-      return documentApi.listPublic();
+      return documentApi.listFeedLatest();
     },
+  });
+}
+
+/**
+ * GET /documents/:id/related — Bearer opsiyonel (özel doküman için gerekir).
+ */
+export function useRelatedDocumentsQuery(
+  documentId: string,
+  enabled: boolean,
+): UseQueryResult<DocumentRecord[], Error> {
+  const { token } = useAuth();
+  const hasAuth: boolean = token !== null;
+  const authBucket: 'auth' | 'anon' = hasAuth ? 'auth' : 'anon';
+
+  return useQuery({
+    queryKey: documentQueryKeys.related(documentId, authBucket),
+    queryFn: async (): Promise<DocumentRecord[]> => {
+      return documentApi.listRelated(documentId, token);
+    },
+    enabled: enabled && documentId.length > 0,
   });
 }

@@ -39,6 +39,19 @@ export class UserRepository implements IUserRepository {
     });
   }
 
+  public async findPublicByEmailNormalized(
+    email: string,
+  ): Promise<PublicUser | null> {
+    const trimmed: string = email.trim();
+    if (trimmed.length === 0) {
+      return null;
+    }
+    return this.prisma.user.findFirst({
+      where: { email: { equals: trimmed, mode: 'insensitive' } },
+      select: publicUserSelect,
+    });
+  }
+
   public async findByEmailWithPassword(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: { email },

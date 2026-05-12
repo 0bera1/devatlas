@@ -20,22 +20,158 @@ model User {
   birthDate     DateTime
   createdAt     DateTime       @default(now())
   documents     Document[]
+  diagrams      Diagram[]
+  favorites     Favorite[]
   refreshTokens RefreshToken[]
+  diagramCollaborations DiagramCollaborator[]
 }
 
-model Document {
+/// Node tabanlı bilgi haritası (graph); dokümanla birlikte arama / keşif için.
+model Diagram {
   id         String     @id @default(cuid())
   title      String
-  content    String     @default("")
-  ownerId    String
   visibility Visibility @default(PRIVATE)
-  owner      User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  ownerId String
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  nodes Node[]
+  edges Edge[]
+
+  collaborators DiagramCollaborator[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([ownerId])
   @@index([visibility])
+}
+
+model Node {
+  id        String @id
+  diagramId String
+  label     String
+  type      String
+  x         Float
+  y         Float
+
+  diagram Diagram @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+
+  outgoingEdges Edge[] @relation("DiagramEdgeFrom")
+  incomingEdges Edge[] @relation("DiagramEdgeTo")
+
+  @@index([diagramId])
+}
+
+model Edge {
+  id         String @id @default(cuid())
+  diagramId  String
+  fromNodeId String
+  toNodeId   String
+  label      String?
+
+  diagram  Diagram @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+  fromNode Node    @relation("DiagramEdgeFrom", fields: [fromNodeId], references: [id], onDelete: Cascade)
+  toNode   Node    @relation("DiagramEdgeTo", fields: [toNodeId], references: [id], onDelete: Cascade)
+
+  @@index([diagramId])
+  @@index([fromNodeId])
+  @@index([toNodeId])
+}
+
+model DiagramCollaborator {
+  diagramId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  diagram Diagram @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([diagramId, userId])
+  @@index([userId])
+}
+
+model Document {
+  id         String     @id @default(cuid())
+  title      String
+  content    String     @default("")
+  visibility Visibility @default(PRIVATE)
+
+  ownerId String
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  /// Toplam görüntülenme (AŞAMA 1 — algoritma verisi; artırma mantığı sonraki aşamada).
+  viewCount Int @default(0)
+  /// Favorileyen kullanıcı sayısı (Favorite satırlarıyla tutarlı tutulmalı).
+  favoriteCount Int @default(0)
+
+  favorites Favorite[]
+  viewBuckets DocumentViewBucket[]
+  documentTags DocumentTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ownerId])
+  @@index([visibility])
+  @@index([categoryId])
+}
+
+model Category {
+  id   String @id @default(cuid())
+  name String @unique
+
+  documents Document[]
+}
+
+model Tag {
+  id   String @id @default(cuid())
+  name String @unique
+
+  documentTags DocumentTag[]
+}
+
+/// Doküman–etiket çoktan çoğa ilişki tablosu.
+model DocumentTag {
+  documentId String
+  tagId      String
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  tag      Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([documentId, tagId])
+  @@index([tagId])
+}
+
+/// Kullanıcı–doküman favori ilişkisi (öneri / engagement için ayrı tablo).
+model Favorite {
+  id         String @id @default(cuid())
+  userId     String
+  documentId String
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, documentId])
+}
+
+/// Aynı izleyici + doküman + UTC günü için en fazla bir görüntülenme sayımı (spam / F5 önleme).
+model DocumentViewBucket {
+  id         String   @id @default(cuid())
+  documentId String
+  /// "user:<userId>" veya "anon:<uuid>"
+  viewerKey  String
+  bucketDate DateTime @db.Date
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, viewerKey, bucketDate])
+  @@index([documentId])
 }
 
 /// Platform içeriği: kullanıcıya bağlı değil; arama ve gelecekteki graph katmanı için ayrı koleksiyon.

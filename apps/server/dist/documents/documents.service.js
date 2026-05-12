@@ -14,17 +14,32 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentsService = void 0;
 const common_1 = require("@nestjs/common");
+const client_1 = require("@prisma/client");
+const feed_constants_1 = require("./constants/feed.constants");
+const related_constants_1 = require("./constants/related.constants");
+const search_constants_1 = require("./constants/search.constants");
+const search_preview_1 = require("./utils/search-preview");
 const document_repository_interface_1 = require("./interfaces/document-repository.interface");
+const engagement_repository_interface_1 = require("./interfaces/engagement-repository.interface");
+const normalize_category_name_1 = require("./utils/normalize-category-name");
+const normalize_document_tag_names_1 = require("./utils/normalize-document-tag-names");
+const utc_date_bucket_1 = require("./utils/utc-date-bucket");
 let DocumentsService = class DocumentsService {
     documentRepository;
-    constructor(documentRepository) {
+    engagementRepository;
+    constructor(documentRepository, engagementRepository) {
         this.documentRepository = documentRepository;
+        this.engagementRepository = engagementRepository;
     }
-    async createDocument(ownerId, title, visibility) {
+    async createDocument(ownerId, command) {
+        const tagNames = (0, normalize_document_tag_names_1.normalizeDocumentTagNames)(command.tags);
+        const categoryName = (0, normalize_category_name_1.normalizeCategoryName)(command.categoryName);
         return this.documentRepository.insertDocument({
             ownerId,
-            title,
-            visibility,
+            title: command.title,
+            visibility: command.visibility,
+            tagNames,
+            ...(categoryName !== undefined ? { categoryName } : {}),
         });
     }
     async listDocuments(ownerId, params) {
@@ -82,10 +97,32 @@ let DocumentsService = class DocumentsService {
         return updated;
     }
     async patchDocument(ownerId, id, patch) {
-        if (patch.title === undefined && patch.visibility === undefined) {
-            throw new common_1.BadRequestException('Provide at least one field: title or visibility.');
+        const repoPatch = {};
+        if (patch.title !== undefined) {
+            repoPatch.title = patch.title;
         }
-        const updated = await this.documentRepository.updateDocumentPatchByIdAndOwnerId(id, ownerId, patch);
+        if (patch.visibility !== undefined) {
+            repoPatch.visibility = patch.visibility;
+        }
+        if (patch.categoryName !== undefined) {
+            switch (patch.categoryName) {
+                case null:
+                    repoPatch.categoryName = null;
+                    break;
+                default: {
+                    const normalized = (0, normalize_category_name_1.normalizeCategoryName)(patch.categoryName);
+                    repoPatch.categoryName =
+                        normalized === undefined ? null : normalized;
+                    break;
+                }
+            }
+        }
+        if (repoPatch.title === undefined &&
+            repoPatch.visibility === undefined &&
+            repoPatch.categoryName === undefined) {
+            throw new common_1.BadRequestException('Provide at least one field: title, visibility, or categoryName.');
+        }
+        const updated = await this.documentRepository.updateDocumentPatchByIdAndOwnerId(id, ownerId, repoPatch);
         if (updated === null) {
             throw new common_1.NotFoundException(`Document with id "${id}" not found`);
         }
@@ -97,11 +134,70 @@ let DocumentsService = class DocumentsService {
             throw new common_1.NotFoundException(`Document with id "${id}" not found`);
         }
     }
+    async getLatestPublicFeed() {
+        return this.documentRepository.selectPublicFeedLatest(feed_constants_1.FEED_DEFAULT_LIMIT);
+    }
+    async getTrendingPublicFeed() {
+        return this.documentRepository.selectPublicFeedTrending(feed_constants_1.FEED_DEFAULT_LIMIT);
+    }
+    async recordPublicDocumentView(documentId, viewerKey) {
+        return this.engagementRepository.tryCountPublicDocumentView(documentId, viewerKey, (0, utc_date_bucket_1.startOfUtcDay)(new Date()));
+    }
+    async addFavorite(userId, documentId) {
+        const doc = await this.documentRepository.selectDocumentByIdForUser(documentId, userId);
+        if (doc === null) {
+            throw new common_1.NotFoundException(`Document with id "${documentId}" not found`);
+        }
+        try {
+            await this.engagementRepository.insertFavorite(userId, documentId);
+        }
+        catch (error) {
+            if (error instanceof client_1.Prisma.PrismaClientKnownRequestError &&
+                error.code === 'P2002') {
+                throw new common_1.ConflictException('Document already favorited');
+            }
+            throw error;
+        }
+    }
+    async searchPublicDocuments(rawQuery) {
+        const trimmed = rawQuery.trim();
+        if (trimmed.length === 0) {
+            return [];
+        }
+        const rows = await this.documentRepository.selectPublicDocumentsByQuery(trimmed, search_constants_1.SEARCH_PUBLIC_DOCUMENTS_LIMIT);
+        return rows.map(row => ({
+            kind: 'document',
+            id: row.id,
+            title: row.title,
+            preview: (0, search_preview_1.buildSearchPreview)(row.content, search_preview_1.SEARCH_PREVIEW_MAX_CHARS),
+            favoriteCount: row.favoriteCount,
+            viewCount: row.viewCount,
+            ownerId: row.ownerId,
+            author: {
+                id: row.owner.id,
+                name: row.owner.name,
+                email: row.owner.email,
+            },
+            visibility: row.visibility,
+            createdAt: row.createdAt,
+            updatedAt: row.updatedAt,
+        }));
+    }
+    async getRelatedDocuments(documentId, viewerUserId) {
+        const source = viewerUserId === null
+            ? await this.documentRepository.selectDocumentByIdPublicOnly(documentId)
+            : await this.documentRepository.selectDocumentByIdForUser(documentId, viewerUserId);
+        if (source === null) {
+            throw new common_1.NotFoundException(`Document with id "${documentId}" not found`);
+        }
+        return this.documentRepository.selectPublicRelatedDocumentsBySharedTagsAndCategory(documentId, related_constants_1.RELATED_PUBLIC_DOCUMENTS_LIMIT);
+    }
 };
 exports.DocumentsService = DocumentsService;
 exports.DocumentsService = DocumentsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(document_repository_interface_1.DOCUMENT_REPOSITORY)),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)(engagement_repository_interface_1.ENGAGEMENT_REPOSITORY)),
+    __metadata("design:paramtypes", [Object, Object])
 ], DocumentsService);
 //# sourceMappingURL=documents.service.js.map

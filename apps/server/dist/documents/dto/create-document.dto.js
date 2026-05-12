@@ -15,6 +15,8 @@ const class_validator_1 = require("class-validator");
 class CreateDocumentDto {
     title;
     visibility;
+    tags;
+    categoryName;
 }
 exports.CreateDocumentDto = CreateDocumentDto;
 __decorate([
@@ -28,4 +30,20 @@ __decorate([
     (0, class_validator_1.IsEnum)(client_1.Visibility),
     __metadata("design:type", String)
 ], CreateDocumentDto.prototype, "visibility", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.ArrayMaxSize)(30),
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.MinLength)(1, { each: true }),
+    (0, class_validator_1.MaxLength)(64, { each: true }),
+    __metadata("design:type", Array)
+], CreateDocumentDto.prototype, "tags", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(1),
+    (0, class_validator_1.MaxLength)(64),
+    __metadata("design:type", String)
+], CreateDocumentDto.prototype, "categoryName", void 0);
 //# sourceMappingURL=create-document.dto.js.map

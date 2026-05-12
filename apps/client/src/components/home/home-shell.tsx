@@ -36,6 +36,12 @@ export function HomeShell({ children }: { children: ReactNode }): ReactNode {
               >
                 {t('nav.knowledge')}
               </Link>
+              <Link
+                href="/search"
+                className="text-zinc-600 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50"
+              >
+                {t('nav.search')}
+              </Link>
               {!isReady ? (
                 <span className="text-zinc-400">{t('nav.loading')}</span>
               ) : loggedIn ? (
@@ -45,6 +51,12 @@ export function HomeShell({ children }: { children: ReactNode }): ReactNode {
                     className="text-zinc-600 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50"
                   >
                     {t('nav.documents')}
+                  </Link>
+                  <Link
+                    href="/diagrams"
+                    className="text-zinc-600 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50"
+                  >
+                    {t('nav.diagrams')}
                   </Link>
                   <span className="hidden text-zinc-500 sm:inline dark:text-zinc-400">
                     {t('nav.sessionActive')}

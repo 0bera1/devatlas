@@ -130,6 +130,28 @@ export class AuthService implements IAuthService {
     };
   }
 
+  public async tryGetSubjectFromAccessToken(
+    accessToken: string | undefined,
+  ): Promise<string | null> {
+    if (accessToken === undefined || accessToken.trim().length === 0) {
+      return null;
+    }
+    try {
+      const payload: JwtPayload = await this.jwtService.verifyAsync<JwtPayload>(
+        accessToken.trim(),
+      );
+      const user: PublicUser | null = await this.userRepository.findById(
+        payload.sub,
+      );
+      if (user === null || user.email !== payload.email) {
+        return null;
+      }
+      return user.id;
+    } catch {
+      return null;
+    }
+  }
+
   private async issueSession(user: PublicUser): Promise<AuthResult> {
     const plainRefresh: string = this.generateOpaqueRefreshToken();
     const tokenHash: string = this.hashRefreshToken(plainRefresh);

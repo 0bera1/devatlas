@@ -10,6 +10,8 @@ export const enMessages: Record<MessageKey, string> = {
   'nav.loading': '…',
   'nav.explore': 'Explore',
   'nav.knowledge': 'Knowledge base',
+  'nav.search': 'Search',
+  'nav.diagrams': 'Diagrams',
 
   'common.loading': 'Loading…',
 
@@ -92,8 +94,80 @@ export const enMessages: Record<MessageKey, string> = {
   'documents.list.next': 'Next',
   'documents.list.page': 'Page',
   'documents.list.visibilityLabel': 'Visibility',
+  'documents.list.tagsLabel': 'Tags (optional)',
+  'documents.list.tagsPlaceholder': 'e.g. nestjs, docker, api',
+  'documents.list.tagsHint':
+    'Comma-separated. Names are lowercased and deduped on the server. Discovery search matches title, body, tag names, and category names.',
+  'documents.list.categoryLabel': 'Category (optional)',
+  'documents.list.categoryPlaceholder': 'e.g. backend, frontend',
+  'documents.list.categoryHint':
+    'One broad macro label, unlike tags. Lowercased on the server. Used for related content and search.',
   'documents.visibilityPublic': 'Public',
   'documents.visibilityPrivate': 'Private',
+
+  'diagrams.list.title': 'Knowledge maps',
+  'diagrams.list.intro':
+    'Drag nodes and connect them to capture architecture or concept relationships. Saved graphs feed search and related-map suggestions.',
+  'diagrams.list.newDiagram': 'New diagram',
+  'diagrams.list.titleLabel': 'Title',
+  'diagrams.list.titlePlaceholder': 'e.g. API → cache → database',
+  'diagrams.list.create': 'Create',
+  'diagrams.list.creating': 'Creating…',
+  'diagrams.list.loading': 'Loading diagrams…',
+  'diagrams.list.empty':
+    'No diagrams yet. Give a title above to create your first map.',
+  'diagrams.list.nodes': 'nodes',
+  'diagrams.list.visibilityLabel': 'Visibility',
+  'diagrams.list.sharedBadge': 'Shared',
+
+  'diagrams.editor.loading': 'Loading diagram…',
+  'diagrams.editor.backToList': '← Diagrams',
+  'diagrams.editor.hint':
+    'Move nodes; drag from handles to targets to add edges. Save writes the full graph to the server.',
+  'diagrams.editor.addNode': 'Add node',
+  'diagrams.editor.save': 'Save',
+  'diagrams.editor.saving': 'Saving…',
+  'diagrams.editor.saved': 'Diagram saved.',
+  'diagrams.editor.saveFailed': 'Could not save.',
+  'diagrams.editor.labelRequired': 'Every node needs a non-empty label.',
+  'diagrams.editor.defaultNodeLabel': 'New node',
+  'diagrams.editor.nodeSettings': 'Node',
+  'diagrams.editor.nodeLabel': 'Label',
+  'diagrams.editor.nodeKind': 'Type',
+  'diagrams.editor.selectNode':
+    'Select a node to edit its label and type in the panel.',
+  'diagrams.editor.invalidId': 'Invalid diagram link.',
+  'diagrams.editor.visibilityLabel': 'Visibility',
+  'diagrams.editor.visibilitySaved': 'Visibility updated.',
+  'diagrams.editor.collaboratorRoleHint':
+    'You are a collaborator on this map. You can edit it; only the owner can change visibility and invitations.',
+  'diagrams.editor.collaboratorsTitle': 'Collaborators',
+  'diagrams.editor.collaboratorsHint':
+    'Invite registered users by email. Invitees can co-edit private diagrams with you.',
+  'diagrams.editor.collaboratorEmail': 'Email',
+  'diagrams.editor.collaboratorEmailPlaceholder': 'teammate@example.com',
+  'diagrams.editor.collaboratorAdd': 'Invite',
+  'diagrams.editor.collaboratorAdding': 'Adding…',
+  'diagrams.editor.collaboratorRemove': 'Remove',
+  'diagrams.editor.collaboratorsRefresh': 'Refresh list',
+  'diagrams.editor.collaboratorsEmpty': 'No collaborators yet.',
+
+  'diagrams.related.title': 'Related diagrams',
+  'diagrams.related.subtitle':
+    'Other public maps that share node labels with this one.',
+  'diagrams.related.empty': 'No related diagrams to suggest yet.',
+
+  'collaboration.statusConnecting': 'Connecting to the live room…',
+  'collaboration.peersCount': 'Live — {{count}} participant(s)',
+  'collaboration.statusConnectedSolo':
+    'Live channel open — you are the only one in the room for now',
+  'collaboration.statusConnectedChannel': 'Connected to the live channel',
+  'collaboration.statusDisconnected':
+    'Disconnected. You can retry; automatic reconnection may also run.',
+  'collaboration.statusError': 'Could not establish the realtime connection.',
+  'collaboration.retry': 'Retry',
+  'collaboration.canvasBadge': 'Live',
+  'collaboration.remoteCaretDetailed': 'Line {{line}} · {{user}}',
 
   'explore.title': 'Explore',
   'explore.intro':
@@ -101,11 +175,26 @@ export const enMessages: Record<MessageKey, string> = {
   'explore.empty': 'There are no public documents yet.',
   'explore.hintLogin': 'To open a document:',
   'explore.updated': 'Updated',
+  'explore.feedLatest': 'Latest',
+  'explore.feedTrending': 'Trending',
 
   'knowledge.title': 'Knowledge base',
   'knowledge.intro':
     'System and help content from the platform (no sign-in required).',
   'knowledge.empty': 'No system content to show.',
+
+  'search.title': 'Search',
+  'search.subtitle':
+    'Searches public documents and diagrams by title and preview text. Queries run after you pause typing (~300 ms), not on every key.',
+  'search.inputLabel': 'Search query',
+  'search.placeholder': 'e.g. nestjs websocket',
+  'search.debounceHint':
+    'The request is sent about 300 ms after you stop changing the text.',
+  'search.emptyPrompt': 'Type a phrase above to search public content.',
+  'search.noResults': 'No matching public documents or diagrams.',
+  'search.kindDocument': 'Document',
+  'search.kindDiagram': 'Diagram',
+  'search.author': 'Author',
 
   'documents.editor.loading': 'Loading…',
   'documents.editor.loadingDoc': 'Loading document…',
@@ -129,12 +218,26 @@ export const enMessages: Record<MessageKey, string> = {
   'documents.editor.contentHint':
     'Content is sent to the server with the same delay while you type (PUT /documents/:id).',
   'documents.editor.visibilityLabel': 'Visibility',
+  'documents.editor.categoryLabel': 'Category',
+  'documents.editor.categoryPlaceholder': 'e.g. backend',
+  'documents.editor.categoryHint':
+    'Saved when the field loses focus. Leave empty to clear the category. Only the owner can change it.',
   'documents.editor.readOnly': 'Read-only',
   'documents.editor.permissionLoading': 'Checking access…',
   'documents.editor.readOnlyHint':
     'You are not the owner of this document; title and content cannot be edited.',
   'documents.editor.readOnlyContentHint':
     'You are viewing the content; only the owner can make changes.',
+  'documents.editor.favorite': 'Favorite',
+  'documents.editor.favoriting': 'Adding…',
+  'documents.engagement.views': 'Views',
+  'documents.engagement.favorites': 'Favorites',
+
+  'documents.related.title': 'Related content',
+  'documents.related.subtitle':
+    'Other public documents in the same category that share at least one of your tags (simple knowledge graph).',
+  'documents.related.empty':
+    'No matching public documents — you need tags and a category for cross-links.',
 
   'roadmap.title': 'Roadmap',
   'roadmap.intro': 'What turns DevAtlas into a serious SaaS product.',
@@ -156,6 +259,8 @@ export const enMessages: Record<MessageKey, string> = {
   'toast.titleSaved': 'Title saved.',
   'toast.contentSaved': 'Content saved.',
   'toast.documentCreated': 'Document created.',
+  'toast.favoriteAdded': 'Added to favorites.',
+  'toast.favoriteDuplicate': 'This document is already in your favorites.',
   'validation.titleRequired': 'Title cannot be empty.',
 
   'errors.network': 'Network error: could not reach the API.',

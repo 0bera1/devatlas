@@ -15,8 +15,10 @@ var DocumentsController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentsController = void 0;
 const common_1 = require("@nestjs/common");
+const crypto_1 = require("crypto");
 const public_decorator_1 = require("../auth/decorators/public.decorator");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const auth_service_interface_1 = require("../auth/interfaces/auth-service.interface");
 const create_document_dto_1 = require("./dto/create-document.dto");
 const list_documents_query_dto_1 = require("./dto/list-documents-query.dto");
 const patch_document_dto_1 = require("./dto/patch-document.dto");
@@ -26,15 +28,53 @@ const DEFAULT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 20;
 let DocumentsController = DocumentsController_1 = class DocumentsController {
     documentsService;
-    constructor(documentsService) {
+    authService;
+    constructor(documentsService, authService) {
         this.documentsService = documentsService;
+        this.authService = authService;
     }
     async getPublicDocuments() {
         return this.documentsService.listPublicDocuments();
     }
+    async recordDocumentView(id, authorization, anonymousIdHeader) {
+        const bearer = DocumentsController_1.extractBearerToken(authorization);
+        const subject = await this.authService.tryGetSubjectFromAccessToken(bearer);
+        let viewerKey;
+        let anonymousId;
+        if (subject !== null) {
+            viewerKey = `user:${subject}`;
+        }
+        else {
+            const trimmedHeader = anonymousIdHeader !== undefined && anonymousIdHeader.trim().length > 0
+                ? anonymousIdHeader.trim()
+                : undefined;
+            if (trimmedHeader === undefined) {
+                const generated = (0, crypto_1.randomUUID)();
+                anonymousId = generated;
+                viewerKey = `anon:${generated}`;
+            }
+            else {
+                viewerKey = `anon:${trimmedHeader}`;
+            }
+        }
+        const counted = await this.documentsService.recordPublicDocumentView(id, viewerKey);
+        return {
+            counted,
+            anonymousId,
+        };
+    }
+    async favoriteDocument(req, id) {
+        const user = DocumentsController_1.requireUser(req);
+        await this.documentsService.addFavorite(user.id, id);
+    }
     async create(req, dto) {
         const owner = DocumentsController_1.requireUser(req);
-        return this.documentsService.createDocument(owner.id, dto.title, dto.visibility);
+        return this.documentsService.createDocument(owner.id, {
+            title: dto.title,
+            visibility: dto.visibility,
+            tags: dto.tags,
+            categoryName: dto.categoryName,
+        });
     }
     async findAll(req, query) {
         const owner = DocumentsController_1.requireUser(req);
@@ -50,6 +90,11 @@ let DocumentsController = DocumentsController_1 = class DocumentsController {
             titleQuery,
         });
     }
+    async getRelatedDocuments(id, authorization) {
+        const bearer = DocumentsController_1.extractBearerToken(authorization);
+        const subject = await this.authService.tryGetSubjectFromAccessToken(bearer);
+        return this.documentsService.getRelatedDocuments(id, subject);
+    }
     async findOne(req, id) {
         const user = DocumentsController_1.requireUser(req);
         return this.documentsService.getDocument(user.id, id);
@@ -63,6 +108,7 @@ let DocumentsController = DocumentsController_1 = class DocumentsController {
         return this.documentsService.patchDocument(owner.id, id, {
             title: dto.title,
             visibility: dto.visibility,
+            categoryName: dto.categoryName,
         });
     }
     async remove(req, id) {
@@ -75,6 +121,17 @@ let DocumentsController = DocumentsController_1 = class DocumentsController {
         }
         return req.user;
     }
+    static extractBearerToken(authorization) {
+        if (authorization === undefined) {
+            return undefined;
+        }
+        const trimmed = authorization.trim();
+        if (!trimmed.startsWith('Bearer ')) {
+            return undefined;
+        }
+        const token = trimmed.slice(7).trim();
+        return token.length > 0 ? token : undefined;
+    }
 };
 exports.DocumentsController = DocumentsController;
 __decorate([
@@ -84,6 +141,26 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], DocumentsController.prototype, "getPublicDocuments", null);
+__decorate([
+    (0, common_1.Post)(':id/view'),
+    (0, public_decorator_1.Public)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Headers)('authorization')),
+    __param(2, (0, common_1.Headers)('x-anonymous-id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", Promise)
+], DocumentsController.prototype, "recordDocumentView", null);
+__decorate([
+    (0, common_1.Post)(':id/favorite'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], DocumentsController.prototype, "favoriteDocument", null);
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
@@ -101,6 +178,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, list_documents_query_dto_1.ListDocumentsQueryDto]),
     __metadata("design:returntype", Promise)
 ], DocumentsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)(':id/related'),
+    (0, public_decorator_1.Public)(),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Headers)('authorization')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], DocumentsController.prototype, "getRelatedDocuments", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Req)()),
@@ -140,6 +226,7 @@ exports.DocumentsController = DocumentsController = DocumentsController_1 = __de
     (0, common_1.Controller)('documents'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Inject)(documents_service_interface_1.DOCUMENTS_SERVICE)),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)(auth_service_interface_1.AUTH_SERVICE)),
+    __metadata("design:paramtypes", [Object, Object])
 ], DocumentsController);
 //# sourceMappingURL=documents.controller.js.map

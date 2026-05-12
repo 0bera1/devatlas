@@ -8,6 +8,8 @@ export const trMessages = {
   'nav.loading': '…',
   'nav.explore': 'Keşif',
   'nav.knowledge': 'Bilgi tabanı',
+  'nav.search': 'Ara',
+  'nav.diagrams': 'Diyagramlar',
 
   'common.loading': 'Yükleniyor…',
 
@@ -90,8 +92,80 @@ export const trMessages = {
   'documents.list.next': 'Sonraki',
   'documents.list.page': 'Sayfa',
   'documents.list.visibilityLabel': 'Görünürlük',
+  'documents.list.tagsLabel': 'Etiketler (isteğe bağlı)',
+  'documents.list.tagsPlaceholder': 'ör. nestjs, docker, api',
+  'documents.list.tagsHint':
+    'Virgülle ayırın. Sunucuda küçük harfe normalize edilir ve tekrarlar elenir. Keşif aramasında başlık, içerik, etiket ve kategori adıyla eşleşir.',
+  'documents.list.categoryLabel': 'Kategori (isteğe bağlı)',
+  'documents.list.categoryPlaceholder': 'ör. backend, frontend',
+  'documents.list.categoryHint':
+    'Tek geniş başlık (makro). Etiketlerden farklıdır. Sunucuda küçük harfe çevrilir; “benzer içerik” ve arama için kullanılır.',
   'documents.visibilityPublic': 'Herkese açık',
   'documents.visibilityPrivate': 'Özel',
+
+  'diagrams.list.title': 'Bilgi haritaları',
+  'diagrams.list.intro':
+    'Düğümleri sürükleyip bağlayarak mimari veya kavram ilişkilerini kaydedin. Kayıtlar arama ve “ilgili diyagram” önerilerinde kullanılır.',
+  'diagrams.list.newDiagram': 'Yeni diyagram',
+  'diagrams.list.titleLabel': 'Başlık',
+  'diagrams.list.titlePlaceholder': 'ör. API — önbellek — veritabanı',
+  'diagrams.list.create': 'Oluştur',
+  'diagrams.list.creating': 'Oluşturuluyor…',
+  'diagrams.list.loading': 'Diyagramlar yükleniyor…',
+  'diagrams.list.empty':
+    'Henüz diyagram yok. Yukarıdan başlık vererek ilk bilgi haritanızı oluşturun.',
+  'diagrams.list.nodes': 'düğüm',
+  'diagrams.list.visibilityLabel': 'Görünürlük',
+  'diagrams.list.sharedBadge': 'Paylaşılan',
+
+  'diagrams.editor.loading': 'Diyagram yükleniyor…',
+  'diagrams.editor.backToList': '← Diyagramlar',
+  'diagrams.editor.hint':
+    'Düğümleri taşıyın; çıkışlardan hedeflere sürükleyerek kenar ekleyin. Kaydet tam grafı sunucuya yazar.',
+  'diagrams.editor.addNode': 'Düğüm ekle',
+  'diagrams.editor.save': 'Kaydet',
+  'diagrams.editor.saving': 'Kaydediliyor…',
+  'diagrams.editor.saved': 'Diyagram kaydedildi.',
+  'diagrams.editor.saveFailed': 'Kaydedilemedi.',
+  'diagrams.editor.labelRequired': 'Tüm düğümlerin etiketi dolu olmalı.',
+  'diagrams.editor.defaultNodeLabel': 'Yeni düğüm',
+  'diagrams.editor.nodeSettings': 'Düğüm',
+  'diagrams.editor.nodeLabel': 'Etiket',
+  'diagrams.editor.nodeKind': 'Tür',
+  'diagrams.editor.selectNode':
+    'Bir düğüm seçin; etiket ve türünü sağ panelden düzenleyin.',
+  'diagrams.editor.invalidId': 'Geçersiz diyagram bağlantısı.',
+  'diagrams.editor.visibilityLabel': 'Görünürlük',
+  'diagrams.editor.visibilitySaved': 'Görünürlük güncellendi.',
+  'diagrams.editor.collaboratorRoleHint':
+    'Bu haritaya iş birlikçi olarak erişiyorsunuz. Düzenleyebilirsiniz; görünürlük ve davet yalnızca sahip tarafından yönetilir.',
+  'diagrams.editor.collaboratorsTitle': 'İş birlikçiler',
+  'diagrams.editor.collaboratorsHint':
+    'Kayıtlı kullanıcı e-postası ile davet edin. Davetliler özel haritayı sizinle birlikte düzenleyebilir.',
+  'diagrams.editor.collaboratorEmail': 'E-posta',
+  'diagrams.editor.collaboratorEmailPlaceholder': 'ornek@devatlas.app',
+  'diagrams.editor.collaboratorAdd': 'Davet et',
+  'diagrams.editor.collaboratorAdding': 'Ekleniyor…',
+  'diagrams.editor.collaboratorRemove': 'Kaldır',
+  'diagrams.editor.collaboratorsRefresh': 'Listeyi yenile',
+  'diagrams.editor.collaboratorsEmpty': 'Henüz iş birlikçi yok.',
+
+  'diagrams.related.title': 'İlgili diyagramlar',
+  'diagrams.related.subtitle':
+    'Ortak düğüm etiketlerine göre eşleşen diğer herkese açık haritalar.',
+  'diagrams.related.empty': 'Şu an önerilecek ilgili diyagram yok.',
+
+  'collaboration.statusConnecting': 'Canlı oda bağlantısı kuruluyor…',
+  'collaboration.peersCount': 'Canlı — {{count}} katılımcı',
+  'collaboration.statusConnectedSolo':
+    'Canlı kanal açık — şimdilik odada yalnız sizsiniz',
+  'collaboration.statusConnectedChannel': 'Canlı kanala bağlısınız',
+  'collaboration.statusDisconnected':
+    'Bağlantı kesildi. İsterseniz yeniden deneyin; otomatik yeniden bağlantı da çalışır.',
+  'collaboration.statusError': 'Gerçek zamanlı bağlantı kurulamadı.',
+  'collaboration.retry': 'Yeniden dene',
+  'collaboration.canvasBadge': 'Canlı',
+  'collaboration.remoteCaretDetailed': 'Satır {{line}} · {{user}}',
 
   'explore.title': 'Keşif',
   'explore.intro':
@@ -99,11 +173,26 @@ export const trMessages = {
   'explore.empty': 'Şu an herkese açık doküman yok.',
   'explore.hintLogin': 'Dokümanı açmak için:',
   'explore.updated': 'Güncellendi',
+  'explore.feedLatest': 'Son yayınlar',
+  'explore.feedTrending': 'Trendler',
 
   'knowledge.title': 'Bilgi tabanı',
   'knowledge.intro':
     'Uygulamaya ait sistem ve yardım içerikleri (giriş gerektirmez).',
   'knowledge.empty': 'Gösterilecek sistem içeriği yok.',
+
+  'search.title': 'Ara',
+  'search.subtitle':
+    'Herkese açık dokümanlarda ve diyagramlarda başlık ile içerik önizlemesinde arar. Sorgu, yazmayı bıraktıktan yaklaşık 300 ms sonra gider.',
+  'search.inputLabel': 'Arama sorgusu',
+  'search.placeholder': 'ör. nestjs websocket',
+  'search.debounceHint':
+    'İstek, yazmayı bıraktıktan yaklaşık 0,3 sn sonra gönderilir.',
+  'search.emptyPrompt': 'Aramak için yukarıya bir ifade yazın.',
+  'search.noResults': 'Eşleşen herkese açık içerik yok (doküman veya diyagram).',
+  'search.kindDocument': 'Doküman',
+  'search.kindDiagram': 'Diyagram',
+  'search.author': 'Yazar',
 
   'documents.editor.loading': 'Yükleniyor…',
   'documents.editor.loadingDoc': 'Doküman yükleniyor…',
@@ -127,12 +216,26 @@ export const trMessages = {
   'documents.editor.contentHint':
     'İçerik yazarken aynı gecikmeyle sunucuya gönderilir (PUT /documents/:id).',
   'documents.editor.visibilityLabel': 'Görünürlük',
+  'documents.editor.categoryLabel': 'Kategori',
+  'documents.editor.categoryPlaceholder': 'ör. backend',
+  'documents.editor.categoryHint':
+    'Odağı kaydırdığınızda kaydedilir. Boş bırakırsanız kategori kaldırılır. Yalnızca siz (sahip) değiştirebilirsiniz.',
   'documents.editor.readOnly': 'Salt okunur',
   'documents.editor.permissionLoading': 'Erişim denetleniyor…',
   'documents.editor.readOnlyHint':
     'Bu dokümanın sahibi değilsiniz; başlık ve içerik düzenlenemez.',
   'documents.editor.readOnlyContentHint':
     'İçeriği görüntülüyorsunuz; düzenlemek için dokümanın sahibi olmalısınız.',
+  'documents.editor.favorite': 'Favorile',
+  'documents.editor.favoriting': 'Ekleniyor…',
+  'documents.engagement.views': 'Görüntülenme',
+  'documents.engagement.favorites': 'Favori',
+
+  'documents.related.title': 'Benzer içerikler',
+  'documents.related.subtitle':
+    'Aynı kategori ile ve en az bir ortak etikete sahip diğer herkese açık dokümanlar (öneri grafiği).',
+  'documents.related.empty':
+    'Eşleşen herkese açık doküman yok — en az bir etiket ve uygun kategori gerekir.',
 
   'roadmap.title': 'Yol haritası',
   'roadmap.intro':
@@ -155,6 +258,8 @@ export const trMessages = {
   'toast.titleSaved': 'Başlık kaydedildi.',
   'toast.contentSaved': 'İçerik kaydedildi.',
   'toast.documentCreated': 'Doküman oluşturuldu.',
+  'toast.favoriteAdded': 'Favorilere eklendi.',
+  'toast.favoriteDuplicate': 'Bu doküman zaten favorilerde.',
   'validation.titleRequired': 'Başlık boş olamaz.',
 
   'errors.network': 'Ağ hatası: API sunucusuna ulaşılamadı.',

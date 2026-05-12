@@ -93,6 +93,22 @@ let AuthService = class AuthService {
             user,
         };
     }
+    async tryGetSubjectFromAccessToken(accessToken) {
+        if (accessToken === undefined || accessToken.trim().length === 0) {
+            return null;
+        }
+        try {
+            const payload = await this.jwtService.verifyAsync(accessToken.trim());
+            const user = await this.userRepository.findById(payload.sub);
+            if (user === null || user.email !== payload.email) {
+                return null;
+            }
+            return user.id;
+        }
+        catch {
+            return null;
+        }
+    }
     async issueSession(user) {
         const plainRefresh = this.generateOpaqueRefreshToken();
         const tokenHash = this.hashRefreshToken(plainRefresh);

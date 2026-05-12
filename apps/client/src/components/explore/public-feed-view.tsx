@@ -3,13 +3,13 @@
 import { isHttpNetworkError } from '@/api/http/execute-request';
 import { DocumentsListSkeleton } from '@/components/documents/documents-list-skeleton';
 import { useAuth } from '@/components/providers/auth-provider';
-import { usePublicDocumentsQuery } from '@/features/documents/queries/useDocument';
+import { usePublicFeedQuery } from '@/features/documents/queries/useDocument';
 import { useFormatDocumentDate } from '@/hooks/use-format-document-date';
 import { useTranslations } from '@/hooks/use-translations';
 import type { DocumentRecord } from '@/domains/documentsDomains';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 export function PublicFeedView(): ReactNode {
   const { t } = useTranslations();
@@ -17,7 +17,9 @@ export function PublicFeedView(): ReactNode {
   const { token, isReady } = useAuth();
   const loggedIn: boolean = isReady && token !== null;
 
-  const { data, isPending, isError, error, refetch } = usePublicDocumentsQuery();
+  const [feedMode, setFeedMode] = useState<'latest' | 'trending'>('latest');
+  const { data, isPending, isError, error, refetch } =
+    usePublicFeedQuery(feedMode);
 
   const errorMessage = useMemo((): string | null => {
     if (!isError || error === null) {
@@ -48,6 +50,34 @@ export function PublicFeedView(): ReactNode {
             </Link>
           </p>
         ) : null}
+        <div className="mt-2 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setFeedMode('latest');
+            }}
+            className={
+              feedMode === 'latest'
+                ? 'rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900'
+                : 'rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900'
+            }
+          >
+            {t('explore.feedLatest')}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setFeedMode('trending');
+            }}
+            className={
+              feedMode === 'trending'
+                ? 'rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900'
+                : 'rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900'
+            }
+          >
+            {t('explore.feedTrending')}
+          </button>
+        </div>
       </header>
 
       {errorMessage !== null ? (
@@ -83,10 +113,21 @@ export function PublicFeedView(): ReactNode {
                 href={`/documents/${doc.id}`}
                 className="flex flex-col rounded-2xl border border-zinc-200 bg-white px-4 py-3 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950/40 dark:hover:border-zinc-600 dark:hover:bg-zinc-900/50 sm:flex-row sm:items-center sm:justify-between"
               >
-                <span className="font-medium text-zinc-950 dark:text-zinc-50">
-                  {doc.title}
-                </span>
-                <span className="mt-1 text-xs text-zinc-500 sm:mt-0 sm:text-right">
+                <div className="min-w-0 flex-1">
+                  <span className="font-medium text-zinc-950 dark:text-zinc-50">
+                    {doc.title}
+                  </span>
+                  {doc.category !== null ? (
+                    <span className="mt-1 inline-block w-fit rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-900 dark:bg-sky-950/50 dark:text-sky-200">
+                      {doc.category.name}
+                    </span>
+                  ) : null}
+                  <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                    {t('documents.engagement.views')}: {doc.viewCount} ·{' '}
+                    {t('documents.engagement.favorites')}: {doc.favoriteCount}
+                  </p>
+                </div>
+                <span className="mt-2 text-xs text-zinc-500 sm:mt-0 sm:shrink-0 sm:text-right">
                   {t('explore.updated')}: {formatUpdatedAt(doc.updatedAt)}
                 </span>
               </Link>

@@ -19,4 +19,12 @@ export interface IAuthService {
   login(email: string, password: string): Promise<AuthResult>;
 
   refresh(refreshToken: string): Promise<AuthResult>;
+
+  /**
+   * Opsiyonel Bearer access token doğrular; geçerliyse kullanıcı id, değilse null.
+   * Görüntülenme dedup için public uçlarda kullanılır.
+   */
+  tryGetSubjectFromAccessToken(
+    accessToken: string | undefined,
+  ): Promise<string | null>;
 }

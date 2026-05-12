@@ -6,6 +6,7 @@ import {
   type IPrismaService,
 } from '../prisma/interfaces/prisma-service.interface';
 import type { DocumentRecord } from './interfaces/document-record.interface';
+import type { DocumentSearchRow } from './interfaces/document-search-row.interface';
 import type {
   CreateDocumentInput,
   IDocumentRepository,
@@ -17,8 +18,35 @@ const documentRecordSelect = {
   content: true,
   ownerId: true,
   visibility: true,
+  category: {
+    select: {
+      id: true,
+      name: true,
+    },
+  },
+  viewCount: true,
+  favoriteCount: true,
   createdAt: true,
   updatedAt: true,
+} satisfies Prisma.DocumentSelect;
+
+const documentSearchRowSelect = {
+  id: true,
+  title: true,
+  content: true,
+  ownerId: true,
+  visibility: true,
+  viewCount: true,
+  favoriteCount: true,
+  createdAt: true,
+  updatedAt: true,
+  owner: {
+    select: {
+      id: true,
+      name: true,
+      email: true,
+    },
+  },
 } satisfies Prisma.DocumentSelect;
 
 @Injectable()
@@ -31,12 +59,44 @@ export class DocumentRepository implements IDocumentRepository {
   public async insertDocument(
     input: CreateDocumentInput,
   ): Promise<DocumentRecord> {
+    const tagNames: readonly string[] | undefined = input.tagNames;
+    const documentTagCreates:
+      | Prisma.DocumentTagCreateWithoutDocumentInput[]
+      | undefined =
+      tagNames !== undefined && tagNames.length > 0
+        ? tagNames.map(
+            (name: string): Prisma.DocumentTagCreateWithoutDocumentInput => ({
+              tag: {
+                connectOrCreate: {
+                  where: { name },
+                  create: { name },
+                },
+              },
+            }),
+          )
+        : undefined;
+
+    const data: Prisma.DocumentCreateInput = {
+      title: input.title,
+      owner: { connect: { id: input.ownerId } },
+      visibility: input.visibility ?? VisibilityEnum.PRIVATE,
+    };
+
+    if (documentTagCreates !== undefined) {
+      data.documentTags = { create: [...documentTagCreates] };
+    }
+
+    if (input.categoryName !== undefined) {
+      data.category = {
+        connectOrCreate: {
+          where: { name: input.categoryName },
+          create: { name: input.categoryName },
+        },
+      };
+    }
+
     return this.prisma.document.create({
-      data: {
-        title: input.title,
-        ownerId: input.ownerId,
-        visibility: input.visibility ?? VisibilityEnum.PRIVATE,
-      },
+      data,
       select: documentRecordSelect,
     });
   }
@@ -113,6 +173,15 @@ export class DocumentRepository implements IDocumentRepository {
     });
   }
 
+  public async selectDocumentByIdPublicOnly(
+    id: string,
+  ): Promise<DocumentRecord | null> {
+    return this.prisma.document.findFirst({
+      where: { id, visibility: VisibilityEnum.PUBLIC },
+      select: documentRecordSelect,
+    });
+  }
+
   public async selectDocumentByIdAndOwnerId(
     id: string,
     ownerId: string,
@@ -127,6 +196,129 @@ export class DocumentRepository implements IDocumentRepository {
     return this.prisma.document.findMany({
       where: { visibility: VisibilityEnum.PUBLIC },
       orderBy: { createdAt: 'desc' },
+      select: documentRecordSelect,
+    });
+  }
+
+  public async selectPublicFeedLatest(take: number): Promise<DocumentRecord[]> {
+    return this.prisma.document.findMany({
+      where: { visibility: VisibilityEnum.PUBLIC },
+      orderBy: { createdAt: 'desc' },
+      take,
+      select: documentRecordSelect,
+    });
+  }
+
+  public async selectPublicFeedTrending(
+    take: number,
+  ): Promise<DocumentRecord[]> {
+    return this.prisma.document.findMany({
+      where: { visibility: VisibilityEnum.PUBLIC },
+      orderBy: [
+        { favoriteCount: 'desc' },
+        { viewCount: 'desc' },
+      ],
+      take,
+      select: documentRecordSelect,
+    });
+  }
+
+  public async selectPublicDocumentsByQuery(
+    searchTerm: string,
+    take: number,
+  ): Promise<DocumentSearchRow[]> {
+    return this.prisma.document.findMany({
+      where: {
+        visibility: VisibilityEnum.PUBLIC,
+        OR: [
+          {
+            title: {
+              contains: searchTerm,
+              mode: 'insensitive',
+            },
+          },
+          {
+            content: {
+              contains: searchTerm,
+              mode: 'insensitive',
+            },
+          },
+          {
+            documentTags: {
+              some: {
+                tag: {
+                  name: {
+                    contains: searchTerm,
+                    mode: 'insensitive',
+                  },
+                },
+              },
+            },
+          },
+          {
+            category: {
+              name: {
+                contains: searchTerm,
+                mode: 'insensitive',
+              },
+            },
+          },
+        ],
+      },
+      take,
+      orderBy: {
+        favoriteCount: 'desc',
+      },
+      select: documentSearchRowSelect,
+    });
+  }
+
+  public async selectPublicRelatedDocumentsBySharedTagsAndCategory(
+    sourceDocumentId: string,
+    take: number,
+  ): Promise<DocumentRecord[]> {
+    const source: {
+      categoryId: string | null;
+      documentTags: { tag: { name: string } }[];
+    } | null = await this.prisma.document.findUnique({
+      where: { id: sourceDocumentId },
+      select: {
+        categoryId: true,
+        documentTags: {
+          select: {
+            tag: { select: { name: true } },
+          },
+        },
+      },
+    });
+
+    if (source === null) {
+      return [];
+    }
+
+    const tagNames: string[] = source.documentTags.map(
+      (row: { tag: { name: string } }): string => row.tag.name,
+    );
+
+    if (tagNames.length === 0) {
+      return [];
+    }
+
+    return this.prisma.document.findMany({
+      where: {
+        id: { not: sourceDocumentId },
+        visibility: VisibilityEnum.PUBLIC,
+        categoryId: source.categoryId,
+        documentTags: {
+          some: {
+            tag: {
+              name: { in: tagNames },
+            },
+          },
+        },
+      },
+      orderBy: { favoriteCount: 'desc' },
+      take,
       select: documentRecordSelect,
     });
   }
@@ -161,7 +353,11 @@ export class DocumentRepository implements IDocumentRepository {
   public async updateDocumentPatchByIdAndOwnerId(
     id: string,
     ownerId: string,
-    patch: { title?: string; visibility?: Visibility },
+    patch: {
+      title?: string;
+      visibility?: Visibility;
+      categoryName?: string | null;
+    },
   ): Promise<DocumentRecord | null> {
     const existing: DocumentRecord | null =
       await this.selectDocumentByIdAndOwnerId(id, ownerId);
@@ -176,6 +372,21 @@ export class DocumentRepository implements IDocumentRepository {
     }
     if (patch.visibility !== undefined) {
       data.visibility = patch.visibility;
+    }
+    if (patch.categoryName !== undefined) {
+      switch (patch.categoryName) {
+        case null:
+          data.category = { disconnect: true };
+          break;
+        default:
+          data.category = {
+            connectOrCreate: {
+              where: { name: patch.categoryName },
+              create: { name: patch.categoryName },
+            },
+          };
+          break;
+      }
     }
 
     return this.prisma.document.update({

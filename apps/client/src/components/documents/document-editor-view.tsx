@@ -1,34 +1,48 @@
 'use client';
 
 import {
+  HttpRequestError,
   isHttpNetworkError,
   isNotFoundHttpError,
 } from '@/api/http/execute-request';
+import { CollaborationLiveStrip } from '@/components/collaboration/collaboration-live-strip';
 import { DocumentEditorSkeleton } from '@/components/documents/document-editor-skeleton';
+import { DocumentRelatedSection } from '@/components/documents/document-related-section';
 import { DocumentsRoadmap } from '@/components/documents/documents-roadmap';
+import { useAuth } from '@/components/providers/auth-provider';
 import { useToast } from '@/components/providers/toast-provider';
 import type { DocumentVisibility } from '@/domains/documentsDomains';
 import { useDocumentAutosave } from '@/hooks/use-document-autosave';
+import { useDocumentCollaboration } from '@/hooks/use-document-collaboration';
 import { useDocumentEditorPermissions } from '@/hooks/use-document-editor-permissions';
 import { useDocumentByIdQuery } from '@/features/documents/queries/useDocument';
-import { usePatchDocumentMutation } from '@/features/documents/mutations/useDocumentMutation';
+import { useFavoriteDocumentMutation, usePatchDocumentMutation } from '@/features/documents/mutations/useDocumentMutation';
 import { useFormatDocumentDate } from '@/hooks/use-format-document-date';
+import { useRecordPublicDocumentView } from '@/hooks/use-record-public-document-view';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useTranslations } from '@/hooks/use-translations';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import type { FormEvent, ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface DocumentEditorViewProps {
   documentId: string;
+}
+
+function formatCollabUserLabel(userId: string): string {
+  if (userId.length <= 12) {
+    return userId;
+  }
+  return `${userId.slice(0, 10)}…`;
 }
 
 export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
   const { documentId } = props;
   const { t } = useTranslations();
   const formatUpdatedAt = useFormatDocumentDate();
-  const { showError } = useToast();
+  const { showError, showSuccess } = useToast();
   const { canRender } = useRequireAuth();
+  const { token } = useAuth();
 
   const {
     data,
@@ -42,6 +56,9 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
     data?.ownerId ?? '',
   );
 
+  const { mutateAsync: favoriteAsync, isPending: favoritePending } =
+    useFavoriteDocumentMutation();
+
   const { mutateAsync: patchDocumentAsync, isPending: visibilitySaving } =
     usePatchDocumentMutation();
 
@@ -49,6 +66,7 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
   const [contentDraft, setContentDraft] = useState<string>('');
   const [visibilityDraft, setVisibilityDraft] =
     useState<DocumentVisibility>('PRIVATE');
+  const [categoryDraft, setCategoryDraft] = useState<string>('');
   const [hydrated, setHydrated] = useState<boolean>(false);
 
   useEffect(() => {
@@ -59,8 +77,43 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
     setTitleDraft(data.title);
     setContentDraft(data.content);
     setVisibilityDraft(data.visibility);
+    setCategoryDraft(data.category?.name ?? '');
     setHydrated(true);
   }, [data, documentId]);
+
+  const collaborationEnabled: boolean =
+    canRender &&
+    hydrated &&
+    data !== undefined &&
+    data.id === documentId;
+
+  const {
+    peerCount,
+    remoteSelections,
+    emitSelection,
+    connection,
+    connectionError,
+    reconnect,
+  } = useDocumentCollaboration(
+    documentId,
+    token,
+    collaborationEnabled,
+  );
+
+  const remoteCaretLines = useMemo((): { userId: string; line: number }[] => {
+    return remoteSelections.map((r): { userId: string; line: number } => {
+      const safeFocus: number = Math.min(r.focus, contentDraft.length);
+      const line: number = contentDraft.slice(0, safeFocus).split('\n').length;
+      return { userId: r.userId, line };
+    });
+  }, [remoteSelections, contentDraft]);
+
+  const pushTextareaSelection = useCallback(
+    (el: HTMLTextAreaElement): void => {
+      emitSelection(el.selectionStart, el.selectionEnd);
+    },
+    [emitSelection],
+  );
 
   const onVisibilityChange = useCallback(
     async (next: DocumentVisibility): Promise<void> => {
@@ -87,6 +140,45 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
     [canEdit, data, documentId, patchDocumentAsync, showError, t],
   );
 
+  const onCategoryBlur = useCallback(async (): Promise<void> => {
+    if (!canEdit || data === undefined) {
+      return;
+    }
+    const serverNormalized: string = (data.category?.name ?? '')
+      .trim()
+      .toLowerCase();
+    const draftNormalized: string = categoryDraft.trim().toLowerCase();
+    if (draftNormalized === serverNormalized) {
+      return;
+    }
+    try {
+      const record = await patchDocumentAsync({
+        documentId,
+        patch: {
+          categoryName:
+            draftNormalized.length === 0 ? null : categoryDraft.trim(),
+        },
+      });
+      setCategoryDraft(record.category?.name ?? '');
+    } catch (err: unknown) {
+      setCategoryDraft(data.category?.name ?? '');
+      const msg: string = isHttpNetworkError(err)
+        ? t('errors.network')
+        : err instanceof Error
+          ? err.message
+          : t('documents.editor.autosaveError');
+      showError(msg);
+    }
+  }, [
+    canEdit,
+    categoryDraft,
+    data,
+    documentId,
+    patchDocumentAsync,
+    showError,
+    t,
+  ]);
+
   const autosave = useDocumentAutosave({
     documentId,
     titleDraft,
@@ -100,6 +192,30 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
       data !== undefined &&
       data.id === documentId,
   });
+
+  useRecordPublicDocumentView(
+    documentId,
+    data?.visibility,
+    hydrated && data !== undefined && data.id === documentId,
+  );
+
+  const onFavoriteClick = useCallback(async (): Promise<void> => {
+    try {
+      await favoriteAsync(documentId);
+      showSuccess(t('toast.favoriteAdded'));
+    } catch (err: unknown) {
+      if (err instanceof HttpRequestError && err.status === 409) {
+        showError(t('toast.favoriteDuplicate'));
+        return;
+      }
+      const msg: string = isHttpNetworkError(err)
+        ? t('errors.network')
+        : err instanceof Error
+          ? err.message
+          : t('documents.editor.autosaveError');
+      showError(msg);
+    }
+  }, [documentId, favoriteAsync, showError, showSuccess, t]);
 
   if (!canRender) {
     return (
@@ -202,6 +318,26 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
               {autosaveLabel}
             </span>
           ) : null}
+          {document.visibility === 'PUBLIC' ? (
+            <span className="text-xs text-zinc-500 dark:text-zinc-400">
+              {t('documents.engagement.views')}: {document.viewCount} ·{' '}
+              {t('documents.engagement.favorites')}: {document.favoriteCount}
+            </span>
+          ) : null}
+          {document.visibility === 'PUBLIC' && token !== null ? (
+            <button
+              type="button"
+              disabled={favoritePending}
+              onClick={() => {
+                void onFavoriteClick();
+              }}
+              className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-800 transition-colors hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
+            >
+              {favoritePending
+                ? t('documents.editor.favoriting')
+                : t('documents.editor.favorite')}
+            </button>
+          ) : null}
         </div>
       </div>
 
@@ -250,6 +386,29 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
                 </select>
               </label>
             </div>
+            <div className="mt-4 max-w-md">
+              <label className="block">
+                <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
+                  {t('documents.editor.categoryLabel')}
+                </span>
+                <input
+                  type="text"
+                  value={categoryDraft}
+                  readOnly={readOnly}
+                  onChange={(e) => {
+                    setCategoryDraft(e.target.value);
+                  }}
+                  onBlur={() => {
+                    void onCategoryBlur();
+                  }}
+                  placeholder={t('documents.editor.categoryPlaceholder')}
+                  className="mt-2 w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-950 outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 read-only:bg-zinc-50 read-only:text-zinc-600 dark:read-only:bg-zinc-900 dark:read-only:text-zinc-300"
+                />
+              </label>
+              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                {t('documents.editor.categoryHint')}
+              </p>
+            </div>
             <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
               {readOnly
                 ? t('documents.editor.readOnlyHint')
@@ -261,11 +420,51 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
             <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               {t('documents.editor.content')}
             </h2>
+            <CollaborationLiveStrip
+              connection={connection}
+              peerCount={peerCount}
+              errorDetail={connectionError}
+              onRetry={
+                connection === 'error' || connection === 'disconnected'
+                  ? reconnect
+                  : undefined
+              }
+              showSoloHint
+            />
+            {remoteCaretLines.length > 0 ? (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {remoteCaretLines.map(
+                  (row: { userId: string; line: number }): ReactNode => (
+                    <span
+                      key={row.userId}
+                      className="inline-flex max-w-full rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-[11px] font-medium text-violet-900 dark:border-violet-800 dark:bg-violet-950/50 dark:text-violet-200"
+                    >
+                      {t('collaboration.remoteCaretDetailed')
+                        .replace('{{line}}', String(row.line))
+                        .replace('{{user}}', formatCollabUserLabel(row.userId))}
+                    </span>
+                  ),
+                )}
+              </div>
+            ) : null}
             <textarea
               value={contentDraft}
               readOnly={readOnly}
               onChange={(e) => {
                 setContentDraft(e.target.value);
+              }}
+              onSelect={(e) => {
+                pushTextareaSelection(e.currentTarget);
+              }}
+              onKeyUp={(e) => {
+                if (e.currentTarget instanceof HTMLTextAreaElement) {
+                  pushTextareaSelection(e.currentTarget);
+                }
+              }}
+              onMouseUp={(e) => {
+                if (e.currentTarget instanceof HTMLTextAreaElement) {
+                  pushTextareaSelection(e.currentTarget);
+                }
               }}
               rows={18}
               placeholder={t('documents.editor.contentPlaceholder')}
@@ -279,7 +478,13 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
           </section>
         </div>
 
-        <DocumentsRoadmap />
+        <div className="flex flex-col gap-6">
+          <DocumentRelatedSection
+            documentId={documentId}
+            enabled={hydrated && data !== undefined && data.id === documentId}
+          />
+          <DocumentsRoadmap />
+        </div>
       </div>
     </main>
   );

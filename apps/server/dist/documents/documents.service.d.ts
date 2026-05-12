@@ -1,12 +1,15 @@
-import type { Visibility } from '@prisma/client';
+import { type Visibility } from '@prisma/client';
 import type { DocumentRecord } from './interfaces/document-record.interface';
+import type { PublicSearchDocumentHit } from './interfaces/public-search-hit.interface';
 import { type IDocumentRepository } from './interfaces/document-repository.interface';
+import { type IEngagementRepository } from './interfaces/engagement-repository.interface';
 import type { PaginatedDocumentList } from './interfaces/paginated-document-list.interface';
-import type { IDocumentsService, ListDocumentsParams } from './interfaces/documents-service.interface';
+import type { CreateDocumentCommand, IDocumentsService, ListDocumentsParams } from './interfaces/documents-service.interface';
 export declare class DocumentsService implements IDocumentsService {
     private readonly documentRepository;
-    constructor(documentRepository: IDocumentRepository);
-    createDocument(ownerId: string, title: string, visibility?: Visibility): Promise<DocumentRecord>;
+    private readonly engagementRepository;
+    constructor(documentRepository: IDocumentRepository, engagementRepository: IEngagementRepository);
+    createDocument(ownerId: string, command: CreateDocumentCommand): Promise<DocumentRecord>;
     listDocuments(ownerId: string, params: ListDocumentsParams): Promise<PaginatedDocumentList>;
     listPublicDocuments(): Promise<DocumentRecord[]>;
     getDocument(userId: string, id: string): Promise<DocumentRecord>;
@@ -15,6 +18,13 @@ export declare class DocumentsService implements IDocumentsService {
     patchDocument(ownerId: string, id: string, patch: {
         title?: string;
         visibility?: Visibility;
+        categoryName?: string | null;
     }): Promise<DocumentRecord>;
     removeDocument(ownerId: string, id: string): Promise<void>;
+    getLatestPublicFeed(): Promise<DocumentRecord[]>;
+    getTrendingPublicFeed(): Promise<DocumentRecord[]>;
+    recordPublicDocumentView(documentId: string, viewerKey: string): Promise<boolean>;
+    addFavorite(userId: string, documentId: string): Promise<void>;
+    searchPublicDocuments(rawQuery: string): Promise<PublicSearchDocumentHit[]>;
+    getRelatedDocuments(documentId: string, viewerUserId: string | null): Promise<DocumentRecord[]>;
 }

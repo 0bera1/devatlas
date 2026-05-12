@@ -22,8 +22,34 @@ const documentRecordSelect = {
     content: true,
     ownerId: true,
     visibility: true,
+    category: {
+        select: {
+            id: true,
+            name: true,
+        },
+    },
+    viewCount: true,
+    favoriteCount: true,
     createdAt: true,
     updatedAt: true,
+};
+const documentSearchRowSelect = {
+    id: true,
+    title: true,
+    content: true,
+    ownerId: true,
+    visibility: true,
+    viewCount: true,
+    favoriteCount: true,
+    createdAt: true,
+    updatedAt: true,
+    owner: {
+        select: {
+            id: true,
+            name: true,
+            email: true,
+        },
+    },
 };
 let DocumentRepository = class DocumentRepository {
     prisma;
@@ -31,12 +57,35 @@ let DocumentRepository = class DocumentRepository {
         this.prisma = prisma;
     }
     async insertDocument(input) {
+        const tagNames = input.tagNames;
+        const documentTagCreates = tagNames !== undefined && tagNames.length > 0
+            ? tagNames.map((name) => ({
+                tag: {
+                    connectOrCreate: {
+                        where: { name },
+                        create: { name },
+                    },
+                },
+            }))
+            : undefined;
+        const data = {
+            title: input.title,
+            owner: { connect: { id: input.ownerId } },
+            visibility: input.visibility ?? client_1.Visibility.PRIVATE,
+        };
+        if (documentTagCreates !== undefined) {
+            data.documentTags = { create: [...documentTagCreates] };
+        }
+        if (input.categoryName !== undefined) {
+            data.category = {
+                connectOrCreate: {
+                    where: { name: input.categoryName },
+                    create: { name: input.categoryName },
+                },
+            };
+        }
         return this.prisma.document.create({
-            data: {
-                title: input.title,
-                ownerId: input.ownerId,
-                visibility: input.visibility ?? client_1.Visibility.PRIVATE,
-            },
+            data,
             select: documentRecordSelect,
         });
     }
@@ -92,6 +141,12 @@ let DocumentRepository = class DocumentRepository {
             select: documentRecordSelect,
         });
     }
+    async selectDocumentByIdPublicOnly(id) {
+        return this.prisma.document.findFirst({
+            where: { id, visibility: client_1.Visibility.PUBLIC },
+            select: documentRecordSelect,
+        });
+    }
     async selectDocumentByIdAndOwnerId(id, ownerId) {
         return this.prisma.document.findFirst({
             where: { id, ownerId },
@@ -102,6 +157,108 @@ let DocumentRepository = class DocumentRepository {
         return this.prisma.document.findMany({
             where: { visibility: client_1.Visibility.PUBLIC },
             orderBy: { createdAt: 'desc' },
+            select: documentRecordSelect,
+        });
+    }
+    async selectPublicFeedLatest(take) {
+        return this.prisma.document.findMany({
+            where: { visibility: client_1.Visibility.PUBLIC },
+            orderBy: { createdAt: 'desc' },
+            take,
+            select: documentRecordSelect,
+        });
+    }
+    async selectPublicFeedTrending(take) {
+        return this.prisma.document.findMany({
+            where: { visibility: client_1.Visibility.PUBLIC },
+            orderBy: [
+                { favoriteCount: 'desc' },
+                { viewCount: 'desc' },
+            ],
+            take,
+            select: documentRecordSelect,
+        });
+    }
+    async selectPublicDocumentsByQuery(searchTerm, take) {
+        return this.prisma.document.findMany({
+            where: {
+                visibility: client_1.Visibility.PUBLIC,
+                OR: [
+                    {
+                        title: {
+                            contains: searchTerm,
+                            mode: 'insensitive',
+                        },
+                    },
+                    {
+                        content: {
+                            contains: searchTerm,
+                            mode: 'insensitive',
+                        },
+                    },
+                    {
+                        documentTags: {
+                            some: {
+                                tag: {
+                                    name: {
+                                        contains: searchTerm,
+                                        mode: 'insensitive',
+                                    },
+                                },
+                            },
+                        },
+                    },
+                    {
+                        category: {
+                            name: {
+                                contains: searchTerm,
+                                mode: 'insensitive',
+                            },
+                        },
+                    },
+                ],
+            },
+            take,
+            orderBy: {
+                favoriteCount: 'desc',
+            },
+            select: documentSearchRowSelect,
+        });
+    }
+    async selectPublicRelatedDocumentsBySharedTagsAndCategory(sourceDocumentId, take) {
+        const source = await this.prisma.document.findUnique({
+            where: { id: sourceDocumentId },
+            select: {
+                categoryId: true,
+                documentTags: {
+                    select: {
+                        tag: { select: { name: true } },
+                    },
+                },
+            },
+        });
+        if (source === null) {
+            return [];
+        }
+        const tagNames = source.documentTags.map((row) => row.tag.name);
+        if (tagNames.length === 0) {
+            return [];
+        }
+        return this.prisma.document.findMany({
+            where: {
+                id: { not: sourceDocumentId },
+                visibility: client_1.Visibility.PUBLIC,
+                categoryId: source.categoryId,
+                documentTags: {
+                    some: {
+                        tag: {
+                            name: { in: tagNames },
+                        },
+                    },
+                },
+            },
+            orderBy: { favoriteCount: 'desc' },
+            take,
             select: documentRecordSelect,
         });
     }
@@ -130,6 +287,21 @@ let DocumentRepository = class DocumentRepository {
         }
         if (patch.visibility !== undefined) {
             data.visibility = patch.visibility;
+        }
+        if (patch.categoryName !== undefined) {
+            switch (patch.categoryName) {
+                case null:
+                    data.category = { disconnect: true };
+                    break;
+                default:
+                    data.category = {
+                        connectOrCreate: {
+                            where: { name: patch.categoryName },
+                            create: { name: patch.categoryName },
+                        },
+                    };
+                    break;
+            }
         }
         return this.prisma.document.update({
             where: { id },

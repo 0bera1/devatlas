@@ -1,5 +1,6 @@
 'use client';
 
+import { authApi } from '@/api/auth/authApi';
 import {
   createContext,
   useCallback,
@@ -34,13 +35,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [refreshToken, setRefreshTokenState] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
 
+  /**
+   * Access JWT kısa ömürlü (ör. 10 dk). Yenileme yalnızca periyodik çalışırsa,
+   * sekmeyi sonra açan kullanıcıda access süresi dolmuş olur ve /documents 401 verir.
+   * Refresh token varsa uygulama açılışında bir kez oturum yenilenir; isReady buna göre gecikir.
+   */
   useEffect(() => {
     if (typeof window === 'undefined') {
       return;
     }
-    setTokenState(window.localStorage.getItem(ACCESS_TOKEN_KEY));
-    setRefreshTokenState(window.localStorage.getItem(REFRESH_TOKEN_KEY));
-    setIsReady(true);
+
+    const storedAccess: string | null =
+      window.localStorage.getItem(ACCESS_TOKEN_KEY);
+    const storedRefresh: string | null =
+      window.localStorage.getItem(REFRESH_TOKEN_KEY);
+
+    if (storedRefresh === null) {
+      setTokenState(storedAccess);
+      setRefreshTokenState(null);
+      setIsReady(true);
+      return;
+    }
+
+    let cancelled = false;
+
+    void (async (): Promise<void> => {
+      try {
+        const result = await authApi.refresh({
+          refreshToken: storedRefresh,
+        });
+        if (cancelled) {
+          return;
+        }
+        window.localStorage.setItem(ACCESS_TOKEN_KEY, result.accessToken);
+        window.localStorage.setItem(REFRESH_TOKEN_KEY, result.refreshToken);
+        setTokenState(result.accessToken);
+        setRefreshTokenState(result.refreshToken);
+      } catch {
+        if (cancelled) {
+          return;
+        }
+        window.localStorage.removeItem(ACCESS_TOKEN_KEY);
+        window.localStorage.removeItem(REFRESH_TOKEN_KEY);
+        setTokenState(null);
+        setRefreshTokenState(null);
+      } finally {
+        if (!cancelled) {
+          setIsReady(true);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const setSession = useCallback((session: AuthSessionPayload) => {

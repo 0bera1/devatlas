@@ -1,7 +1,12 @@
 import { getApiBaseUrl } from '@/lib/api/base-url';
 import { parseApiError } from '@/lib/api/parse-api-error';
 import { API_NETWORK_ERROR_CODE, type ApiNetworkFailure } from '@/lib/api/api-error';
-import { DocumentMethods } from '@/api/MethodNames';
+import {
+  DiagramMethods,
+  DocumentMethods,
+  FeedMethods,
+  SearchMethods,
+} from '@/api/MethodNames';
 
 export class HttpRequestError extends Error {
   public constructor(
@@ -30,6 +35,7 @@ export interface ExecuteJsonRequestOptions {
   readonly path: string;
   readonly accessToken?: string | null;
   readonly body?: unknown;
+  readonly extraHeaders?: Readonly<Record<string, string>>;
 }
 
 /**
@@ -39,7 +45,7 @@ export async function executeJsonRequest<TResponse>(
   options: ExecuteJsonRequestOptions,
 ): Promise<TResponse> {
   const url: string = `${getApiBaseUrl()}${options.path}`;
-  const headers: HeadersInit = {};
+  const headers: Record<string, string> = {};
 
   if (options.body !== undefined) {
     headers['Content-Type'] = 'application/json';
@@ -47,6 +53,12 @@ export async function executeJsonRequest<TResponse>(
 
   if (options.accessToken !== undefined && options.accessToken !== null) {
     headers.Authorization = `Bearer ${options.accessToken}`;
+  }
+
+  if (options.extraHeaders !== undefined) {
+    for (const [key, value] of Object.entries(options.extraHeaders)) {
+      headers[key] = value;
+    }
   }
 
   let response: Response;
@@ -116,13 +128,129 @@ export function buildDocumentPath(
     case DocumentMethods.GetById:
     case DocumentMethods.UpdateContent:
     case DocumentMethods.PatchDocument:
-    case DocumentMethods.Delete: {
+    case DocumentMethods.Delete:
+    case DocumentMethods.RecordView:
+    case DocumentMethods.FavoriteDocument:
+    case DocumentMethods.Related: {
       const id: string | undefined = params?.id;
       if (id === undefined || id.length === 0) {
         throw new HttpRequestError('Document id is required', 400);
       }
-      return `/documents/${encodeURIComponent(id)}`;
+      const enc: string = encodeURIComponent(id);
+      switch (method) {
+        case DocumentMethods.RecordView:
+          return `/documents/${enc}/view`;
+        case DocumentMethods.FavoriteDocument:
+          return `/documents/${enc}/favorite`;
+        case DocumentMethods.Related:
+          return `/documents/${enc}/related`;
+        default:
+          return `/documents/${enc}`;
+      }
     }
+    default: {
+      const _exhaustive: never = method;
+      return _exhaustive;
+    }
+  }
+}
+
+export function buildFeedPath(method: FeedMethods): string {
+  switch (method) {
+    case FeedMethods.Latest:
+      return '/feed/latest';
+    case FeedMethods.Trending:
+      return '/feed/trending';
+    default: {
+      const _exhaustive: never = method;
+      return _exhaustive;
+    }
+  }
+}
+
+export function buildSearchPath(
+  method: SearchMethods,
+  query: { readonly q: string },
+): string {
+  switch (method) {
+    case SearchMethods.PublicDocuments: {
+      const params = new URLSearchParams();
+      params.set('q', query.q);
+      return `/search?${params.toString()}`;
+    }
+    default: {
+      const _exhaustive: never = method;
+      return _exhaustive;
+    }
+  }
+}
+
+export function buildDiagramPath(
+  method: DiagramMethods,
+  params?: { readonly id?: string; readonly userId?: string },
+): string {
+  switch (method) {
+    case DiagramMethods.List:
+    case DiagramMethods.Create:
+      return '/diagrams';
+    case DiagramMethods.GetById:
+    case DiagramMethods.SaveGraph:
+    case DiagramMethods.Patch:
+    case DiagramMethods.Related:
+    case DiagramMethods.ListCollaborators:
+    case DiagramMethods.AddCollaborator:
+    case DiagramMethods.RemoveCollaborator: {
+      const id: string | undefined = params?.id;
+      if (id === undefined || id.length === 0) {
+        throw new HttpRequestError('Diagram id is required', 400);
+      }
+      const enc: string = encodeURIComponent(id);
+      switch (method) {
+        case DiagramMethods.SaveGraph:
+          return `/diagrams/${enc}`;
+        case DiagramMethods.Patch:
+          return `/diagrams/${enc}`;
+        case DiagramMethods.Related:
+          return `/diagrams/${enc}/related`;
+        case DiagramMethods.ListCollaborators:
+        case DiagramMethods.AddCollaborator:
+          return `/diagrams/${enc}/collaborators`;
+        case DiagramMethods.RemoveCollaborator: {
+          const userId: string | undefined = params?.userId;
+          if (userId === undefined || userId.length === 0) {
+            throw new HttpRequestError('Collaborator user id is required', 400);
+          }
+          return `/diagrams/${enc}/collaborators/${encodeURIComponent(userId)}`;
+        }
+        default:
+          return `/diagrams/${enc}`;
+      }
+    }
+    default: {
+      const _exhaustive: never = method;
+      return _exhaustive;
+    }
+  }
+}
+
+export function diagramHttpVerb(
+  method: DiagramMethods,
+): 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' {
+  switch (method) {
+    case DiagramMethods.List:
+    case DiagramMethods.GetById:
+    case DiagramMethods.Related:
+    case DiagramMethods.ListCollaborators:
+      return 'GET';
+    case DiagramMethods.Create:
+    case DiagramMethods.AddCollaborator:
+      return 'POST';
+    case DiagramMethods.SaveGraph:
+      return 'PUT';
+    case DiagramMethods.Patch:
+      return 'PATCH';
+    case DiagramMethods.RemoveCollaborator:
+      return 'DELETE';
     default: {
       const _exhaustive: never = method;
       return _exhaustive;
@@ -137,8 +265,12 @@ export function documentHttpVerb(
     case DocumentMethods.List:
     case DocumentMethods.GetById:
     case DocumentMethods.PublicFeed:
+    case DocumentMethods.Related:
       return 'GET';
     case DocumentMethods.Create:
+      return 'POST';
+    case DocumentMethods.RecordView:
+    case DocumentMethods.FavoriteDocument:
       return 'POST';
     case DocumentMethods.UpdateContent:
       return 'PUT';

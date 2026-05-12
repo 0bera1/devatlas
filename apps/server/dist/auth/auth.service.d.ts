@@ -12,6 +12,7 @@ export declare class AuthService implements IAuthService {
     register(email: string, password: string, name: string | null | undefined, birthDate: Date): Promise<AuthResult>;
     login(email: string, password: string): Promise<AuthResult>;
     refresh(plainRefreshToken: string): Promise<AuthResult>;
+    tryGetSubjectFromAccessToken(accessToken: string | undefined): Promise<string | null>;
     private issueSession;
     private signAccessToken;
     private generateOpaqueRefreshToken;

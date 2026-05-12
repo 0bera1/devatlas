@@ -11,10 +11,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatchDocumentDto = void 0;
 const client_1 = require("@prisma/client");
+const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 class PatchDocumentDto {
     title;
     visibility;
+    categoryName;
 }
 exports.PatchDocumentDto = PatchDocumentDto;
 __decorate([
@@ -29,4 +31,13 @@ __decorate([
     (0, class_validator_1.IsEnum)(client_1.Visibility),
     __metadata("design:type", String)
 ], PatchDocumentDto.prototype, "visibility", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(({ value }) => value === '' ? null : value),
+    (0, class_validator_1.ValidateIf)((_, value) => value !== null && value !== undefined),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(1),
+    (0, class_validator_1.MaxLength)(64),
+    __metadata("design:type", Object)
+], PatchDocumentDto.prototype, "categoryName", void 0);
 //# sourceMappingURL=patch-document.dto.js.map

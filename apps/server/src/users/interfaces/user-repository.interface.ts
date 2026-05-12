@@ -13,6 +13,7 @@ export interface CreateUserData {
 export interface IUserRepository {
   findAll(): Promise<PublicUser[]>;
   findById(id: string): Promise<PublicUser | null>;
+  findPublicByEmailNormalized(email: string): Promise<PublicUser | null>;
   findByEmailWithPassword(email: string): Promise<User | null>;
   create(data: CreateUserData): Promise<PublicUser>;
   deleteById(id: string): Promise<PublicUser>;

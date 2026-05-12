@@ -29,6 +29,8 @@ export function DocumentsListView(): ReactNode {
   const [appliedQ, setAppliedQ] = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState<string>('');
   const [newTitle, setNewTitle] = useState<string>('');
+  const [newTagsInput, setNewTagsInput] = useState<string>('');
+  const [newCategoryInput, setNewCategoryInput] = useState<string>('');
   const [newVisibility, setNewVisibility] = useState<DocumentVisibility>('PRIVATE');
 
   const listQuery = useMemo(
@@ -95,11 +97,25 @@ export function DocumentsListView(): ReactNode {
       }
       resetCreate();
       try {
+        const rawTagParts: string[] = newTagsInput
+          .split(',')
+          .map((part: string) => part.trim())
+          .filter((part: string) => part.length > 0);
+        const tagsPayload: string[] | undefined =
+          rawTagParts.length > 0 ? rawTagParts : undefined;
+        const categoryTrimmed: string = newCategoryInput.trim();
+
         const doc: DocumentRecord = await createDocuments({
           title: trimmedTitle,
           visibility: newVisibility,
+          ...(tagsPayload !== undefined ? { tags: tagsPayload } : {}),
+          ...(categoryTrimmed.length > 0
+            ? { categoryName: categoryTrimmed }
+            : {}),
         });
         setNewTitle('');
+        setNewTagsInput('');
+        setNewCategoryInput('');
         setNewVisibility('PRIVATE');
         showSuccess(t('toast.documentCreated'));
         router.push(`/documents/${doc.id}`);
@@ -111,7 +127,18 @@ export function DocumentsListView(): ReactNode {
         }
       }
     },
-    [createDocuments, newTitle, newVisibility, resetCreate, router, showError, showSuccess, t],
+    [
+      createDocuments,
+      newTitle,
+      newTagsInput,
+      newCategoryInput,
+      newVisibility,
+      resetCreate,
+      router,
+      showError,
+      showSuccess,
+      t,
+    ],
   );
 
   if (!canRender) {
@@ -213,6 +240,46 @@ export function DocumentsListView(): ReactNode {
                     ? t('documents.list.creating')
                     : t('documents.list.create')}
                 </button>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="block">
+                  <span className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                    {t('documents.list.tagsLabel')}
+                  </span>
+                  <input
+                    type="text"
+                    value={newTagsInput}
+                    onChange={(e) => {
+                      setNewTagsInput(e.target.value);
+                    }}
+                    placeholder={t('documents.list.tagsPlaceholder')}
+                    autoComplete="off"
+                    className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-950 outline-none ring-zinc-400 focus:ring-2 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+                  />
+                </label>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                  {t('documents.list.tagsHint')}
+                </p>
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="block">
+                  <span className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                    {t('documents.list.categoryLabel')}
+                  </span>
+                  <input
+                    type="text"
+                    value={newCategoryInput}
+                    onChange={(e) => {
+                      setNewCategoryInput(e.target.value);
+                    }}
+                    placeholder={t('documents.list.categoryPlaceholder')}
+                    autoComplete="off"
+                    className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-950 outline-none ring-zinc-400 focus:ring-2 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+                  />
+                </label>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                  {t('documents.list.categoryHint')}
+                </p>
               </div>
             </form>
             {createErrorMessage !== null ? (
@@ -316,6 +383,11 @@ export function DocumentsListView(): ReactNode {
                             ? t('documents.visibilityPublic')
                             : t('documents.visibilityPrivate')}
                         </span>
+                        {doc.category !== null ? (
+                          <span className="shrink-0 rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-900 dark:bg-sky-950/50 dark:text-sky-200">
+                            {doc.category.name}
+                          </span>
+                        ) : null}
                       </div>
                       <span className="mt-1 text-xs text-zinc-500 sm:mt-0 sm:text-right">
                         {t('documents.list.updated')}:{' '}

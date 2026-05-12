@@ -1,11 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { SocketIoAdapter } from './collaboration/socket-io.adapter';
 
 const DEFAULT_PORT = 3500;
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
+  app.useWebSocketAdapter(new SocketIoAdapter(app));
   app.enableShutdownHooks();
 
   const corsOrigins: string[] | undefined = process.env.CORS_ORIGIN?.split(',')
@@ -18,6 +20,11 @@ async function bootstrap(): Promise<void> {
         ? corsOrigins
         : true,
     credentials: true,
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Anonymous-Id',
+    ],
   });
 
   app.useGlobalPipes(
