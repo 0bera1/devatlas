@@ -1,3 +1,5 @@
+/** Kimlik doğrulama (auth) domain modelleri — API  */
+
 export interface PublicUser {
   id: string;
   email: string;

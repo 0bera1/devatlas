@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { authApi } from '@/api/auth/authApi';
 import { useAuth } from '@/components/providers/auth-provider';
-import { refreshRequest } from '@/lib/api/auth-api';
 import { ACCESS_TOKEN_REFRESH_INTERVAL_MS } from '@/lib/auth/refresh-interval';
+import { useEffect, useRef } from 'react';
 
 /**
  * Varsayılan: 10 dakikada bir refresh token ile yeni access + refresh çifti alır.
@@ -26,15 +26,15 @@ export function AccessTokenRefreshScheduler(): null {
       if (current === null) {
         return;
       }
-      const result = await refreshRequest({ refreshToken: current });
-      if (!result.ok) {
+      try {
+        const result = await authApi.refresh({ refreshToken: current });
+        setSession({
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
+        });
+      } catch {
         clearSession();
-        return;
       }
-      setSession({
-        accessToken: result.data.accessToken,
-        refreshToken: result.data.refreshToken,
-      });
     };
 
     const intervalId = window.setInterval(() => {

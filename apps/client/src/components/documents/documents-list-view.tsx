@@ -1,37 +1,88 @@
 'use client';
 
+import { isHttpNetworkError, isNotFoundHttpError } from '@/api/http/execute-request';
 import { DocumentsRoadmap } from '@/components/documents/documents-roadmap';
-import { useRequireAuth } from '@/hooks/use-require-auth';
-import { useDocumentsList } from '@/hooks/use-documents-list';
+import { useToast } from '@/components/providers/toast-provider';
+import {
+  useCreateDocumentMutation,
+} from '@/features/documents/mutations/useDocumentMutation';
+import { useDocumentsListQuery } from '@/features/documents/queries/useDocument';
 import { useFormatDocumentDate } from '@/hooks/use-format-document-date';
+import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useTranslations } from '@/hooks/use-translations';
-import type { DocumentRecord } from '@/types/document';
+import type { DocumentRecord } from '@/domains/documentsDomains';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import type { FormEvent, ReactNode } from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 export function DocumentsListView(): ReactNode {
   const { t } = useTranslations();
   const formatUpdatedAt = useFormatDocumentDate();
+  const router = useRouter();
+  const { showSuccess, showError } = useToast();
   const { canRender } = useRequireAuth();
-  const {
-    status,
-    errorMessage,
-    data,
-    page,
-    pageSize,
-    searchInput,
-    setSearchInput,
-    createStatus,
-    createError,
-    setPage,
-    applySearch,
-    clearSearch,
-    refresh,
-    createDocument,
-  } = useDocumentsList();
 
+  const [page, setPageState] = useState<number>(1);
+  const [pageSize] = useState<number>(20);
+  const [appliedQ, setAppliedQ] = useState<string | null>(null);
+  const [searchInput, setSearchInput] = useState<string>('');
   const [newTitle, setNewTitle] = useState<string>('');
+
+  const listQuery = useMemo(
+    () => ({
+      page,
+      pageSize,
+      q: appliedQ,
+    }),
+    [page, pageSize, appliedQ],
+  );
+
+  const {
+    data,
+    isPending: listPending,
+    isError: listIsError,
+    error: listError,
+    refetch,
+  } = useDocumentsListQuery(listQuery, canRender);
+
+  const {
+    mutateAsync: createDocuments,
+    isPending: createPending,
+    isError: createIsError,
+    error: createErrorRaw,
+    reset: resetCreate,
+  } = useCreateDocumentMutation();
+
+  const listErrorMessage = useMemo((): string | null => {
+    if (!listIsError || listError === null) {
+      return null;
+    }
+    return isHttpNetworkError(listError)
+      ? t('errors.network')
+      : listError.message;
+  }, [listIsError, listError, t]);
+
+  const createErrorMessage = useMemo((): string | null => {
+    if (!createIsError || createErrorRaw === null) {
+      return null;
+    }
+    return isHttpNetworkError(createErrorRaw)
+      ? t('errors.network')
+      : createErrorRaw.message;
+  }, [createIsError, createErrorRaw, t]);
+
+  const applySearch = useCallback(() => {
+    const trimmed: string = searchInput.trim();
+    setAppliedQ(trimmed.length > 0 ? trimmed : null);
+    setPageState(1);
+  }, [searchInput]);
+
+  const clearSearch = useCallback(() => {
+    setSearchInput('');
+    setAppliedQ(null);
+    setPageState(1);
+  }, []);
 
   const onCreateSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>): Promise<void> => {
@@ -40,10 +91,21 @@ export function DocumentsListView(): ReactNode {
       if (trimmedTitle.length === 0) {
         return;
       }
-      await createDocument(trimmedTitle);
-      setNewTitle('');
+      resetCreate();
+      try {
+        const doc: DocumentRecord = await createDocuments(trimmedTitle);
+        setNewTitle('');
+        showSuccess(t('toast.documentCreated'));
+        router.push(`/documents/${doc.id}`);
+      } catch (err: unknown) {
+        if (isHttpNetworkError(err)) {
+          showError(t('errors.network'));
+        } else if (err instanceof Error) {
+          showError(err.message);
+        }
+      }
     },
-    [newTitle, createDocument],
+    [createDocuments, newTitle, resetCreate, router, showError, showSuccess, t],
   );
 
   if (!canRender) {
@@ -57,6 +119,7 @@ export function DocumentsListView(): ReactNode {
   const items: DocumentRecord[] = data?.items ?? [];
   const total: number = data?.total ?? 0;
   const totalPages: number = data?.totalPages ?? 0;
+  const listLoading: boolean = listPending && data === undefined;
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-6 py-10 lg:py-14">
@@ -73,9 +136,9 @@ export function DocumentsListView(): ReactNode {
           <button
             type="button"
             onClick={() => {
-              void refresh();
+              void refetch();
             }}
-            disabled={status === 'loading'}
+            disabled={listPending}
             className="rounded-lg border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
           >
             {t('documents.list.refresh')}
@@ -109,19 +172,17 @@ export function DocumentsListView(): ReactNode {
               </label>
               <button
                 type="submit"
-                disabled={
-                  createStatus === 'loading' || newTitle.trim().length === 0
-                }
+                disabled={createPending || newTitle.trim().length === 0}
                 className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
               >
-                {createStatus === 'loading'
+                {createPending
                   ? t('documents.list.creating')
                   : t('documents.list.create')}
               </button>
             </form>
-            {createError !== null ? (
+            {createErrorMessage !== null ? (
               <p className="mt-2 text-sm text-red-600 dark:text-red-400">
-                {createError}
+                {createErrorMessage}
               </p>
             ) : null}
           </section>
@@ -173,14 +234,14 @@ export function DocumentsListView(): ReactNode {
             </p>
           </section>
 
-          {status === 'error' && errorMessage !== null ? (
+          {listErrorMessage !== null ? (
             <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-300">
-              {errorMessage}
+              {listErrorMessage}
             </p>
           ) : null}
 
           <section>
-            {status === 'loading' && data === null ? (
+            {listLoading ? (
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 {t('documents.list.loadingList')}
               </p>
@@ -213,9 +274,9 @@ export function DocumentsListView(): ReactNode {
               <div className="mt-6 flex items-center justify-between gap-4">
                 <button
                   type="button"
-                  disabled={page <= 1 || status === 'loading'}
+                  disabled={page <= 1 || listPending}
                   onClick={() => {
-                    setPage(page - 1);
+                    setPageState(page - 1);
                   }}
                   className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-800 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200"
                 >
@@ -226,9 +287,9 @@ export function DocumentsListView(): ReactNode {
                 </span>
                 <button
                   type="button"
-                  disabled={page >= totalPages || status === 'loading'}
+                  disabled={page >= totalPages || listPending}
                   onClick={() => {
-                    setPage(page + 1);
+                    setPageState(page + 1);
                   }}
                   className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-800 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200"
                 >

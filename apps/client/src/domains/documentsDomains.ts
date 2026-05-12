@@ -1,3 +1,5 @@
+/** Doküman (documents) domain modelleri — API ve mutation değişkenleri. */
+
 export interface DocumentRecord {
   id: string;
   title: string;
@@ -25,4 +27,20 @@ export interface UpdateDocumentContentBody {
 
 export interface PatchDocumentTitleBody {
   title: string;
+}
+
+export interface ListDocumentsQuery {
+  page: number;
+  pageSize: number;
+  q: string | null;
+}
+
+export interface PatchDocumentTitleVariables {
+  readonly documentId: string;
+  readonly title: string;
+}
+
+export interface UpdateDocumentContentVariables {
+  readonly documentId: string;
+  readonly content: string;
 }

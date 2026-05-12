@@ -1,12 +1,23 @@
 'use client';
 
+import {
+  HttpRequestError,
+  isHttpNetworkError,
+  isNotFoundHttpError,
+} from '@/api/http/execute-request';
 import { DocumentsRoadmap } from '@/components/documents/documents-roadmap';
-import { useDocumentEditor } from '@/hooks/use-document-editor';
+import { useToast } from '@/components/providers/toast-provider';
+import {
+  usePatchDocumentTitleMutation,
+  useUpdateDocumentContentMutation,
+} from '@/features/documents/mutations/useDocumentMutation';
+import { useDocumentByIdQuery } from '@/features/documents/queries/useDocument';
 import { useFormatDocumentDate } from '@/hooks/use-format-document-date';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useTranslations } from '@/hooks/use-translations';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 
 interface DocumentEditorViewProps {
   documentId: string;
@@ -16,22 +27,29 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
   const { documentId } = props;
   const { t } = useTranslations();
   const formatUpdatedAt = useFormatDocumentDate();
+  const { showSuccess, showError } = useToast();
   const { canRender } = useRequireAuth();
+
   const {
-    loadStatus,
-    loadError,
-    document,
-    titleDraft,
-    contentDraft,
-    setTitleDraft,
-    setContentDraft,
-    titleSave,
-    titleSaveError,
-    contentSave,
-    contentSaveError,
-    saveTitle,
-    saveContent,
-  } = useDocumentEditor(documentId);
+    data,
+    isPending: docPending,
+    isError: docIsError,
+    error: docError,
+  } = useDocumentByIdQuery(documentId, canRender);
+
+  const [titleDraft, setTitleDraft] = useState<string>('');
+  const [contentDraft, setContentDraft] = useState<string>('');
+
+  useEffect(() => {
+    if (data === undefined) {
+      return;
+    }
+    setTitleDraft(data.title);
+    setContentDraft(data.content);
+  }, [data?.id]);
+
+  const patchTitleMut = usePatchDocumentTitleMutation();
+  const updateContentMut = useUpdateDocumentContentMutation();
 
   if (!canRender) {
     return (
@@ -41,7 +59,7 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
     );
   }
 
-  if (loadStatus === 'loading') {
+  if (docPending && data === undefined) {
     return (
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-6 py-10">
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -51,7 +69,7 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
     );
   }
 
-  if (loadStatus === 'not-found') {
+  if (docIsError && docError !== null && isNotFoundHttpError(docError)) {
     return (
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-6 py-10">
         <p className="text-zinc-800 dark:text-zinc-200">
@@ -67,12 +85,13 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
     );
   }
 
-  if (loadStatus === 'error') {
+  if (docIsError && docError !== null) {
+    const loadMsg: string = isHttpNetworkError(docError)
+      ? t('errors.network')
+      : docError.message;
     return (
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-6 py-10">
-        <p className="text-sm text-red-600 dark:text-red-400">
-          {loadError ?? t('documents.editor.loadFailed')}
-        </p>
+        <p className="text-sm text-red-600 dark:text-red-400">{loadMsg}</p>
         <Link
           href="/documents"
           className="text-sm font-medium text-zinc-600 underline-offset-4 hover:underline dark:text-zinc-400"
@@ -82,6 +101,55 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
       </main>
     );
   }
+
+  if (data === undefined) {
+    return null;
+  }
+
+  const document = data;
+
+  const saveTitle = async (): Promise<void> => {
+    const nextTitle: string = titleDraft.trim();
+    if (nextTitle.length === 0) {
+      showError(t('validation.titleRequired'));
+      return;
+    }
+    try {
+      const record = await patchTitleMut.mutateAsync({
+        documentId,
+        title: nextTitle,
+      });
+      setTitleDraft(record.title);
+      showSuccess(t('toast.titleSaved'));
+    } catch (err: unknown) {
+      if (isHttpNetworkError(err)) {
+        showError(t('errors.network'));
+      } else if (err instanceof HttpRequestError) {
+        showError(err.message);
+      } else if (err instanceof Error) {
+        showError(err.message);
+      }
+    }
+  };
+
+  const saveContent = async (): Promise<void> => {
+    try {
+      const record = await updateContentMut.mutateAsync({
+        documentId,
+        content: contentDraft,
+      });
+      setContentDraft(record.content);
+      showSuccess(t('toast.contentSaved'));
+    } catch (err: unknown) {
+      if (isHttpNetworkError(err)) {
+        showError(t('errors.network'));
+      } else if (err instanceof HttpRequestError) {
+        showError(err.message);
+      } else if (err instanceof Error) {
+        showError(err.message);
+      }
+    }
+  };
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-6 py-10 lg:py-14">
@@ -93,12 +161,10 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
           >
             {t('documents.editor.backDocuments')}
           </Link>
-          {document !== null ? (
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">
-              {t('documents.editor.lastUpdated')}:{' '}
-              {formatUpdatedAt(document.updatedAt)}
-            </span>
-          ) : null}
+          <span className="text-xs text-zinc-500 dark:text-zinc-400">
+            {t('documents.editor.lastUpdated')}:{' '}
+            {formatUpdatedAt(document.updatedAt)}
+          </span>
         </div>
       </div>
 
@@ -121,19 +187,21 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
             <div className="mt-3 flex flex-wrap items-center gap-3">
               <button
                 type="button"
-                disabled={titleSave === 'saving'}
+                disabled={patchTitleMut.isPending}
                 onClick={() => {
                   void saveTitle();
                 }}
                 className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
               >
-                {titleSave === 'saving'
+                {patchTitleMut.isPending
                   ? t('documents.editor.savingTitle')
                   : t('documents.editor.saveTitle')}
               </button>
-              {titleSaveError !== null ? (
+              {patchTitleMut.isError && patchTitleMut.error ? (
                 <span className="text-sm text-red-600 dark:text-red-400">
-                  {titleSaveError}
+                  {isHttpNetworkError(patchTitleMut.error)
+                    ? t('errors.network')
+                    : patchTitleMut.error.message}
                 </span>
               ) : null}
             </div>
@@ -146,20 +214,22 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
               </h2>
               <button
                 type="button"
-                disabled={contentSave === 'saving'}
+                disabled={updateContentMut.isPending}
                 onClick={() => {
                   void saveContent();
                 }}
                 className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
               >
-                {contentSave === 'saving'
+                {updateContentMut.isPending
                   ? t('documents.editor.savingContent')
                   : t('documents.editor.saveContent')}
               </button>
             </div>
-            {contentSaveError !== null ? (
+            {updateContentMut.isError && updateContentMut.error ? (
               <p className="mt-2 text-sm text-red-600 dark:text-red-400">
-                {contentSaveError}
+                {isHttpNetworkError(updateContentMut.error)
+                  ? t('errors.network')
+                  : updateContentMut.error.message}
               </p>
             ) : null}
             <textarea
