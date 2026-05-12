@@ -17,18 +17,23 @@ export const trMessages = {
   'home.introAfterAuth': 'sayfalarını kullan.',
 
   'auth.backHome': '← Ana sayfa',
-  'auth.login.title': 'Giriş yap',
-  'auth.login.description': 'DevAtlas hesabınızla devam edin.',
+  'auth.login.title': 'DevAtlas’a hoş geldiniz',
+  'auth.login.description': 'Çalışma alanına devam etmek için giriş yapın.',
   'auth.login.footerText': 'Hesabınız yok mu?',
   'auth.login.footerLink': 'Kayıt olun',
   'auth.login.email': 'E-posta',
   'auth.login.password': 'Şifre',
   'auth.login.submit': 'Giriş yap',
   'auth.login.submitting': 'Giriş yapılıyor…',
+  'auth.login.forgotPassword': 'Şifrenizi mi unuttunuz?',
+  'auth.forgotPasswordSoon': 'Şifre sıfırlama yakında eklenecek.',
 
-  'auth.register.title': 'Hesap oluştur',
+  'auth.password.show': 'Şifreyi göster',
+  'auth.password.hide': 'Şifreyi gizle',
+
+  'auth.register.title': 'DevAtlas’a katılın',
   'auth.register.description':
-    'Birkaç alanla kayıt olun; ardından otomatik giriş yapılır.',
+    'Hesap oluşturun; ardından otomatik giriş yapılır.',
   'auth.register.footerText': 'Zaten hesabınız var mı?',
   'auth.register.footerLink': 'Giriş yapın',
   'auth.register.passwordHint': 'En az 8 karakter.',
@@ -36,6 +41,18 @@ export const trMessages = {
   'auth.register.birthDate': 'Doğum tarihi',
   'auth.register.submit': 'Kayıt ol',
   'auth.register.submitting': 'Hesap oluşturuluyor…',
+
+  'auth.or': 'veya',
+  'auth.social.google': 'Google ile devam et',
+  'auth.social.googleSoon': 'Google ile giriş yakında eklenecek.',
+
+  'auth.split.signUp': 'Kayıt ol',
+  'auth.split.logIn': 'Giriş yap',
+  'auth.split.ctaJoin': 'Bize katıl',
+  'auth.split.ctaLogin': 'Oturum aç',
+
+  'auth.hero.name': 'DevAtlas',
+  'auth.hero.tagline': 'Notlar ve bilgi tabanı',
 
   'documents.list.title': 'Dokümanlar',
   'documents.list.intro':

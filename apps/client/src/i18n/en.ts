@@ -19,18 +19,23 @@ export const enMessages: Record<MessageKey, string> = {
   'home.introAfterAuth': 'from the menu above.',
 
   'auth.backHome': '← Home',
-  'auth.login.title': 'Log in',
-  'auth.login.description': 'Continue with your DevAtlas account.',
+  'auth.login.title': 'Welcome to DevAtlas',
+  'auth.login.description': 'Sign in to continue to your workspace.',
   'auth.login.footerText': "Don't have an account?",
   'auth.login.footerLink': 'Sign up',
   'auth.login.email': 'Email',
   'auth.login.password': 'Password',
   'auth.login.submit': 'Log in',
   'auth.login.submitting': 'Signing in…',
+  'auth.login.forgotPassword': 'Forgot password?',
+  'auth.forgotPasswordSoon': 'Password recovery is coming soon.',
 
-  'auth.register.title': 'Create account',
+  'auth.password.show': 'Show password',
+  'auth.password.hide': 'Hide password',
+
+  'auth.register.title': 'Join DevAtlas',
   'auth.register.description':
-    'Register in a few fields; you will be signed in automatically.',
+    'Create an account; you will be signed in automatically.',
   'auth.register.footerText': 'Already have an account?',
   'auth.register.footerLink': 'Log in',
   'auth.register.passwordHint': 'At least 8 characters.',
@@ -38,6 +43,18 @@ export const enMessages: Record<MessageKey, string> = {
   'auth.register.birthDate': 'Date of birth',
   'auth.register.submit': 'Sign up',
   'auth.register.submitting': 'Creating account…',
+
+  'auth.or': 'Or',
+  'auth.social.google': 'Continue with Google',
+  'auth.social.googleSoon': 'Google sign-in is coming soon.',
+
+  'auth.split.signUp': 'Sign up',
+  'auth.split.logIn': 'Log in',
+  'auth.split.ctaJoin': 'Join us',
+  'auth.split.ctaLogin': 'Sign in',
+
+  'auth.hero.name': 'DevAtlas',
+  'auth.hero.tagline': 'Notes & knowledge base',
 
   'documents.list.title': 'Documents',
   'documents.list.intro':

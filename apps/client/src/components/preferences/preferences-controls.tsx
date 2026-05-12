@@ -10,16 +10,39 @@ import type { ReactNode } from 'react';
 interface PreferencesControlsProps {
   /** Daha sıkı spacing (header içi) */
   compact?: boolean;
+  /** Giriş / kayıt tam ekranı: sadece dil, koyu panel stili */
+  variant?: 'default' | 'auth';
 }
 
 export function PreferencesControls(
   props: PreferencesControlsProps,
 ): ReactNode {
-  const { compact } = props;
+  const { compact, variant = 'default' } = props;
   const { t, locale, setLocale } = useTranslations();
   const { theme, setTheme } = useTheme();
 
   const gap: string = compact ? 'gap-2' : 'gap-3';
+
+  if (variant === 'auth') {
+    return (
+      <label className="flex items-center gap-2 text-xs font-medium text-zinc-300">
+        <span className="sr-only">{t('preferences.language')}</span>
+        <select
+          value={locale}
+          onChange={(e) => {
+            setLocale(e.target.value as Locale);
+          }}
+          className="cursor-pointer rounded-lg border border-white/20 bg-white/5 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white outline-none transition-colors hover:border-white/35 focus-visible:ring-2 focus-visible:ring-amber-400/80"
+        >
+          {locales.map((code: Locale) => (
+            <option key={code} value={code} className="bg-zinc-900 text-white">
+              {code.toUpperCase()}
+            </option>
+          ))}
+        </select>
+      </label>
+    );
+  }
 
   return (
     <div
