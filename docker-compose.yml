@@ -1,0 +1,47 @@
+services:
+  web:
+    build:
+      context: ./apps/client
+      dockerfile: DockerFile
+    container_name: devatlas-web
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3500
+
+  api:
+    build:
+      context: ./apps/server
+      dockerfile: DockerFile
+    container_name: devatlas-api
+    ports:
+      - "3500:3500"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/devatlas?schema=public
+      PORT: "3500"
+
+  db:
+    image: postgres:16
+    container_name: devatlas-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: devatlas
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d devatlas"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
