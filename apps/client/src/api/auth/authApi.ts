@@ -1,6 +1,7 @@
 import type {
   AuthResponse,
   LoginRequest,
+  PublicUser,
   RefreshRequest,
   RegisterRequest,
 } from '@/domains/authDomains';
@@ -15,6 +16,8 @@ function authPath(method: AuthMethods): string {
       return '/auth/register';
     case AuthMethods.Refresh:
       return '/auth/refresh';
+    case AuthMethods.Profile:
+      return '/auth/profile';
     default: {
       const _e: never = method;
       return _e;
@@ -26,6 +29,8 @@ function authVerb(
   method: AuthMethods,
 ): 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' {
   switch (method) {
+    case AuthMethods.Profile:
+      return 'GET';
     case AuthMethods.Login:
     case AuthMethods.Register:
     case AuthMethods.Refresh:
@@ -59,6 +64,14 @@ export const authApi = {
       method: authVerb(AuthMethods.Refresh),
       path: authPath(AuthMethods.Refresh),
       body,
+    });
+  },
+
+  async getProfile(accessToken: string): Promise<PublicUser> {
+    return executeJsonRequest<PublicUser>({
+      method: authVerb(AuthMethods.Profile),
+      path: authPath(AuthMethods.Profile),
+      accessToken,
     });
   },
 } as const;

@@ -20,8 +20,12 @@ let DocumentsService = class DocumentsService {
     constructor(documentRepository) {
         this.documentRepository = documentRepository;
     }
-    async createDocument(ownerId, title) {
-        return this.documentRepository.insertDocument({ ownerId, title });
+    async createDocument(ownerId, title, visibility) {
+        return this.documentRepository.insertDocument({
+            ownerId,
+            title,
+            visibility,
+        });
     }
     async listDocuments(ownerId, params) {
         const page = params.page;
@@ -53,8 +57,11 @@ let DocumentsService = class DocumentsService {
             totalPages,
         };
     }
-    async getDocument(ownerId, id) {
-        const document = await this.documentRepository.selectDocumentByIdAndOwnerId(id, ownerId);
+    async listPublicDocuments() {
+        return this.documentRepository.selectPublicDocumentsOrdered();
+    }
+    async getDocument(userId, id) {
+        const document = await this.documentRepository.selectDocumentByIdForUser(id, userId);
         if (document === null) {
             throw new common_1.NotFoundException(`Document with id "${id}" not found`);
         }
@@ -69,6 +76,16 @@ let DocumentsService = class DocumentsService {
     }
     async updateDocumentTitle(ownerId, id, title) {
         const updated = await this.documentRepository.updateDocumentTitleByIdAndOwnerId(id, ownerId, title);
+        if (updated === null) {
+            throw new common_1.NotFoundException(`Document with id "${id}" not found`);
+        }
+        return updated;
+    }
+    async patchDocument(ownerId, id, patch) {
+        if (patch.title === undefined && patch.visibility === undefined) {
+            throw new common_1.BadRequestException('Provide at least one field: title or visibility.');
+        }
+        const updated = await this.documentRepository.updateDocumentPatchByIdAndOwnerId(id, ownerId, patch);
         if (updated === null) {
             throw new common_1.NotFoundException(`Document with id "${id}" not found`);
         }

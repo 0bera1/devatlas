@@ -15,6 +15,7 @@ var DocumentsController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentsController = void 0;
 const common_1 = require("@nestjs/common");
+const public_decorator_1 = require("../auth/decorators/public.decorator");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const create_document_dto_1 = require("./dto/create-document.dto");
 const list_documents_query_dto_1 = require("./dto/list-documents-query.dto");
@@ -28,9 +29,12 @@ let DocumentsController = DocumentsController_1 = class DocumentsController {
     constructor(documentsService) {
         this.documentsService = documentsService;
     }
+    async getPublicDocuments() {
+        return this.documentsService.listPublicDocuments();
+    }
     async create(req, dto) {
         const owner = DocumentsController_1.requireUser(req);
-        return this.documentsService.createDocument(owner.id, dto.title);
+        return this.documentsService.createDocument(owner.id, dto.title, dto.visibility);
     }
     async findAll(req, query) {
         const owner = DocumentsController_1.requireUser(req);
@@ -47,16 +51,19 @@ let DocumentsController = DocumentsController_1 = class DocumentsController {
         });
     }
     async findOne(req, id) {
-        const owner = DocumentsController_1.requireUser(req);
-        return this.documentsService.getDocument(owner.id, id);
+        const user = DocumentsController_1.requireUser(req);
+        return this.documentsService.getDocument(user.id, id);
     }
     async updateContent(req, id, dto) {
         const owner = DocumentsController_1.requireUser(req);
         return this.documentsService.updateDocumentContent(owner.id, id, dto.content);
     }
-    async patchTitle(req, id, dto) {
+    async patchDocument(req, id, dto) {
         const owner = DocumentsController_1.requireUser(req);
-        return this.documentsService.updateDocumentTitle(owner.id, id, dto.title);
+        return this.documentsService.patchDocument(owner.id, id, {
+            title: dto.title,
+            visibility: dto.visibility,
+        });
     }
     async remove(req, id) {
         const owner = DocumentsController_1.requireUser(req);
@@ -70,6 +77,13 @@ let DocumentsController = DocumentsController_1 = class DocumentsController {
     }
 };
 exports.DocumentsController = DocumentsController;
+__decorate([
+    (0, common_1.Get)('public'),
+    (0, public_decorator_1.Public)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], DocumentsController.prototype, "getPublicDocuments", null);
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
@@ -112,7 +126,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, String, patch_document_dto_1.PatchDocumentDto]),
     __metadata("design:returntype", Promise)
-], DocumentsController.prototype, "patchTitle", null);
+], DocumentsController.prototype, "patchDocument", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),

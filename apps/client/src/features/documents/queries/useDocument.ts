@@ -48,3 +48,15 @@ export function useDocumentByIdQuery(
     enabled: enabled && token !== null && documentId.length > 0,
   });
 }
+
+/**
+ * Halka açık doküman akışı GET /documents/public — token gerekmez.
+ */
+export function usePublicDocumentsQuery(): UseQueryResult<DocumentRecord[], Error> {
+  return useQuery({
+    queryKey: documentQueryKeys.publicFeed(),
+    queryFn: async (): Promise<DocumentRecord[]> => {
+      return documentApi.listPublic();
+    },
+  });
+}

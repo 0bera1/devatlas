@@ -9,11 +9,12 @@ import { type IDocumentsService } from './interfaces/documents-service.interface
 export declare class DocumentsController {
     private readonly documentsService;
     constructor(documentsService: IDocumentsService);
+    getPublicDocuments(): Promise<DocumentRecord[]>;
     create(req: Request, dto: CreateDocumentDto): Promise<DocumentRecord>;
     findAll(req: Request, query: ListDocumentsQueryDto): Promise<PaginatedDocumentList>;
     findOne(req: Request, id: string): Promise<DocumentRecord>;
     updateContent(req: Request, id: string, dto: UpdateDocumentDto): Promise<DocumentRecord>;
-    patchTitle(req: Request, id: string, dto: PatchDocumentDto): Promise<DocumentRecord>;
+    patchDocument(req: Request, id: string, dto: PatchDocumentDto): Promise<DocumentRecord>;
     remove(req: Request, id: string): Promise<void>;
     private static requireUser;
 }

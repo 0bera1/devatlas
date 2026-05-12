@@ -8,6 +8,8 @@ export const enMessages: Record<MessageKey, string> = {
   'nav.logout': 'Log out',
   'nav.sessionActive': 'Signed in',
   'nav.loading': '…',
+  'nav.explore': 'Explore',
+  'nav.knowledge': 'Knowledge base',
 
   'common.loading': 'Loading…',
 
@@ -17,6 +19,11 @@ export const enMessages: Record<MessageKey, string> = {
     'page to create and edit your notes. For authentication, use',
   'home.introBetweenAuth': 'or',
   'home.introAfterAuth': 'from the menu above.',
+  'home.publicFeedBefore': 'Public notes are listed in',
+  'home.publicFeedLink': 'Explore',
+  'home.publicFeedMid': '; system and help texts are in the',
+  'home.knowledgeLink': 'Knowledge base',
+  'home.publicFeedAfter': '.',
 
   'auth.backHome': '← Home',
   'auth.login.title': 'Welcome to DevAtlas',
@@ -72,12 +79,33 @@ export const enMessages: Record<MessageKey, string> = {
   'documents.list.pageSize': 'Page size',
   'documents.list.total': 'Total',
   'documents.list.loadingList': 'Loading list…',
+  'documents.list.skeleton': 'Loading documents',
+  'documents.list.emptyTitle': 'No documents yet',
+  'documents.list.emptySubtitle':
+    'Create your first note above — it is saved to the API as soon as you add a title.',
+  'documents.list.emptySearch':
+    'No documents match your search. Try another keyword or clear the search.',
   'documents.list.empty':
     'No documents yet, or no search results. Create a new one above.',
   'documents.list.updated': 'Updated',
   'documents.list.prev': 'Previous',
   'documents.list.next': 'Next',
   'documents.list.page': 'Page',
+  'documents.list.visibilityLabel': 'Visibility',
+  'documents.visibilityPublic': 'Public',
+  'documents.visibilityPrivate': 'Private',
+
+  'explore.title': 'Explore',
+  'explore.intro':
+    'Documents marked as public in the community. You must sign in to open the full text.',
+  'explore.empty': 'There are no public documents yet.',
+  'explore.hintLogin': 'To open a document:',
+  'explore.updated': 'Updated',
+
+  'knowledge.title': 'Knowledge base',
+  'knowledge.intro':
+    'System and help content from the platform (no sign-in required).',
+  'knowledge.empty': 'No system content to show.',
 
   'documents.editor.loading': 'Loading…',
   'documents.editor.loadingDoc': 'Loading document…',
@@ -92,9 +120,21 @@ export const enMessages: Record<MessageKey, string> = {
   'documents.editor.content': 'Content',
   'documents.editor.saveContent': 'Save content',
   'documents.editor.savingContent': 'Saving…',
+  'documents.editor.autosaveSaving': 'Saving…',
+  'documents.editor.autosaveSaved': 'All changes saved',
+  'documents.editor.autosaveError': 'Could not save changes.',
+  'documents.editor.autosaveHintTitle':
+    'Title updates automatically after you stop typing (about half a second).',
   'documents.editor.contentPlaceholder': 'Write here…',
   'documents.editor.contentHint':
-    'Auto-save is on the roadmap; for now use Save to send to the API.',
+    'Content is sent to the server with the same delay while you type (PUT /documents/:id).',
+  'documents.editor.visibilityLabel': 'Visibility',
+  'documents.editor.readOnly': 'Read-only',
+  'documents.editor.permissionLoading': 'Checking access…',
+  'documents.editor.readOnlyHint':
+    'You are not the owner of this document; title and content cannot be edited.',
+  'documents.editor.readOnlyContentHint':
+    'You are viewing the content; only the owner can make changes.',
 
   'roadmap.title': 'Roadmap',
   'roadmap.intro': 'What turns DevAtlas into a serious SaaS product.',

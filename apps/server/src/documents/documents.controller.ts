@@ -16,6 +16,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import type { Request } from 'express';
+import { Public } from '../auth/decorators/public.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import type { PublicUser } from '../users/interfaces/public-user.interface';
 import { CreateDocumentDto } from './dto/create-document.dto';
@@ -40,6 +41,13 @@ export class DocumentsController {
     private readonly documentsService: IDocumentsService,
   ) {}
 
+  /** Social / keşif katmanı: kimlik doğrulaması gerekmez. */
+  @Get('public')
+  @Public()
+  public async getPublicDocuments(): Promise<DocumentRecord[]> {
+    return this.documentsService.listPublicDocuments();
+  }
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
   public async create(
@@ -48,7 +56,11 @@ export class DocumentsController {
   ): Promise<DocumentRecord> {
     const owner: PublicUser = DocumentsController.requireUser(req);
 
-    return this.documentsService.createDocument(owner.id, dto.title);
+    return this.documentsService.createDocument(
+      owner.id,
+      dto.title,
+      dto.visibility,
+    );
   }
 
   @Get()
@@ -77,9 +89,9 @@ export class DocumentsController {
     @Req() req: Request,
     @Param('id') id: string,
   ): Promise<DocumentRecord> {
-    const owner: PublicUser = DocumentsController.requireUser(req);
+    const user: PublicUser = DocumentsController.requireUser(req);
 
-    return this.documentsService.getDocument(owner.id, id);
+    return this.documentsService.getDocument(user.id, id);
   }
 
   @Put(':id')
@@ -97,15 +109,19 @@ export class DocumentsController {
     );
   }
 
+  /** Başlık ve/veya görünürlük (PUBLIC / PRIVATE); yalnızca owner. */
   @Patch(':id')
-  public async patchTitle(
+  public async patchDocument(
     @Req() req: Request,
     @Param('id') id: string,
     @Body() dto: PatchDocumentDto,
   ): Promise<DocumentRecord> {
     const owner: PublicUser = DocumentsController.requireUser(req);
 
-    return this.documentsService.updateDocumentTitle(owner.id, id, dto.title);
+    return this.documentsService.patchDocument(owner.id, id, {
+      title: dto.title,
+      visibility: dto.visibility,
+    });
   }
 
   @Delete(':id')

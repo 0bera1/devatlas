@@ -5,7 +5,7 @@ import type {
   DocumentRecord,
   ListDocumentsQuery,
   PaginatedDocumentList,
-  PatchDocumentTitleBody,
+  PatchDocumentBody,
   UpdateDocumentContentBody,
 } from '@/domains/documentsDomains';
 
@@ -20,7 +20,28 @@ function appendListQuery(basePath: string, query: ListDocumentsQuery): string {
   return qs.length > 0 ? `${basePath}?${qs}` : basePath;
 }
 
+function compactPatch(patch: PatchDocumentBody): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  if (patch.title !== undefined) {
+    out.title = patch.title;
+  }
+  if (patch.visibility !== undefined) {
+    out.visibility = patch.visibility;
+  }
+  return out;
+}
+
 export const documentApi = {
+  /**
+   * GET — halka açık feed (@Public). Kimlik gerekmez.
+   */
+  async listPublic(): Promise<DocumentRecord[]> {
+    return executeJsonRequest<DocumentRecord[]>({
+      method: documentHttpVerb(DocumentMethods.PublicFeed),
+      path: buildDocumentPath(DocumentMethods.PublicFeed),
+    });
+  },
+
   /**
    * GET — {@link DocumentMethods.List}
    */
@@ -85,18 +106,20 @@ export const documentApi = {
   },
 
   /**
-   * PATCH — {@link DocumentMethods.PatchTitle}
+   * PATCH — başlık ve/veya görünürlük (yalnızca owner).
    */
-  async patchTitle(
+  async patchDocument(
     accessToken: string,
     documentId: string,
-    body: PatchDocumentTitleBody,
+    patch: PatchDocumentBody,
   ): Promise<DocumentRecord> {
     return executeJsonRequest<DocumentRecord>({
-      method: documentHttpVerb(DocumentMethods.PatchTitle),
-      path: buildDocumentPath(DocumentMethods.PatchTitle, { id: documentId }),
+      method: documentHttpVerb(DocumentMethods.PatchDocument),
+      path: buildDocumentPath(DocumentMethods.PatchDocument, {
+        id: documentId,
+      }),
       accessToken,
-      body,
+      body: compactPatch(patch),
     });
   },
 

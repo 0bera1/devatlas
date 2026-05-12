@@ -1,6 +1,7 @@
 'use client';
 
 import { isHttpNetworkError, isNotFoundHttpError } from '@/api/http/execute-request';
+import { DocumentsListSkeleton } from '@/components/documents/documents-list-skeleton';
 import { DocumentsRoadmap } from '@/components/documents/documents-roadmap';
 import { useToast } from '@/components/providers/toast-provider';
 import {
@@ -10,7 +11,7 @@ import { useDocumentsListQuery } from '@/features/documents/queries/useDocument'
 import { useFormatDocumentDate } from '@/hooks/use-format-document-date';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useTranslations } from '@/hooks/use-translations';
-import type { DocumentRecord } from '@/domains/documentsDomains';
+import type { DocumentRecord, DocumentVisibility } from '@/domains/documentsDomains';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { FormEvent, ReactNode } from 'react';
@@ -28,6 +29,7 @@ export function DocumentsListView(): ReactNode {
   const [appliedQ, setAppliedQ] = useState<string | null>(null);
   const [searchInput, setSearchInput] = useState<string>('');
   const [newTitle, setNewTitle] = useState<string>('');
+  const [newVisibility, setNewVisibility] = useState<DocumentVisibility>('PRIVATE');
 
   const listQuery = useMemo(
     () => ({
@@ -93,8 +95,12 @@ export function DocumentsListView(): ReactNode {
       }
       resetCreate();
       try {
-        const doc: DocumentRecord = await createDocuments(trimmedTitle);
+        const doc: DocumentRecord = await createDocuments({
+          title: trimmedTitle,
+          visibility: newVisibility,
+        });
         setNewTitle('');
+        setNewVisibility('PRIVATE');
         showSuccess(t('toast.documentCreated'));
         router.push(`/documents/${doc.id}`);
       } catch (err: unknown) {
@@ -105,7 +111,7 @@ export function DocumentsListView(): ReactNode {
         }
       }
     },
-    [createDocuments, newTitle, resetCreate, router, showError, showSuccess, t],
+    [createDocuments, newTitle, newVisibility, resetCreate, router, showError, showSuccess, t],
   );
 
   if (!canRender) {
@@ -120,6 +126,14 @@ export function DocumentsListView(): ReactNode {
   const total: number = data?.total ?? 0;
   const totalPages: number = data?.totalPages ?? 0;
   const listLoading: boolean = listPending && data === undefined;
+  const isTrulyEmpty: boolean =
+    !listLoading &&
+    items.length === 0 &&
+    appliedQ === null &&
+    total === 0 &&
+    !listIsError;
+  const isSearchEmpty: boolean =
+    !listLoading && items.length === 0 && appliedQ !== null && !listIsError;
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-6 py-10 lg:py-14">
@@ -153,32 +167,53 @@ export function DocumentsListView(): ReactNode {
               {t('documents.list.newDoc')}
             </h2>
             <form
-              className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end"
+              className="mt-3 flex flex-col gap-3"
               onSubmit={(e) => {
                 void onCreateSubmit(e);
               }}
             >
-              <label className="block min-w-0 flex-1">
-                <span className="sr-only">{t('documents.list.titleLabel')}</span>
-                <input
-                  type="text"
-                  value={newTitle}
-                  onChange={(e) => {
-                    setNewTitle(e.target.value);
-                  }}
-                  placeholder={t('documents.list.titlePlaceholder')}
-                  className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-950 outline-none ring-zinc-400 focus:ring-2 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
-                />
-              </label>
-              <button
-                type="submit"
-                disabled={createPending || newTitle.trim().length === 0}
-                className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-              >
-                {createPending
-                  ? t('documents.list.creating')
-                  : t('documents.list.create')}
-              </button>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                <label className="block min-w-0 flex-1">
+                  <span className="sr-only">{t('documents.list.titleLabel')}</span>
+                  <input
+                    type="text"
+                    value={newTitle}
+                    onChange={(e) => {
+                      setNewTitle(e.target.value);
+                    }}
+                    placeholder={t('documents.list.titlePlaceholder')}
+                    className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-950 outline-none ring-zinc-400 focus:ring-2 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+                  />
+                </label>
+                <label className="block shrink-0 sm:w-44">
+                  <span className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                    {t('documents.list.visibilityLabel')}
+                  </span>
+                  <select
+                    value={newVisibility}
+                    onChange={(e) => {
+                      setNewVisibility(e.target.value as DocumentVisibility);
+                    }}
+                    className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-950 outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+                  >
+                    <option value="PRIVATE">
+                      {t('documents.visibilityPrivate')}
+                    </option>
+                    <option value="PUBLIC">
+                      {t('documents.visibilityPublic')}
+                    </option>
+                  </select>
+                </label>
+                <button
+                  type="submit"
+                  disabled={createPending || newTitle.trim().length === 0}
+                  className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                >
+                  {createPending
+                    ? t('documents.list.creating')
+                    : t('documents.list.create')}
+                </button>
+              </div>
             </form>
             {createErrorMessage !== null ? (
               <p className="mt-2 text-sm text-red-600 dark:text-red-400">
@@ -242,13 +277,22 @@ export function DocumentsListView(): ReactNode {
 
           <section>
             {listLoading ? (
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                {t('documents.list.loadingList')}
-              </p>
-            ) : items.length === 0 ? (
-              <p className="rounded-2xl border border-dashed border-zinc-300 px-4 py-10 text-center text-sm text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
-                {t('documents.list.empty')}
-              </p>
+              <DocumentsListSkeleton />
+            ) : isTrulyEmpty ? (
+              <div className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50/50 px-6 py-12 text-center dark:border-zinc-700 dark:bg-zinc-950/30">
+                <p className="font-sans text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                  {t('documents.list.emptyTitle')}
+                </p>
+                <p className="mx-auto mt-3 max-w-md text-sm text-zinc-600 dark:text-zinc-400">
+                  {t('documents.list.emptySubtitle')}
+                </p>
+              </div>
+            ) : isSearchEmpty ? (
+              <div className="rounded-2xl border border-dashed border-zinc-300 px-6 py-10 text-center dark:border-zinc-700">
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                  {t('documents.list.emptySearch')}
+                </p>
+              </div>
             ) : (
               <ul className="flex flex-col gap-2">
                 {items.map((doc: DocumentRecord) => (
@@ -257,9 +301,22 @@ export function DocumentsListView(): ReactNode {
                       href={`/documents/${doc.id}`}
                       className="flex flex-col rounded-2xl border border-zinc-200 bg-white px-4 py-3 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950/40 dark:hover:border-zinc-600 dark:hover:bg-zinc-900/50 sm:flex-row sm:items-center sm:justify-between"
                     >
-                      <span className="font-medium text-zinc-950 dark:text-zinc-50">
-                        {doc.title}
-                      </span>
+                      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                        <span className="font-medium text-zinc-950 dark:text-zinc-50">
+                          {doc.title}
+                        </span>
+                        <span
+                          className={
+                            doc.visibility === 'PUBLIC'
+                              ? 'shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-200'
+                              : 'shrink-0 rounded-full bg-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:bg-zinc-700 dark:text-zinc-100'
+                          }
+                        >
+                          {doc.visibility === 'PUBLIC'
+                            ? t('documents.visibilityPublic')
+                            : t('documents.visibilityPrivate')}
+                        </span>
+                      </div>
                       <span className="mt-1 text-xs text-zinc-500 sm:mt-0 sm:text-right">
                         {t('documents.list.updated')}:{' '}
                         {formatUpdatedAt(doc.updatedAt)}

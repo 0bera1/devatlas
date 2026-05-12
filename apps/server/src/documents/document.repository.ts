@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { Prisma } from '@prisma/client';
+import type { Prisma, Visibility } from '@prisma/client';
+import { Visibility as VisibilityEnum } from '@prisma/client';
 import {
   PRISMA_SERVICE,
   type IPrismaService,
@@ -15,6 +16,7 @@ const documentRecordSelect = {
   title: true,
   content: true,
   ownerId: true,
+  visibility: true,
   createdAt: true,
   updatedAt: true,
 } satisfies Prisma.DocumentSelect;
@@ -33,6 +35,7 @@ export class DocumentRepository implements IDocumentRepository {
       data: {
         title: input.title,
         ownerId: input.ownerId,
+        visibility: input.visibility ?? VisibilityEnum.PRIVATE,
       },
       select: documentRecordSelect,
     });
@@ -94,12 +97,36 @@ export class DocumentRepository implements IDocumentRepository {
     });
   }
 
+  public async selectDocumentByIdForUser(
+    id: string,
+    userId: string,
+  ): Promise<DocumentRecord | null> {
+    return this.prisma.document.findFirst({
+      where: {
+        id,
+        OR: [
+          { visibility: VisibilityEnum.PUBLIC },
+          { ownerId: userId },
+        ],
+      },
+      select: documentRecordSelect,
+    });
+  }
+
   public async selectDocumentByIdAndOwnerId(
     id: string,
     ownerId: string,
   ): Promise<DocumentRecord | null> {
     return this.prisma.document.findFirst({
       where: { id, ownerId },
+      select: documentRecordSelect,
+    });
+  }
+
+  public async selectPublicDocumentsOrdered(): Promise<DocumentRecord[]> {
+    return this.prisma.document.findMany({
+      where: { visibility: VisibilityEnum.PUBLIC },
+      orderBy: { createdAt: 'desc' },
       select: documentRecordSelect,
     });
   }
@@ -128,6 +155,14 @@ export class DocumentRepository implements IDocumentRepository {
     ownerId: string,
     title: string,
   ): Promise<DocumentRecord | null> {
+    return this.updateDocumentPatchByIdAndOwnerId(id, ownerId, { title });
+  }
+
+  public async updateDocumentPatchByIdAndOwnerId(
+    id: string,
+    ownerId: string,
+    patch: { title?: string; visibility?: Visibility },
+  ): Promise<DocumentRecord | null> {
     const existing: DocumentRecord | null =
       await this.selectDocumentByIdAndOwnerId(id, ownerId);
 
@@ -135,9 +170,17 @@ export class DocumentRepository implements IDocumentRepository {
       return null;
     }
 
+    const data: Prisma.DocumentUpdateInput = {};
+    if (patch.title !== undefined) {
+      data.title = patch.title;
+    }
+    if (patch.visibility !== undefined) {
+      data.visibility = patch.visibility;
+    }
+
     return this.prisma.document.update({
       where: { id },
-      data: { title },
+      data,
       select: documentRecordSelect,
     });
   }

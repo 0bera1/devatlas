@@ -1,4 +1,10 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import type { Visibility } from '@prisma/client';
 import type { DocumentRecord } from './interfaces/document-record.interface';
 import {
   DOCUMENT_REPOSITORY,
@@ -20,8 +26,13 @@ export class DocumentsService implements IDocumentsService {
   public async createDocument(
     ownerId: string,
     title: string,
+    visibility?: Visibility,
   ): Promise<DocumentRecord> {
-    return this.documentRepository.insertDocument({ ownerId, title });
+    return this.documentRepository.insertDocument({
+      ownerId,
+      title,
+      visibility,
+    });
   }
 
   public async listDocuments(
@@ -75,9 +86,13 @@ export class DocumentsService implements IDocumentsService {
     };
   }
 
-  public async getDocument(ownerId: string, id: string): Promise<DocumentRecord> {
+  public async listPublicDocuments(): Promise<DocumentRecord[]> {
+    return this.documentRepository.selectPublicDocumentsOrdered();
+  }
+
+  public async getDocument(userId: string, id: string): Promise<DocumentRecord> {
     const document: DocumentRecord | null =
-      await this.documentRepository.selectDocumentByIdAndOwnerId(id, ownerId);
+      await this.documentRepository.selectDocumentByIdForUser(id, userId);
 
     if (document === null) {
       throw new NotFoundException(`Document with id "${id}" not found`);
@@ -115,6 +130,31 @@ export class DocumentsService implements IDocumentsService {
         id,
         ownerId,
         title,
+      );
+
+    if (updated === null) {
+      throw new NotFoundException(`Document with id "${id}" not found`);
+    }
+
+    return updated;
+  }
+
+  public async patchDocument(
+    ownerId: string,
+    id: string,
+    patch: { title?: string; visibility?: Visibility },
+  ): Promise<DocumentRecord> {
+    if (patch.title === undefined && patch.visibility === undefined) {
+      throw new BadRequestException(
+        'Provide at least one field: title or visibility.',
+      );
+    }
+
+    const updated: DocumentRecord | null =
+      await this.documentRepository.updateDocumentPatchByIdAndOwnerId(
+        id,
+        ownerId,
+        patch,
       );
 
     if (updated === null) {

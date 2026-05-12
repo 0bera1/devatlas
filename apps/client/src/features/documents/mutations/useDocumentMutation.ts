@@ -4,71 +4,86 @@ import { DocumentMethods } from '@/api/MethodNames';
 import { documentApi } from '@/api/documents/documentApi';
 import { documentQueryKeys } from '@/api/query/document-query-keys';
 import { useAuth } from '@/components/providers/auth-provider';
+import type {
+  CreateDocumentBody,
+  DocumentRecord,
+  PatchDocumentVariables,
+  UpdateDocumentContentVariables,
+} from '@/domains/documentsDomains';
 import {
   useMutation,
   useQueryClient,
   type UseMutationResult,
 } from '@tanstack/react-query';
-import type {
-  DocumentRecord,
-  PatchDocumentTitleVariables,
-  UpdateDocumentContentVariables,
-} from '@/domains/documentsDomains';
+
+async function invalidateDocumentCaches(
+  queryClient: ReturnType<typeof useQueryClient>,
+  documentId: string,
+): Promise<void> {
+  await queryClient.invalidateQueries({
+    queryKey: documentQueryKeys.detail(documentId),
+  });
+  await queryClient.invalidateQueries({ queryKey: documentQueryKeys.lists() });
+  await queryClient.invalidateQueries({
+    queryKey: documentQueryKeys.publicFeed(),
+  });
+}
 
 /**
- * POST {@link DocumentMethods.Create} — yeni doküman.
- * Kullanım: `const { mutate: createDocuments } = useCreateDocumentMutation();`
+ * POST {@link DocumentMethods.Create}
  */
 export function useCreateDocumentMutation(): UseMutationResult<
   DocumentRecord,
   Error,
-  string
+  CreateDocumentBody
 > {
   const queryClient = useQueryClient();
   const { token } = useAuth();
 
   return useMutation({
     mutationKey: [DocumentMethods.Create],
-    mutationFn: async (title: string): Promise<DocumentRecord> => {
+    mutationFn: async (body: CreateDocumentBody): Promise<DocumentRecord> => {
       if (token === null) {
         throw new Error('Unauthenticated');
       }
-      return documentApi.create(token, { title });
+      return documentApi.create(token, body);
     },
     onSettled: async () => {
       await queryClient.invalidateQueries({ queryKey: documentQueryKeys.lists() });
+      await queryClient.invalidateQueries({
+        queryKey: documentQueryKeys.publicFeed(),
+      });
     },
   });
 }
 
 /**
- * PATCH {@link DocumentMethods.PatchTitle}
+ * PATCH — başlık / görünürlük
  */
-export function usePatchDocumentTitleMutation(): UseMutationResult<
+export function usePatchDocumentMutation(): UseMutationResult<
   DocumentRecord,
   Error,
-  PatchDocumentTitleVariables
+  PatchDocumentVariables
 > {
   const queryClient = useQueryClient();
   const { token } = useAuth();
 
   return useMutation({
-    mutationKey: [DocumentMethods.PatchTitle],
+    mutationKey: [DocumentMethods.PatchDocument],
     mutationFn: async (
-      variables: PatchDocumentTitleVariables,
+      variables: PatchDocumentVariables,
     ): Promise<DocumentRecord> => {
       if (token === null) {
         throw new Error('Unauthenticated');
       }
-      return documentApi.patchTitle(token, variables.documentId, {
-        title: variables.title,
-      });
+      return documentApi.patchDocument(
+        token,
+        variables.documentId,
+        variables.patch,
+      );
     },
-    onSettled: async (_data, _err, variables) => {
-      await queryClient.invalidateQueries({
-        queryKey: documentQueryKeys.detail(variables.documentId),
-      });
-      await queryClient.invalidateQueries({ queryKey: documentQueryKeys.lists() });
+    onSettled: async (_d, _e, variables) => {
+      await invalidateDocumentCaches(queryClient, variables.documentId);
     },
   });
 }
@@ -96,11 +111,8 @@ export function useUpdateDocumentContentMutation(): UseMutationResult<
         content: variables.content,
       });
     },
-    onSettled: async (_data, _err, variables) => {
-      await queryClient.invalidateQueries({
-        queryKey: documentQueryKeys.detail(variables.documentId),
-      });
-      await queryClient.invalidateQueries({ queryKey: documentQueryKeys.lists() });
+    onSettled: async (_d, _e, variables) => {
+      await invalidateDocumentCaches(queryClient, variables.documentId);
     },
   });
 }

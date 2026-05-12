@@ -111,9 +111,11 @@ export function buildDocumentPath(
     case DocumentMethods.List:
     case DocumentMethods.Create:
       return '/documents';
+    case DocumentMethods.PublicFeed:
+      return '/documents/public';
     case DocumentMethods.GetById:
     case DocumentMethods.UpdateContent:
-    case DocumentMethods.PatchTitle:
+    case DocumentMethods.PatchDocument:
     case DocumentMethods.Delete: {
       const id: string | undefined = params?.id;
       if (id === undefined || id.length === 0) {
@@ -134,12 +136,13 @@ export function documentHttpVerb(
   switch (method) {
     case DocumentMethods.List:
     case DocumentMethods.GetById:
+    case DocumentMethods.PublicFeed:
       return 'GET';
     case DocumentMethods.Create:
       return 'POST';
     case DocumentMethods.UpdateContent:
       return 'PUT';
-    case DocumentMethods.PatchTitle:
+    case DocumentMethods.PatchDocument:
       return 'PATCH';
     case DocumentMethods.Delete:
       return 'DELETE';

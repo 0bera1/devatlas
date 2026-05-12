@@ -10,9 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateDocumentDto = void 0;
+const client_1 = require("@prisma/client");
 const class_validator_1 = require("class-validator");
 class CreateDocumentDto {
     title;
+    visibility;
 }
 exports.CreateDocumentDto = CreateDocumentDto;
 __decorate([
@@ -21,4 +23,9 @@ __decorate([
     (0, class_validator_1.MaxLength)(500),
     __metadata("design:type", String)
 ], CreateDocumentDto.prototype, "title", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(client_1.Visibility),
+    __metadata("design:type", String)
+], CreateDocumentDto.prototype, "visibility", void 0);
 //# sourceMappingURL=create-document.dto.js.map

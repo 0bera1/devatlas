@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Visibility {
+  PUBLIC
+  PRIVATE
+}
+
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
@@ -19,16 +24,29 @@ model User {
 }
 
 model Document {
-  id        String   @id @default(cuid())
-  title     String
-  content   String   @default("")
-  ownerId   String
-  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  id         String     @id @default(cuid())
+  title      String
+  content    String     @default("")
+  ownerId    String
+  visibility Visibility @default(PRIVATE)
+  owner      User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([ownerId])
+  @@index([visibility])
+}
+
+/// Platform içeriği: kullanıcıya bağlı değil; arama ve gelecekteki graph katmanı için ayrı koleksiyon.
+model SystemContent {
+  id        String   @id @default(cuid())
+  type      String
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([type])
 }
 
 model RefreshToken {

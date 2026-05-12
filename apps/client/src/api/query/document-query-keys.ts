@@ -2,6 +2,8 @@ import type { ListDocumentsQuery } from '@/domains/documentsDomains';
 
 export const documentQueryKeys = {
   all: ['documents'] as const,
+  publicFeed: (): readonly ['documents', 'public'] =>
+    [...documentQueryKeys.all, 'public'] as const,
   lists: (): readonly ['documents', 'list'] =>
     [...documentQueryKeys.all, 'list'] as const,
   list: (

@@ -24,6 +24,18 @@ export function HomeShell({ children }: { children: ReactNode }): ReactNode {
           <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-3">
             <PreferencesControls compact />
             <nav className="flex items-center gap-3 text-sm font-medium sm:gap-4">
+              <Link
+                href="/explore"
+                className="text-zinc-600 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50"
+              >
+                {t('nav.explore')}
+              </Link>
+              <Link
+                href="/knowledge"
+                className="text-zinc-600 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50"
+              >
+                {t('nav.knowledge')}
+              </Link>
               {!isReady ? (
                 <span className="text-zinc-400">{t('nav.loading')}</span>
               ) : loggedIn ? (

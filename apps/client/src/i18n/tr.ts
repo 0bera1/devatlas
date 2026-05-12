@@ -6,6 +6,8 @@ export const trMessages = {
   'nav.logout': 'Çıkış',
   'nav.sessionActive': 'Oturum açık',
   'nav.loading': '…',
+  'nav.explore': 'Keşif',
+  'nav.knowledge': 'Bilgi tabanı',
 
   'common.loading': 'Yükleniyor…',
 
@@ -15,6 +17,11 @@ export const trMessages = {
     'sayfasından notlarını oluşturup düzenleyebilirsin. Kimlik doğrulama için üst menüden',
   'home.introBetweenAuth': 'veya',
   'home.introAfterAuth': 'sayfalarını kullan.',
+  'home.publicFeedBefore': 'Herkese açık notlar:',
+  'home.publicFeedLink': 'Keşif',
+  'home.publicFeedMid': 'sayfasında; yardım ve sabit metinler',
+  'home.knowledgeLink': 'Bilgi tabanı',
+  'home.publicFeedAfter': 'bölümünde.',
 
   'auth.backHome': '← Ana sayfa',
   'auth.login.title': 'DevAtlas’a hoş geldiniz',
@@ -70,12 +77,33 @@ export const trMessages = {
   'documents.list.pageSize': 'Sayfa boyutu',
   'documents.list.total': 'Toplam kayıt',
   'documents.list.loadingList': 'Liste yükleniyor…',
+  'documents.list.skeleton': 'Dokümanlar yükleniyor',
+  'documents.list.emptyTitle': 'Henüz doküman yok',
+  'documents.list.emptySubtitle':
+    'Yukarıdan başlık girerek ilk notunu oluştur; kayıt API’ye hemen düşer.',
+  'documents.list.emptySearch':
+    'Aramanızla eşleşen doküman yok. Başka bir kelime deneyin veya aramayı temizleyin.',
   'documents.list.empty':
     'Henüz doküman yok veya arama sonuç vermedi. Yukarıdan yeni bir tane oluşturabilirsin.',
   'documents.list.updated': 'Güncellendi',
   'documents.list.prev': 'Önceki',
   'documents.list.next': 'Sonraki',
   'documents.list.page': 'Sayfa',
+  'documents.list.visibilityLabel': 'Görünürlük',
+  'documents.visibilityPublic': 'Herkese açık',
+  'documents.visibilityPrivate': 'Özel',
+
+  'explore.title': 'Keşif',
+  'explore.intro':
+    'Toplulukta herkese açık olarak işaretlenmiş dokümanların listesi. Tam metin için giriş yapmanız gerekir.',
+  'explore.empty': 'Şu an herkese açık doküman yok.',
+  'explore.hintLogin': 'Dokümanı açmak için:',
+  'explore.updated': 'Güncellendi',
+
+  'knowledge.title': 'Bilgi tabanı',
+  'knowledge.intro':
+    'Uygulamaya ait sistem ve yardım içerikleri (giriş gerektirmez).',
+  'knowledge.empty': 'Gösterilecek sistem içeriği yok.',
 
   'documents.editor.loading': 'Yükleniyor…',
   'documents.editor.loadingDoc': 'Doküman yükleniyor…',
@@ -90,9 +118,21 @@ export const trMessages = {
   'documents.editor.content': 'İçerik',
   'documents.editor.saveContent': 'İçeriği kaydet',
   'documents.editor.savingContent': 'Kaydediliyor…',
+  'documents.editor.autosaveSaving': 'Kaydediliyor…',
+  'documents.editor.autosaveSaved': 'Tüm değişiklikler kaydedildi',
+  'documents.editor.autosaveError': 'Kayıt yapılamadı.',
+  'documents.editor.autosaveHintTitle':
+    'Başlık yazmayı bıraktığınızda yaklaşık yarım saniye sonra otomatik kaydedilir.',
   'documents.editor.contentPlaceholder': 'Metni buraya yaz…',
   'documents.editor.contentHint':
-    'Otomatik kayıt yol haritasında; şimdilik kaydet düğmesiyle API’ye gönderiliyor.',
+    'İçerik yazarken aynı gecikmeyle sunucuya gönderilir (PUT /documents/:id).',
+  'documents.editor.visibilityLabel': 'Görünürlük',
+  'documents.editor.readOnly': 'Salt okunur',
+  'documents.editor.permissionLoading': 'Erişim denetleniyor…',
+  'documents.editor.readOnlyHint':
+    'Bu dokümanın sahibi değilsiniz; başlık ve içerik düzenlenemez.',
+  'documents.editor.readOnlyContentHint':
+    'İçeriği görüntülüyorsunuz; düzenlemek için dokümanın sahibi olmalısınız.',
 
   'roadmap.title': 'Yol haritası',
   'roadmap.intro':

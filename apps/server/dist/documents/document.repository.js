@@ -14,12 +14,14 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentRepository = void 0;
 const common_1 = require("@nestjs/common");
+const client_1 = require("@prisma/client");
 const prisma_service_interface_1 = require("../prisma/interfaces/prisma-service.interface");
 const documentRecordSelect = {
     id: true,
     title: true,
     content: true,
     ownerId: true,
+    visibility: true,
     createdAt: true,
     updatedAt: true,
 };
@@ -33,6 +35,7 @@ let DocumentRepository = class DocumentRepository {
             data: {
                 title: input.title,
                 ownerId: input.ownerId,
+                visibility: input.visibility ?? client_1.Visibility.PRIVATE,
             },
             select: documentRecordSelect,
         });
@@ -77,9 +80,28 @@ let DocumentRepository = class DocumentRepository {
             take,
         });
     }
+    async selectDocumentByIdForUser(id, userId) {
+        return this.prisma.document.findFirst({
+            where: {
+                id,
+                OR: [
+                    { visibility: client_1.Visibility.PUBLIC },
+                    { ownerId: userId },
+                ],
+            },
+            select: documentRecordSelect,
+        });
+    }
     async selectDocumentByIdAndOwnerId(id, ownerId) {
         return this.prisma.document.findFirst({
             where: { id, ownerId },
+            select: documentRecordSelect,
+        });
+    }
+    async selectPublicDocumentsOrdered() {
+        return this.prisma.document.findMany({
+            where: { visibility: client_1.Visibility.PUBLIC },
+            orderBy: { createdAt: 'desc' },
             select: documentRecordSelect,
         });
     }
@@ -95,13 +117,23 @@ let DocumentRepository = class DocumentRepository {
         });
     }
     async updateDocumentTitleByIdAndOwnerId(id, ownerId, title) {
+        return this.updateDocumentPatchByIdAndOwnerId(id, ownerId, { title });
+    }
+    async updateDocumentPatchByIdAndOwnerId(id, ownerId, patch) {
         const existing = await this.selectDocumentByIdAndOwnerId(id, ownerId);
         if (existing === null) {
             return null;
         }
+        const data = {};
+        if (patch.title !== undefined) {
+            data.title = patch.title;
+        }
+        if (patch.visibility !== undefined) {
+            data.visibility = patch.visibility;
+        }
         return this.prisma.document.update({
             where: { id },
-            data: { title },
+            data,
             select: documentRecordSelect,
         });
     }

@@ -37,6 +37,23 @@ export default function Home() {
           </Link>{' '}
           {t('home.introAfterAuth')}
         </p>
+        <p className="max-w-xl text-base leading-relaxed text-zinc-600 dark:text-zinc-400">
+          {t('home.publicFeedBefore')}{' '}
+          <Link
+            href="/explore"
+            className="font-medium text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-200"
+          >
+            {t('home.publicFeedLink')}
+          </Link>{' '}
+          {t('home.publicFeedMid')}{' '}
+          <Link
+            href="/knowledge"
+            className="font-medium text-zinc-900 underline-offset-4 hover:underline dark:text-zinc-200"
+          >
+            {t('home.knowledgeLink')}
+          </Link>
+          {t('home.publicFeedAfter')}
+        </p>
       </main>
     </HomeShell>
   );

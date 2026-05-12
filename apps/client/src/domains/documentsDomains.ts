@@ -1,10 +1,13 @@
 /** Doküman (documents) domain modelleri — API ve mutation değişkenleri. */
 
+export type DocumentVisibility = 'PUBLIC' | 'PRIVATE';
+
 export interface DocumentRecord {
   id: string;
   title: string;
   content: string;
   ownerId: string;
+  visibility: DocumentVisibility;
   createdAt: string;
   updatedAt: string;
 }
@@ -19,14 +22,16 @@ export interface PaginatedDocumentList {
 
 export interface CreateDocumentBody {
   title: string;
+  visibility?: DocumentVisibility;
 }
 
 export interface UpdateDocumentContentBody {
   content: string;
 }
 
-export interface PatchDocumentTitleBody {
-  title: string;
+export interface PatchDocumentBody {
+  title?: string;
+  visibility?: DocumentVisibility;
 }
 
 export interface ListDocumentsQuery {
@@ -35,9 +40,9 @@ export interface ListDocumentsQuery {
   q: string | null;
 }
 
-export interface PatchDocumentTitleVariables {
+export interface PatchDocumentVariables {
   readonly documentId: string;
-  readonly title: string;
+  readonly patch: PatchDocumentBody;
 }
 
 export interface UpdateDocumentContentVariables {
