@@ -12,6 +12,7 @@ export const enMessages: Record<MessageKey, string> = {
   'nav.knowledge': 'Knowledge base',
   'nav.search': 'Search',
   'nav.diagrams': 'Diagrams',
+  'nav.profile': 'Profile',
 
   'common.loading': 'Loading…',
 
@@ -93,11 +94,28 @@ export const enMessages: Record<MessageKey, string> = {
   'documents.list.prev': 'Previous',
   'documents.list.next': 'Next',
   'documents.list.page': 'Page',
+  'documents.list.deleteAction': 'Delete',
+  'documents.list.deleting': 'Deleting…',
+  'documents.list.deleteConfirm':
+    'Delete the document “{{title}}”? This cannot be undone.',
   'documents.list.visibilityLabel': 'Visibility',
   'documents.list.tagsLabel': 'Tags (optional)',
   'documents.list.tagsPlaceholder': 'e.g. nestjs, docker, api',
   'documents.list.tagsHint':
     'Comma-separated. Names are lowercased and deduped on the server. Discovery search matches title, body, tag names, and category names.',
+  'documents.autoTag.suggest': 'Suggest tags',
+  'documents.autoTag.loading': 'Suggesting…',
+  'documents.autoTag.applyAll': 'Apply all',
+  'documents.autoTag.hint':
+    'I can suggest tech tags from the title. Type a title first, then press "Suggest tags".',
+  'documents.interviewQuestions.title': 'Related interview questions',
+  'documents.interviewQuestions.subtitle':
+    'Hands-on interview questions matched against this document\'s tags.',
+  'documents.interviewQuestions.empty':
+    'No matching interview questions yet. The engine suggests them as you add tags.',
+  'documents.interviewQuestions.showAnswer': 'Show answer',
+  'documents.interviewQuestions.hideAnswer': 'Hide answer',
+  'documents.interviewQuestions.scoreLabel': 'Score',
   'documents.list.categoryLabel': 'Category (optional)',
   'documents.list.categoryPlaceholder': 'e.g. backend, frontend',
   'documents.list.categoryHint':
@@ -119,6 +137,19 @@ export const enMessages: Record<MessageKey, string> = {
   'diagrams.list.nodes': 'nodes',
   'diagrams.list.visibilityLabel': 'Visibility',
   'diagrams.list.sharedBadge': 'Shared',
+  'diagrams.list.deleteAction': 'Delete',
+  'diagrams.list.deleting': 'Deleting…',
+  'diagrams.list.deleteConfirm':
+    'Delete the diagram “{{title}}”? All nodes and edges will be lost.',
+
+  'diagrams.generate.title': 'Generate diagram with AI',
+  'diagrams.generate.intro':
+    'Describe your architecture idea in a few words. The heuristic engine picks the closest template and scaffolds your first diagram.',
+  'diagrams.generate.promptLabel': 'Prompt',
+  'diagrams.generate.promptPlaceholder':
+    'e.g. nestjs websocket realtime chat',
+  'diagrams.generate.button': 'Generate diagram',
+  'diagrams.generate.loading': 'Generating…',
 
   'diagrams.editor.loading': 'Loading diagram…',
   'diagrams.editor.backToList': '← Diagrams',
@@ -134,6 +165,21 @@ export const enMessages: Record<MessageKey, string> = {
   'diagrams.editor.nodeSettings': 'Node',
   'diagrams.editor.nodeLabel': 'Label',
   'diagrams.editor.nodeKind': 'Type',
+  'diagrams.editor.deleteNode': 'Delete node',
+  'diagrams.editor.edgeSettings': 'Connection',
+  'diagrams.editor.edgeLabel': 'Edge label',
+  'diagrams.editor.edgeLabelPlaceholder': 'e.g. cache, query, publish',
+  'diagrams.editor.edgeKind': 'Arrow type',
+  'diagrams.editor.edgeAnimated': 'Animated flow',
+  'diagrams.editor.deleteEdge': 'Delete connection',
+  'diagrams.editor.edgeDirectionHint':
+    'The arrow direction follows the source node you dragged from to the target node.',
+  'diagrams.editor.suggestCacheLayer':
+    'Suggestion: add an animated Redis cache layer after this API',
+  'diagrams.editor.suggestDatabaseFallback':
+    'Suggestion: add a PostgreSQL fallback below this cache',
+  'diagrams.editor.selectElement':
+    'Select a node or connection to edit its settings in the side panel.',
   'diagrams.editor.selectNode':
     'Select a node to edit its label and type in the panel.',
   'diagrams.editor.invalidId': 'Invalid diagram link.',
@@ -151,11 +197,30 @@ export const enMessages: Record<MessageKey, string> = {
   'diagrams.editor.collaboratorRemove': 'Remove',
   'diagrams.editor.collaboratorsRefresh': 'Refresh list',
   'diagrams.editor.collaboratorsEmpty': 'No collaborators yet.',
+  'diagrams.editor.dangerZoneTitle': 'Danger zone',
+  'diagrams.editor.dangerZoneIntro':
+    'Deleting this diagram permanently removes all nodes, connections and collaborator invitations.',
+  'diagrams.editor.deleteAction': 'Delete diagram',
+  'diagrams.editor.deleting': 'Deleting…',
+  'diagrams.editor.deleteConfirm':
+    'Delete the diagram “{{title}}”? This cannot be undone.',
 
-  'diagrams.related.title': 'Related diagrams',
+  'diagrams.related.title': 'Related Resources',
   'diagrams.related.subtitle':
-    'Other public maps that share node labels with this one.',
-  'diagrams.related.empty': 'No related diagrams to suggest yet.',
+    'Resource suggestions based on semantic tags extracted from node labels.',
+  'diagrams.related.empty': 'No related resources to suggest yet.',
+  'diagrams.related.tagsTitle': 'Semantic tags',
+  'diagrams.related.diagramsTitle': 'Related diagrams',
+  'diagrams.related.diagramsEmpty': 'No matching public diagrams.',
+  'diagrams.related.documentsTitle': 'Related documents',
+  'diagrams.related.documentsEmpty': 'No matching public documents.',
+  'diagrams.related.questionsTitle': 'Related interview questions',
+  'diagrams.related.questionsEmpty': 'No matching interview questions.',
+  'diagrams.related.technologiesTitle': 'Similar technologies',
+  'diagrams.related.technologiesEmpty': 'No similar technologies yet.',
+  'diagrams.related.score': 'Score',
+  'diagrams.related.matches': 'Matches',
+  'diagrams.related.relatedDiagramCount': 'Related diagrams',
 
   'collaboration.statusConnecting': 'Connecting to the live room…',
   'collaboration.peersCount': 'Live — {{count}} participant(s)',
@@ -230,6 +295,13 @@ export const enMessages: Record<MessageKey, string> = {
     'You are viewing the content; only the owner can make changes.',
   'documents.editor.favorite': 'Favorite',
   'documents.editor.favoriting': 'Adding…',
+  'documents.editor.dangerZoneTitle': 'Danger zone',
+  'documents.editor.dangerZoneIntro':
+    'Deleting this document permanently removes its content, tags and favorites.',
+  'documents.editor.deleteAction': 'Delete document',
+  'documents.editor.deleting': 'Deleting…',
+  'documents.editor.deleteConfirm':
+    'Delete the document “{{title}}”? This cannot be undone.',
   'documents.engagement.views': 'Views',
   'documents.engagement.favorites': 'Favorites',
 
@@ -259,8 +331,83 @@ export const enMessages: Record<MessageKey, string> = {
   'toast.titleSaved': 'Title saved.',
   'toast.contentSaved': 'Content saved.',
   'toast.documentCreated': 'Document created.',
+  'toast.documentDeleted': 'Document deleted.',
+  'toast.documentDeleteFailed': 'Could not delete the document.',
+  'toast.diagramDeleted': 'Diagram deleted.',
+  'toast.diagramDeleteFailed': 'Could not delete the diagram.',
   'toast.favoriteAdded': 'Added to favorites.',
   'toast.favoriteDuplicate': 'This document is already in your favorites.',
+  'toast.diagramFavoriteAdded': 'Diagram added to favorites.',
+  'toast.diagramFavoriteDuplicate':
+    'This diagram is already in your favorites.',
+  'toast.diagramFavoriteFailed': 'Could not favorite the diagram.',
+  'toast.profileUpdated': 'Profile updated.',
+  'toast.profileUpdateFailed': 'Could not update the profile.',
+  'toast.passwordUpdated': 'Password updated.',
+  'toast.passwordUpdateFailed': 'Could not update the password.',
+
+  'profile.page.title': 'Profile',
+  'profile.page.subtitle':
+    'Edit your personal info, review your favorites, and see your last year of activity.',
+  'profile.info.title': 'Account information',
+  'profile.info.description':
+    'Email stays the same; you can update your name and birth date.',
+  'profile.info.email': 'Email',
+  'profile.info.name': 'Name',
+  'profile.info.namePlaceholder': 'Display name…',
+  'profile.info.birthDate': 'Birth date',
+  'profile.info.memberSince': 'Member since',
+  'profile.info.save': 'Save',
+  'profile.info.saving': 'Saving…',
+  'profile.info.cleared': 'Name will be cleared.',
+  'profile.info.clearName': 'Clear name',
+  'profile.password.title': 'Password',
+  'profile.password.description':
+    'For security we need your current password. New password must be at least 8 characters.',
+  'profile.password.current': 'Current password',
+  'profile.password.next': 'New password',
+  'profile.password.confirm': 'Confirm new password',
+  'profile.password.submit': 'Update password',
+  'profile.password.submitting': 'Updating…',
+  'profile.password.mismatch': 'New passwords do not match.',
+  'profile.password.tooShort': 'New password must be at least 8 characters.',
+  'profile.favorites.title': 'Favorites',
+  'profile.favorites.description':
+    'Quickly return to the documents and diagrams you starred.',
+  'profile.favorites.tab.documents': 'Documents',
+  'profile.favorites.tab.diagrams': 'Diagrams',
+  'profile.favorites.empty.documents': 'No favorited documents yet.',
+  'profile.favorites.empty.diagrams': 'No favorited diagrams yet.',
+  'profile.favorites.itemNodes': 'nodes',
+  'profile.favorites.itemFavorites': 'favorites',
+  'profile.favorites.itemViews': 'views',
+  'profile.favorites.favoritedAt': 'Favorited',
+  'profile.activity.title': 'Activity',
+  'profile.activity.description':
+    'Your daily document and diagram saves over the last year, shaded against your own average.',
+  'profile.activity.legendLess': 'Less',
+  'profile.activity.legendMore': 'More',
+  'profile.activity.tooltipCount': '{{count}} saves',
+  'profile.activity.tooltipNone': 'No saves this day',
+  'profile.activity.weekday.mon': 'Mon',
+  'profile.activity.weekday.wed': 'Wed',
+  'profile.activity.weekday.fri': 'Fri',
+  'profile.activity.month.jan': 'Jan',
+  'profile.activity.month.feb': 'Feb',
+  'profile.activity.month.mar': 'Mar',
+  'profile.activity.month.apr': 'Apr',
+  'profile.activity.month.may': 'May',
+  'profile.activity.month.jun': 'Jun',
+  'profile.activity.month.jul': 'Jul',
+  'profile.activity.month.aug': 'Aug',
+  'profile.activity.month.sep': 'Sep',
+  'profile.activity.month.oct': 'Oct',
+  'profile.activity.month.nov': 'Nov',
+  'profile.activity.month.dec': 'Dec',
+
+  'diagram.editor.favorite': 'Favorite',
+  'diagram.editor.favoriting': 'Adding…',
+  'diagram.editor.favoriteCount': '{{count}} favorites',
   'validation.titleRequired': 'Title cannot be empty.',
 
   'errors.network': 'Network error: could not reach the API.',

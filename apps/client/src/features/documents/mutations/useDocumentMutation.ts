@@ -134,6 +134,31 @@ export function useUpdateDocumentContentMutation(): UseMutationResult<
 }
 
 /**
+ * DELETE — {@link DocumentMethods.Delete} (yalnızca owner).
+ */
+export function useDeleteDocumentMutation(): UseMutationResult<
+  void,
+  Error,
+  string
+> {
+  const queryClient = useQueryClient();
+  const { token } = useAuth();
+
+  return useMutation({
+    mutationKey: [DocumentMethods.Delete],
+    mutationFn: async (documentId: string): Promise<void> => {
+      if (token === null) {
+        throw new Error('Unauthenticated');
+      }
+      await documentApi.remove(token, documentId);
+    },
+    onSettled: async (_d, _e, documentId) => {
+      await invalidateDocumentCaches(queryClient, documentId);
+    },
+  });
+}
+
+/**
  * POST — doküman favorile (yalnızca erişilebilir doküman; tekrar 409).
  */
 export function useFavoriteDocumentMutation(): UseMutationResult<

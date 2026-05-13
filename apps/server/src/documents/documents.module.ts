@@ -1,5 +1,7 @@
 import { Module, Provider, forwardRef } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
+import { IntelligenceModule } from '../intelligence/intelligence.module';
+import { UserActivityModule } from '../user-activity/user-activity.module';
 import { DocumentRepository } from './document.repository';
 import { DocumentsController } from './documents.controller';
 import { DocumentsService } from './documents.service';
@@ -24,7 +26,7 @@ const documentsServiceProvider: Provider = {
 };
 
 @Module({
-  imports: [forwardRef(() => AuthModule)],
+  imports: [forwardRef(() => AuthModule), IntelligenceModule, UserActivityModule],
   controllers: [DocumentsController],
   providers: [
     documentRepositoryProvider,

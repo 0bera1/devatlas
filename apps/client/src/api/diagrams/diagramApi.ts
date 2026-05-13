@@ -12,6 +12,7 @@ import type {
   PatchDiagramBody,
   SaveDiagramGraphBody,
 } from '@/domains/diagramDomains';
+
 export const diagramApi = {
   async list(accessToken: string): Promise<DiagramSummary[]> {
     return executeJsonRequest<DiagramSummary[]>({
@@ -70,6 +71,17 @@ export const diagramApi = {
     });
   },
 
+  /**
+   * DELETE — {@link DiagramMethods.Delete}
+   */
+  async remove(accessToken: string, diagramId: string): Promise<void> {
+    await executeJsonRequest<void>({
+      method: diagramHttpVerb(DiagramMethods.Delete),
+      path: buildDiagramPath(DiagramMethods.Delete, { id: diagramId }),
+      accessToken,
+    });
+  },
+
   async listCollaborators(
     accessToken: string,
     diagramId: string,
@@ -119,6 +131,17 @@ export const diagramApi = {
       method: diagramHttpVerb(DiagramMethods.Related),
       path: buildDiagramPath(DiagramMethods.Related, { id: diagramId }),
       accessToken: accessToken ?? undefined,
+    });
+  },
+
+  /**
+   * POST — {@link DiagramMethods.FavoriteDiagram}. 409 = zaten favorilenmiş.
+   */
+  async favorite(accessToken: string, diagramId: string): Promise<void> {
+    await executeJsonRequest<void>({
+      method: diagramHttpVerb(DiagramMethods.FavoriteDiagram),
+      path: buildDiagramPath(DiagramMethods.FavoriteDiagram, { id: diagramId }),
+      accessToken,
     });
   },
 } as const;

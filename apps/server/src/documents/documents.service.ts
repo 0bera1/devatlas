@@ -6,6 +6,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma, type Visibility } from '@prisma/client';
+import {
+  INTELLIGENCE_SERVICE,
+  type IIntelligenceService,
+} from '../intelligence/interfaces/intelligence-service.interface';
+import {
+  USER_ACTIVITY_SERVICE,
+  type IUserActivityService,
+} from '../user-activity/interfaces/user-activity-service.interface';
 import { FEED_DEFAULT_LIMIT } from './constants/feed.constants';
 import { RELATED_PUBLIC_DOCUMENTS_LIMIT } from './constants/related.constants';
 import { SEARCH_PUBLIC_DOCUMENTS_LIMIT } from './constants/search.constants';
@@ -37,26 +45,56 @@ export class DocumentsService implements IDocumentsService {
     private readonly documentRepository: IDocumentRepository,
     @Inject(ENGAGEMENT_REPOSITORY)
     private readonly engagementRepository: IEngagementRepository,
+    @Inject(INTELLIGENCE_SERVICE)
+    private readonly intelligenceService: IIntelligenceService,
+    @Inject(USER_ACTIVITY_SERVICE)
+    private readonly userActivityService: IUserActivityService,
   ) {}
 
   public async createDocument(
     ownerId: string,
     command: CreateDocumentCommand,
   ): Promise<DocumentRecord> {
-    const tagNames: string[] | undefined = normalizeDocumentTagNames(
+    const providedTagNames: string[] | undefined = normalizeDocumentTagNames(
       command.tags,
     );
+    const tagNames: string[] | undefined = this.resolveCreationTagNames(
+      providedTagNames,
+      command.title,
+    );
+
     const categoryName: string | undefined = normalizeCategoryName(
       command.categoryName,
     );
 
-    return this.documentRepository.insertDocument({
-      ownerId,
-      title: command.title,
-      visibility: command.visibility,
-      tagNames,
-      ...(categoryName !== undefined ? { categoryName } : {}),
-    });
+    const created: DocumentRecord =
+      await this.documentRepository.insertDocument({
+        ownerId,
+        title: command.title,
+        visibility: command.visibility,
+        tagNames,
+        ...(categoryName !== undefined ? { categoryName } : {}),
+      });
+
+    await this.userActivityService.recordActivity(ownerId);
+    return created;
+  }
+
+  /**
+   * Kullanıcı etiket vermediyse başlığa bakarak heuristic etiket üret.
+   * Kullanıcı etiket verdiyse niyetine saygı duy, dokunma.
+   */
+  private resolveCreationTagNames(
+    providedTagNames: string[] | undefined,
+    title: string,
+  ): string[] | undefined {
+    if (providedTagNames !== undefined) {
+      return providedTagNames;
+    }
+
+    const autoTags: string[] =
+      this.intelligenceService.extractAutoTagsFromSource({ title });
+    return autoTags.length === 0 ? undefined : autoTags;
   }
 
   public async listDocuments(
@@ -141,6 +179,7 @@ export class DocumentsService implements IDocumentsService {
       throw new NotFoundException(`Document with id "${id}" not found`);
     }
 
+    await this.userActivityService.recordActivity(ownerId);
     return updated;
   }
 

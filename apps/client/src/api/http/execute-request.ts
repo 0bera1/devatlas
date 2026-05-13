@@ -5,6 +5,8 @@ import {
   DiagramMethods,
   DocumentMethods,
   FeedMethods,
+  IntelligenceMethods,
+  ProfileMethods,
   SearchMethods,
 } from '@/api/MethodNames';
 
@@ -196,7 +198,9 @@ export function buildDiagramPath(
     case DiagramMethods.GetById:
     case DiagramMethods.SaveGraph:
     case DiagramMethods.Patch:
+    case DiagramMethods.Delete:
     case DiagramMethods.Related:
+    case DiagramMethods.FavoriteDiagram:
     case DiagramMethods.ListCollaborators:
     case DiagramMethods.AddCollaborator:
     case DiagramMethods.RemoveCollaborator: {
@@ -210,8 +214,12 @@ export function buildDiagramPath(
           return `/diagrams/${enc}`;
         case DiagramMethods.Patch:
           return `/diagrams/${enc}`;
+        case DiagramMethods.Delete:
+          return `/diagrams/${enc}`;
         case DiagramMethods.Related:
           return `/diagrams/${enc}/related`;
+        case DiagramMethods.FavoriteDiagram:
+          return `/diagrams/${enc}/favorite`;
         case DiagramMethods.ListCollaborators:
         case DiagramMethods.AddCollaborator:
           return `/diagrams/${enc}/collaborators`;
@@ -244,13 +252,126 @@ export function diagramHttpVerb(
       return 'GET';
     case DiagramMethods.Create:
     case DiagramMethods.AddCollaborator:
+    case DiagramMethods.FavoriteDiagram:
       return 'POST';
     case DiagramMethods.SaveGraph:
       return 'PUT';
     case DiagramMethods.Patch:
       return 'PATCH';
+    case DiagramMethods.Delete:
     case DiagramMethods.RemoveCollaborator:
       return 'DELETE';
+    default: {
+      const _exhaustive: never = method;
+      return _exhaustive;
+    }
+  }
+}
+
+export interface IntelligencePathParams {
+  readonly diagramId?: string;
+  readonly documentId?: string;
+}
+
+export function buildIntelligencePath(
+  method: IntelligenceMethods,
+  params: IntelligencePathParams = {},
+): string {
+  switch (method) {
+    case IntelligenceMethods.GetDiagramResources: {
+      const id: string | undefined = params.diagramId;
+      if (id === undefined || id.length === 0) {
+        throw new HttpRequestError('Diagram id is required', 400);
+      }
+      return `/intelligence/diagrams/${encodeURIComponent(id)}/resources`;
+    }
+    case IntelligenceMethods.GetDocumentInterviewQuestions: {
+      const id: string | undefined = params.documentId;
+      if (id === undefined || id.length === 0) {
+        throw new HttpRequestError('Document id is required', 400);
+      }
+      return `/intelligence/documents/${encodeURIComponent(id)}/interview-questions`;
+    }
+    case IntelligenceMethods.GetAutoTags:
+      return '/intelligence/auto-tags';
+    case IntelligenceMethods.GenerateDiagram:
+      return '/intelligence/diagrams/generate';
+    default: {
+      const _exhaustive: never = method;
+      return _exhaustive;
+    }
+  }
+}
+
+export function intelligenceHttpVerb(
+  method: IntelligenceMethods,
+): 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' {
+  switch (method) {
+    case IntelligenceMethods.GetDiagramResources:
+    case IntelligenceMethods.GetDocumentInterviewQuestions:
+      return 'GET';
+    case IntelligenceMethods.GetAutoTags:
+    case IntelligenceMethods.GenerateDiagram:
+      return 'POST';
+    default: {
+      const _exhaustive: never = method;
+      return _exhaustive;
+    }
+  }
+}
+
+export interface ProfilePathParams {
+  readonly from?: string;
+  readonly to?: string;
+}
+
+export function buildProfilePath(
+  method: ProfileMethods,
+  params: ProfilePathParams = {},
+): string {
+  switch (method) {
+    case ProfileMethods.GetMe:
+    case ProfileMethods.UpdateMe:
+      return '/profile/me';
+    case ProfileMethods.ChangePassword:
+      return '/profile/me/password';
+    case ProfileMethods.FavoriteDocuments:
+      return '/profile/me/favorites/documents';
+    case ProfileMethods.FavoriteDiagrams:
+      return '/profile/me/favorites/diagrams';
+    case ProfileMethods.Activity: {
+      const query = new URLSearchParams();
+      if (params.from !== undefined) {
+        query.set('from', params.from);
+      }
+      if (params.to !== undefined) {
+        query.set('to', params.to);
+      }
+      const qs: string = query.toString();
+      return qs.length === 0
+        ? '/profile/me/activity'
+        : `/profile/me/activity?${qs}`;
+    }
+    default: {
+      const _exhaustive: never = method;
+      return _exhaustive;
+    }
+  }
+}
+
+export function profileHttpVerb(
+  method: ProfileMethods,
+): 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' {
+  switch (method) {
+    case ProfileMethods.GetMe:
+    case ProfileMethods.FavoriteDocuments:
+    case ProfileMethods.FavoriteDiagrams:
+    case ProfileMethods.Activity:
+      return 'GET';
+    case ProfileMethods.UpdateMe:
+      return 'PATCH';
+    case ProfileMethods.ChangePassword:
+      return 'POST';
     default: {
       const _exhaustive: never = method;
       return _exhaustive;

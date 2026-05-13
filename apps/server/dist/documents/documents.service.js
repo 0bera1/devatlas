@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentsService = void 0;
 const common_1 = require("@nestjs/common");
 const client_1 = require("@prisma/client");
+const intelligence_service_interface_1 = require("../intelligence/interfaces/intelligence-service.interface");
+const user_activity_service_interface_1 = require("../user-activity/interfaces/user-activity-service.interface");
 const feed_constants_1 = require("./constants/feed.constants");
 const related_constants_1 = require("./constants/related.constants");
 const search_constants_1 = require("./constants/search.constants");
@@ -27,20 +29,34 @@ const utc_date_bucket_1 = require("./utils/utc-date-bucket");
 let DocumentsService = class DocumentsService {
     documentRepository;
     engagementRepository;
-    constructor(documentRepository, engagementRepository) {
+    intelligenceService;
+    userActivityService;
+    constructor(documentRepository, engagementRepository, intelligenceService, userActivityService) {
         this.documentRepository = documentRepository;
         this.engagementRepository = engagementRepository;
+        this.intelligenceService = intelligenceService;
+        this.userActivityService = userActivityService;
     }
     async createDocument(ownerId, command) {
-        const tagNames = (0, normalize_document_tag_names_1.normalizeDocumentTagNames)(command.tags);
+        const providedTagNames = (0, normalize_document_tag_names_1.normalizeDocumentTagNames)(command.tags);
+        const tagNames = this.resolveCreationTagNames(providedTagNames, command.title);
         const categoryName = (0, normalize_category_name_1.normalizeCategoryName)(command.categoryName);
-        return this.documentRepository.insertDocument({
+        const created = await this.documentRepository.insertDocument({
             ownerId,
             title: command.title,
             visibility: command.visibility,
             tagNames,
             ...(categoryName !== undefined ? { categoryName } : {}),
         });
+        await this.userActivityService.recordActivity(ownerId);
+        return created;
+    }
+    resolveCreationTagNames(providedTagNames, title) {
+        if (providedTagNames !== undefined) {
+            return providedTagNames;
+        }
+        const autoTags = this.intelligenceService.extractAutoTagsFromSource({ title });
+        return autoTags.length === 0 ? undefined : autoTags;
     }
     async listDocuments(ownerId, params) {
         const page = params.page;
@@ -87,6 +103,7 @@ let DocumentsService = class DocumentsService {
         if (updated === null) {
             throw new common_1.NotFoundException(`Document with id "${id}" not found`);
         }
+        await this.userActivityService.recordActivity(ownerId);
         return updated;
     }
     async updateDocumentTitle(ownerId, id, title) {
@@ -198,6 +215,8 @@ exports.DocumentsService = DocumentsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(document_repository_interface_1.DOCUMENT_REPOSITORY)),
     __param(1, (0, common_1.Inject)(engagement_repository_interface_1.ENGAGEMENT_REPOSITORY)),
-    __metadata("design:paramtypes", [Object, Object])
+    __param(2, (0, common_1.Inject)(intelligence_service_interface_1.INTELLIGENCE_SERVICE)),
+    __param(3, (0, common_1.Inject)(user_activity_service_interface_1.USER_ACTIVITY_SERVICE)),
+    __metadata("design:paramtypes", [Object, Object, Object, Object])
 ], DocumentsService);
 //# sourceMappingURL=documents.service.js.map

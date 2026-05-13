@@ -1,0 +1,11 @@
+export declare const DIAGRAM_KEYWORDS_LIMIT = 24;
+export declare const RELATED_RESOURCE_LIMIT = 10;
+export declare const RELATED_CANDIDATE_LIMIT = 50;
+export declare const RELATED_NODE_LABEL_LIMIT = 64;
+export declare const MATCHING_KEYWORD_SCORE = 10;
+export declare const FAVORITE_SCORE = 2;
+export declare const INTERVIEW_QUESTION_TAG_LIMIT = 12;
+export declare const INTERVIEW_QUESTION_CANDIDATE_LIMIT = 50;
+export declare const INTERVIEW_QUESTION_RESOURCE_LIMIT = 10;
+export declare const INTERVIEW_QUESTION_MATCH_SCORE = 10;
+export declare const INTERVIEW_MARKERS: readonly string[];

@@ -59,6 +59,16 @@ export class DiagramsController {
     });
   }
 
+  @Post(':id/favorite')
+  @HttpCode(HttpStatus.CREATED)
+  public async favoriteDiagram(
+    @Req() req: Request,
+    @Param('id') id: string,
+  ): Promise<void> {
+    const user: PublicUser = DiagramsController.requireUser(req);
+    await this.diagramsService.addFavorite(user.id, id);
+  }
+
   @Get()
   public async list(@Req() req: Request): Promise<DiagramSummary[]> {
     const owner: PublicUser = DiagramsController.requireUser(req);
@@ -154,6 +164,17 @@ export class DiagramsController {
       title: dto.title,
       visibility: dto.visibility,
     });
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async remove(
+    @Req() req: Request,
+    @Param('id') id: string,
+  ): Promise<void> {
+    const owner: PublicUser = DiagramsController.requireUser(req);
+
+    await this.diagramsService.removeDiagram(owner.id, id);
   }
 
   private static requireUser(req: Request): PublicUser {

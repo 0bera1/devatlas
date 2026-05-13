@@ -22,8 +22,10 @@ model User {
   documents     Document[]
   diagrams      Diagram[]
   favorites     Favorite[]
+  diagramFavorites DiagramFavorite[]
   refreshTokens RefreshToken[]
   diagramCollaborations DiagramCollaborator[]
+  activityBuckets UserActivityBucket[]
 }
 
 /// Node tabanlı bilgi haritası (graph); dokümanla birlikte arama / keşif için.
@@ -39,6 +41,10 @@ model Diagram {
   edges Edge[]
 
   collaborators DiagramCollaborator[]
+  diagramFavorites DiagramFavorite[]
+
+  /// Favorileyen kullanıcı sayısı (DiagramFavorite satırlarıyla tutarlı tutulmalı).
+  favoriteCount Int @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -54,6 +60,8 @@ model Node {
   type      String
   x         Float
   y         Float
+  width     Float?
+  height    Float?
 
   diagram Diagram @relation(fields: [diagramId], references: [id], onDelete: Cascade)
 
@@ -69,6 +77,8 @@ model Edge {
   fromNodeId String
   toNodeId   String
   label      String?
+  type       String?
+  animated   Boolean @default(false)
 
   diagram  Diagram @relation(fields: [diagramId], references: [id], onDelete: Cascade)
   fromNode Node    @relation("DiagramEdgeFrom", fields: [fromNodeId], references: [id], onDelete: Cascade)
@@ -160,6 +170,35 @@ model Favorite {
   @@unique([userId, documentId])
 }
 
+/// Kullanıcı–diyagram favori ilişkisi; doküman favorisi ile paralel yapıda.
+model DiagramFavorite {
+  id        String @id @default(cuid())
+  userId    String
+  diagramId String
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  diagram Diagram @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, diagramId])
+  @@index([diagramId])
+}
+
+/// Kullanıcının günlük üretim aktivitesi (oluşturma + kaydetme). GitHub-style heatmap kaynağı.
+/// Aynı kullanıcı + aynı UTC günü için tek bir satır olur; her save action `count` alanını +1 yapar.
+model UserActivityBucket {
+  id         String   @id @default(cuid())
+  userId     String
+  bucketDate DateTime @db.Date
+  count      Int      @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bucketDate])
+  @@index([userId])
+}
+
 /// Aynı izleyici + doküman + UTC günü için en fazla bir görüntülenme sayımı (spam / F5 önleme).
 model DocumentViewBucket {
   id         String   @id @default(cuid())
@@ -183,6 +222,22 @@ model SystemContent {
   createdAt DateTime @default(now())
 
   @@index([type])
+}
+
+/// AŞAMA 3 — Bilgi platformu: tag tabanlı önerilen mülakat soruları.
+/// `tags` Postgres String[] alanı; GIN indeks ile çakışma sorgusu hızlandırılır.
+model InterviewQuestion {
+  id         String   @id @default(cuid())
+  question   String
+  answer     String
+  tags       String[]
+  difficulty String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tags], type: Gin)
+  @@index([difficulty])
 }
 
 model RefreshToken {

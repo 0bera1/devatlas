@@ -18,12 +18,16 @@ export interface SaveDiagramGraphInputNode {
   readonly type: string;
   readonly x: number;
   readonly y: number;
+  readonly width?: number | null;
+  readonly height?: number | null;
 }
 
 export interface SaveDiagramGraphInputEdge {
   readonly fromNodeId: string;
   readonly toNodeId: string;
   readonly label?: string | null;
+  readonly type?: string | null;
+  readonly animated?: boolean;
 }
 
 export interface IDiagramRepository {
@@ -53,6 +57,12 @@ export interface IDiagramRepository {
     ownerId: string,
     patch: { title?: string; visibility?: Visibility },
   ): Promise<DiagramRecord | null>;
+  deleteDiagramByIdAndOwnerId(id: string, ownerId: string): Promise<boolean>;
+  /**
+   * Kullanıcı–diyagram favori satırı + favoriteCount atomik artışı.
+   * Unique ihlalinde Prisma P2002 fırlatır (zaten favorilenmiş).
+   */
+  insertDiagramFavorite(userId: string, diagramId: string): Promise<void>;
   selectPublicDiagramsByQuery(
     searchTerm: string,
     take: number,

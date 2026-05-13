@@ -7,6 +7,10 @@ export interface CreateUserData {
     password: string;
     birthDate: Date;
 }
+export interface UpdateUserProfileData {
+    name?: string | null;
+    birthDate?: Date;
+}
 export interface IUserRepository {
     findAll(): Promise<PublicUser[]>;
     findById(id: string): Promise<PublicUser | null>;
@@ -14,4 +18,7 @@ export interface IUserRepository {
     findByEmailWithPassword(email: string): Promise<User | null>;
     create(data: CreateUserData): Promise<PublicUser>;
     deleteById(id: string): Promise<PublicUser>;
+    updateProfileById(id: string, patch: UpdateUserProfileData): Promise<PublicUser | null>;
+    updatePasswordHashById(id: string, newPasswordHash: string): Promise<boolean>;
+    selectPasswordHashById(id: string): Promise<string | null>;
 }

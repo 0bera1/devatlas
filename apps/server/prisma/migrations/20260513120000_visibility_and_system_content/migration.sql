@@ -1,6 +1,3 @@
--- CreateEnum
-CREATE TYPE "Visibility" AS ENUM ('PUBLIC', 'PRIVATE');
-
 -- AlterTable
 ALTER TABLE "Document" ADD COLUMN     "visibility" "Visibility" NOT NULL DEFAULT 'PRIVATE';
 

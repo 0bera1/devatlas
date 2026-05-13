@@ -35,12 +35,30 @@ export enum DiagramMethods {
   GetById = 'diagram:getById',
   SaveGraph = 'diagram:saveGraph',
   Patch = 'diagram:patch',
+  Delete = 'diagram:delete',
   Related = 'diagram:related',
+  FavoriteDiagram = 'diagram:favoriteDiagram',
   ListCollaborators = 'diagram:listCollaborators',
   AddCollaborator = 'diagram:addCollaborator',
   RemoveCollaborator = 'diagram:removeCollaborator',
 }
 
+export enum ProfileMethods {
+  GetMe = 'profile:getMe',
+  UpdateMe = 'profile:updateMe',
+  ChangePassword = 'profile:changePassword',
+  FavoriteDocuments = 'profile:favoriteDocuments',
+  FavoriteDiagrams = 'profile:favoriteDiagrams',
+  Activity = 'profile:activity',
+}
+
 export enum SystemContentMethods {
   List = 'systemContent:list',
+}
+
+export enum IntelligenceMethods {
+  GetDiagramResources = 'intelligence:getDiagramResources',
+  GetAutoTags = 'intelligence:getAutoTags',
+  GenerateDiagram = 'intelligence:generateDiagram',
+  GetDocumentInterviewQuestions = 'intelligence:getDocumentInterviewQuestions',
 }

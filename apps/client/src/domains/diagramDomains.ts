@@ -10,7 +10,14 @@ export interface DiagramCollaboratorEntry {
   name: string | null;
 }
 
-export type DiagramNodeKind = 'text' | 'db' | 'service' | 'api';
+export type DiagramNodeKind =
+  | 'text'
+  | 'db'
+  | 'service'
+  | 'api'
+  | 'cache'
+  | 'queue';
+export type DiagramEdgeKind = 'smoothstep' | 'straight' | 'step' | 'default';
 
 export interface DiagramNodeRecord {
   id: string;
@@ -19,6 +26,8 @@ export interface DiagramNodeRecord {
   type: string;
   x: number;
   y: number;
+  width: number | null;
+  height: number | null;
 }
 
 export interface DiagramEdgeRecord {
@@ -27,6 +36,8 @@ export interface DiagramEdgeRecord {
   fromNodeId: string;
   toNodeId: string;
   label: string | null;
+  type: DiagramEdgeKind | null;
+  animated: boolean;
 }
 
 export interface DiagramRecord {
@@ -37,6 +48,7 @@ export interface DiagramRecord {
   viewerAccess: DiagramViewerAccess;
   nodes: DiagramNodeRecord[];
   edges: DiagramEdgeRecord[];
+  favoriteCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -48,6 +60,7 @@ export interface DiagramSummary {
   visibility: DocumentVisibility;
   accessRole: DiagramListAccessRole;
   nodeCount: number;
+  favoriteCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -58,12 +71,16 @@ export type DiagramSaveNodeBody = {
   type: DiagramNodeKind;
   x: number;
   y: number;
+  width?: number | null;
+  height?: number | null;
 };
 
 export interface DiagramSaveEdgeBody {
   from: string;
   to: string;
   label?: string;
+  type?: DiagramEdgeKind;
+  animated?: boolean;
 }
 
 export interface SaveDiagramGraphBody {

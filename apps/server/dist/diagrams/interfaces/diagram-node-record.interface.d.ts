@@ -5,4 +5,6 @@ export interface DiagramNodeRecord {
     type: string;
     x: number;
     y: number;
+    width: number | null;
+    height: number | null;
 }

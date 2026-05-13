@@ -15,9 +15,12 @@ const auth_module_1 = require("./auth/auth.module");
 const diagrams_module_1 = require("./diagrams/diagrams.module");
 const documents_module_1 = require("./documents/documents.module");
 const feed_module_1 = require("./feed/feed.module");
+const intelligence_module_1 = require("./intelligence/intelligence.module");
 const prisma_module_1 = require("./prisma/prisma.module");
+const profile_module_1 = require("./profile/profile.module");
 const search_module_1 = require("./search/search.module");
 const system_content_module_1 = require("./system-content/system-content.module");
+const user_activity_module_1 = require("./user-activity/user-activity.module");
 const users_module_1 = require("./users/users.module");
 const collaboration_module_1 = require("./collaboration/collaboration.module");
 let AppModule = class AppModule {
@@ -33,9 +36,12 @@ exports.AppModule = AppModule = __decorate([
             documents_module_1.DocumentsModule,
             diagrams_module_1.DiagramsModule,
             collaboration_module_1.CollaborationModule,
+            intelligence_module_1.IntelligenceModule,
             feed_module_1.FeedModule,
             search_module_1.SearchModule,
             system_content_module_1.SystemContentModule,
+            user_activity_module_1.UserActivityModule,
+            profile_module_1.ProfileModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

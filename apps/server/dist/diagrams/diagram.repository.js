@@ -21,6 +21,7 @@ const diagramFullSelect = {
     title: true,
     ownerId: true,
     visibility: true,
+    favoriteCount: true,
     createdAt: true,
     updatedAt: true,
     nodes: {
@@ -32,6 +33,8 @@ const diagramFullSelect = {
             type: true,
             x: true,
             y: true,
+            width: true,
+            height: true,
         },
     },
     edges: {
@@ -42,6 +45,8 @@ const diagramFullSelect = {
             fromNodeId: true,
             toNodeId: true,
             label: true,
+            type: true,
+            animated: true,
         },
     },
 };
@@ -53,6 +58,8 @@ function mapPrismaDiagramToRecord(row) {
         type: n.type,
         x: n.x,
         y: n.y,
+        width: n.width,
+        height: n.height,
     }));
     const edges = row.edges.map((e) => ({
         id: e.id,
@@ -60,6 +67,8 @@ function mapPrismaDiagramToRecord(row) {
         fromNodeId: e.fromNodeId,
         toNodeId: e.toNodeId,
         label: e.label,
+        type: e.type,
+        animated: e.animated,
     }));
     return {
         id: row.id,
@@ -69,6 +78,7 @@ function mapPrismaDiagramToRecord(row) {
         viewerAccess: 'viewer',
         nodes,
         edges,
+        favoriteCount: row.favoriteCount,
         createdAt: row.createdAt,
         updatedAt: row.updatedAt,
     };
@@ -103,6 +113,7 @@ let DiagramRepository = class DiagramRepository {
                 title: true,
                 ownerId: true,
                 visibility: true,
+                favoriteCount: true,
                 createdAt: true,
                 updatedAt: true,
                 _count: { select: { nodes: true } },
@@ -115,6 +126,7 @@ let DiagramRepository = class DiagramRepository {
             visibility: r.visibility,
             accessRole: r.ownerId === userId ? 'owner' : 'collaborator',
             nodeCount: r._count.nodes,
+            favoriteCount: r.favoriteCount,
             createdAt: r.createdAt,
             updatedAt: r.updatedAt,
         }));
@@ -185,6 +197,8 @@ let DiagramRepository = class DiagramRepository {
                         type: n.type,
                         x: n.x,
                         y: n.y,
+                        width: n.width ?? null,
+                        height: n.height ?? null,
                     })),
                 });
             }
@@ -195,6 +209,8 @@ let DiagramRepository = class DiagramRepository {
                         fromNodeId: e.fromNodeId,
                         toNodeId: e.toNodeId,
                         label: e.label ?? null,
+                        type: e.type ?? null,
+                        animated: e.animated ?? false,
                     })),
                 });
             }
@@ -223,6 +239,30 @@ let DiagramRepository = class DiagramRepository {
             select: diagramFullSelect,
         });
         return mapPrismaDiagramToRecord(row);
+    }
+    async deleteDiagramByIdAndOwnerId(id, ownerId) {
+        const result = await this.prisma.diagram.deleteMany({
+            where: { id, ownerId },
+        });
+        return result.count > 0;
+    }
+    async insertDiagramFavorite(userId, diagramId) {
+        await this.prisma.$transaction(async (tx) => {
+            await tx.diagramFavorite.create({
+                data: {
+                    userId,
+                    diagramId,
+                },
+            });
+            await tx.diagram.update({
+                where: { id: diagramId },
+                data: {
+                    favoriteCount: {
+                        increment: 1,
+                    },
+                },
+            });
+        });
     }
     async selectPublicDiagramsByQuery(searchTerm, take) {
         const rows = await this.prisma.diagram.findMany({
@@ -321,6 +361,7 @@ let DiagramRepository = class DiagramRepository {
                 title: true,
                 ownerId: true,
                 visibility: true,
+                favoriteCount: true,
                 createdAt: true,
                 updatedAt: true,
                 _count: { select: { nodes: true } },
@@ -333,6 +374,7 @@ let DiagramRepository = class DiagramRepository {
             visibility: r.visibility,
             accessRole: 'viewer',
             nodeCount: r._count.nodes,
+            favoriteCount: r.favoriteCount,
             createdAt: r.createdAt,
             updatedAt: r.updatedAt,
         }));

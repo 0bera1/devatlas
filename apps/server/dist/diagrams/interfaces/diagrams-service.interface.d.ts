@@ -15,11 +15,15 @@ export interface SaveDiagramGraphCommand {
         readonly type: string;
         readonly x: number;
         readonly y: number;
+        readonly width?: number | null;
+        readonly height?: number | null;
     }[];
     readonly edges: readonly {
         readonly from: string;
         readonly to: string;
         readonly label?: string | null;
+        readonly type?: string | null;
+        readonly animated?: boolean;
     }[];
 }
 export interface IDiagramsService {
@@ -31,6 +35,8 @@ export interface IDiagramsService {
         title?: string;
         visibility?: Visibility;
     }): Promise<DiagramRecord>;
+    removeDiagram(ownerId: string, diagramId: string): Promise<void>;
+    addFavorite(userId: string, diagramId: string): Promise<void>;
     searchPublicDiagrams(rawQuery: string): Promise<PublicSearchDiagramHit[]>;
     getRelatedDiagrams(diagramId: string, viewerUserId: string | null): Promise<DiagramSummary[]>;
     addDiagramCollaboratorByEmail(ownerId: string, diagramId: string, email: string): Promise<DiagramCollaboratorEntry[]>;

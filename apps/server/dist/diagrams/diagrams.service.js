@@ -17,14 +17,17 @@ const common_1 = require("@nestjs/common");
 const client_1 = require("@prisma/client");
 const search_preview_1 = require("../documents/utils/search-preview");
 const user_repository_interface_1 = require("../users/interfaces/user-repository.interface");
+const user_activity_service_interface_1 = require("../user-activity/interfaces/user-activity-service.interface");
 const search_constants_1 = require("./constants/search.constants");
 const diagram_repository_interface_1 = require("./interfaces/diagram-repository.interface");
 let DiagramsService = class DiagramsService {
     diagramRepository;
     userRepository;
-    constructor(diagramRepository, userRepository) {
+    userActivityService;
+    constructor(diagramRepository, userRepository, userActivityService) {
         this.diagramRepository = diagramRepository;
         this.userRepository = userRepository;
+        this.userActivityService = userActivityService;
     }
     async createDiagram(ownerId, command) {
         const created = await this.diagramRepository.insertDiagram({
@@ -32,6 +35,7 @@ let DiagramsService = class DiagramsService {
             title: command.title,
             visibility: command.visibility,
         });
+        await this.userActivityService.recordActivity(ownerId);
         return { ...created, viewerAccess: 'owner' };
     }
     async listDiagramsForUser(userId) {
@@ -59,6 +63,8 @@ let DiagramsService = class DiagramsService {
             type: n.type,
             x: n.x,
             y: n.y,
+            width: n.width ?? null,
+            height: n.height ?? null,
         }));
         const edges = [];
         for (const e of command.edges) {
@@ -72,6 +78,8 @@ let DiagramsService = class DiagramsService {
                 fromNodeId: e.from,
                 toNodeId: e.to,
                 label: e.label,
+                type: e.type ?? 'smoothstep',
+                animated: e.animated ?? false,
             });
         }
         const updated = await this.diagramRepository.replaceDiagramGraph(diagramId, actorUserId, nodes, edges);
@@ -79,6 +87,7 @@ let DiagramsService = class DiagramsService {
             throw new common_1.NotFoundException(`Diagram with id "${diagramId}" not found`);
         }
         const viewerAccess = await this.resolveViewerAccess(updated, diagramId, actorUserId);
+        await this.userActivityService.recordActivity(actorUserId);
         return { ...updated, viewerAccess };
     }
     async patchDiagram(ownerId, diagramId, patch) {
@@ -90,6 +99,28 @@ let DiagramsService = class DiagramsService {
             throw new common_1.NotFoundException(`Diagram with id "${diagramId}" not found`);
         }
         return { ...updated, viewerAccess: 'owner' };
+    }
+    async addFavorite(userId, diagramId) {
+        const accessible = await this.diagramRepository.selectDiagramByIdForUser(diagramId, userId);
+        if (accessible === null) {
+            throw new common_1.NotFoundException(`Diagram with id "${diagramId}" not found`);
+        }
+        try {
+            await this.diagramRepository.insertDiagramFavorite(userId, diagramId);
+        }
+        catch (error) {
+            if (error instanceof client_1.Prisma.PrismaClientKnownRequestError &&
+                error.code === 'P2002') {
+                throw new common_1.ConflictException('Diagram already favorited');
+            }
+            throw error;
+        }
+    }
+    async removeDiagram(ownerId, diagramId) {
+        const removed = await this.diagramRepository.deleteDiagramByIdAndOwnerId(diagramId, ownerId);
+        if (!removed) {
+            throw new common_1.NotFoundException(`Diagram with id "${diagramId}" not found`);
+        }
     }
     async searchPublicDiagrams(rawQuery) {
         const trimmed = rawQuery.trim();
@@ -182,6 +213,7 @@ exports.DiagramsService = DiagramsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)(diagram_repository_interface_1.DIAGRAM_REPOSITORY)),
     __param(1, (0, common_1.Inject)(user_repository_interface_1.USER_REPOSITORY)),
-    __metadata("design:paramtypes", [Object, Object])
+    __param(2, (0, common_1.Inject)(user_activity_service_interface_1.USER_ACTIVITY_SERVICE)),
+    __metadata("design:paramtypes", [Object, Object, Object])
 ], DiagramsService);
 //# sourceMappingURL=diagrams.service.js.map

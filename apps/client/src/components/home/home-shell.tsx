@@ -58,6 +58,12 @@ export function HomeShell({ children }: { children: ReactNode }): ReactNode {
                   >
                     {t('nav.diagrams')}
                   </Link>
+                  <Link
+                    href="/profile"
+                    className="text-zinc-600 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50"
+                  >
+                    {t('nav.profile')}
+                  </Link>
                   <span className="hidden text-zinc-500 sm:inline dark:text-zinc-400">
                     {t('nav.sessionActive')}
                   </span>

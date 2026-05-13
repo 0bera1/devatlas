@@ -13,6 +13,7 @@ export declare class DiagramsController {
     private readonly authService;
     constructor(diagramsService: IDiagramsService, authService: IAuthService);
     create(req: Request, dto: CreateDiagramDto): Promise<DiagramRecord>;
+    favoriteDiagram(req: Request, id: string): Promise<void>;
     list(req: Request): Promise<DiagramSummary[]>;
     listCollaborators(req: Request, id: string): Promise<readonly DiagramCollaboratorEntry[]>;
     addCollaborator(req: Request, id: string, dto: AddDiagramCollaboratorDto): Promise<DiagramCollaboratorEntry[]>;
@@ -21,6 +22,7 @@ export declare class DiagramsController {
     getOne(req: Request, id: string): Promise<DiagramRecord>;
     saveGraph(req: Request, id: string, dto: SaveDiagramBodyDto): Promise<DiagramRecord>;
     patchDiagram(req: Request, id: string, dto: PatchDiagramDto): Promise<DiagramRecord>;
+    remove(req: Request, id: string): Promise<void>;
     private static requireUser;
     private static extractBearerToken;
 }

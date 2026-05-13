@@ -6,9 +6,11 @@ import {
   isNotFoundHttpError,
 } from '@/api/http/execute-request';
 import { CollaborationLiveStrip } from '@/components/collaboration/collaboration-live-strip';
+import { DocumentDangerZone } from '@/components/documents/document-danger-zone';
 import { DocumentEditorSkeleton } from '@/components/documents/document-editor-skeleton';
 import { DocumentRelatedSection } from '@/components/documents/document-related-section';
 import { DocumentsRoadmap } from '@/components/documents/documents-roadmap';
+import { InterviewQuestionsSection } from '@/components/documents/interview-questions/interview-questions-section';
 import { useAuth } from '@/components/providers/auth-provider';
 import { useToast } from '@/components/providers/toast-provider';
 import type { DocumentVisibility } from '@/domains/documentsDomains';
@@ -483,6 +485,16 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
             documentId={documentId}
             enabled={hydrated && data !== undefined && data.id === documentId}
           />
+          <InterviewQuestionsSection
+            documentId={documentId}
+            enabled={hydrated && data !== undefined && data.id === documentId}
+          />
+          {canEdit ? (
+            <DocumentDangerZone
+              documentId={document.id}
+              documentTitle={document.title}
+            />
+          ) : null}
           <DocumentsRoadmap />
         </div>
       </div>

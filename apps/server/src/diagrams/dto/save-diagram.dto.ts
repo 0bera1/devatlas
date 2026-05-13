@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsIn,
   IsNumber,
   IsOptional,
@@ -22,7 +23,7 @@ export class SaveDiagramNodeBodyDto {
   public readonly label!: string;
 
   @IsString()
-  @IsIn(['text', 'db', 'service', 'api'])
+  @IsIn(['text', 'db', 'service', 'api', 'cache', 'queue'])
   public readonly type!: string;
 
   @IsNumber()
@@ -30,6 +31,14 @@ export class SaveDiagramNodeBodyDto {
 
   @IsNumber()
   public readonly y!: number;
+
+  @IsOptional()
+  @IsNumber()
+  public readonly width?: number;
+
+  @IsOptional()
+  @IsNumber()
+  public readonly height?: number;
 }
 
 export class SaveDiagramEdgeBodyDto {
@@ -47,6 +56,15 @@ export class SaveDiagramEdgeBodyDto {
   @IsString()
   @MaxLength(200)
   public readonly label?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['smoothstep', 'straight', 'step', 'default'])
+  public readonly type?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  public readonly animated?: boolean;
 }
 
 export class SaveDiagramBodyDto {

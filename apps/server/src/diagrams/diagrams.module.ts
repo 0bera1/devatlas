@@ -1,5 +1,6 @@
 import { Module, Provider, forwardRef } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
+import { UserActivityModule } from '../user-activity/user-activity.module';
 import { UsersModule } from '../users/users.module';
 import { DiagramRepository } from './diagram.repository';
 import { DiagramsController } from './diagrams.controller';
@@ -18,7 +19,7 @@ const diagramsServiceProvider: Provider = {
 };
 
 @Module({
-  imports: [forwardRef(() => AuthModule), UsersModule],
+  imports: [forwardRef(() => AuthModule), UsersModule, UserActivityModule],
   controllers: [DiagramsController],
   providers: [diagramRepositoryProvider, diagramsServiceProvider],
   exports: [diagramsServiceProvider],

@@ -4,4 +4,6 @@ export interface DiagramEdgeRecord {
     fromNodeId: string;
     toNodeId: string;
     label: string | null;
+    type: string | null;
+    animated: boolean;
 }

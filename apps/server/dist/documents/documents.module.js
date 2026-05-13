@@ -9,6 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentsModule = void 0;
 const common_1 = require("@nestjs/common");
 const auth_module_1 = require("../auth/auth.module");
+const intelligence_module_1 = require("../intelligence/intelligence.module");
+const user_activity_module_1 = require("../user-activity/user-activity.module");
 const document_repository_1 = require("./document.repository");
 const documents_controller_1 = require("./documents.controller");
 const documents_service_1 = require("./documents.service");
@@ -33,7 +35,7 @@ let DocumentsModule = class DocumentsModule {
 exports.DocumentsModule = DocumentsModule;
 exports.DocumentsModule = DocumentsModule = __decorate([
     (0, common_1.Module)({
-        imports: [(0, common_1.forwardRef)(() => auth_module_1.AuthModule)],
+        imports: [(0, common_1.forwardRef)(() => auth_module_1.AuthModule), intelligence_module_1.IntelligenceModule, user_activity_module_1.UserActivityModule],
         controllers: [documents_controller_1.DocumentsController],
         providers: [
             documentRepositoryProvider,

@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "Visibility" AS ENUM ('PUBLIC', 'PRIVATE');
+
 -- CreateTable
 CREATE TABLE "Diagram" (
     "id" TEXT NOT NULL,

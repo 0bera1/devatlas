@@ -12,6 +12,7 @@ export interface DiagramRecord {
   viewerAccess: DiagramViewerAccess;
   nodes: DiagramNodeRecord[];
   edges: DiagramEdgeRecord[];
+  favoriteCount: number;
   createdAt: Date;
   updatedAt: Date;
 }

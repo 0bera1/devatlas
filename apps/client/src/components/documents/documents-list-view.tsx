@@ -1,6 +1,8 @@
 'use client';
 
-import { isHttpNetworkError, isNotFoundHttpError } from '@/api/http/execute-request';
+import { isHttpNetworkError } from '@/api/http/execute-request';
+import { AutoTagSuggester } from '@/components/documents/auto-tag/auto-tag-suggester';
+import { DocumentsListRow } from '@/components/documents/documents-list-row';
 import { DocumentsListSkeleton } from '@/components/documents/documents-list-skeleton';
 import { DocumentsRoadmap } from '@/components/documents/documents-roadmap';
 import { useToast } from '@/components/providers/toast-provider';
@@ -8,18 +10,15 @@ import {
   useCreateDocumentMutation,
 } from '@/features/documents/mutations/useDocumentMutation';
 import { useDocumentsListQuery } from '@/features/documents/queries/useDocument';
-import { useFormatDocumentDate } from '@/hooks/use-format-document-date';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useTranslations } from '@/hooks/use-translations';
 import type { DocumentRecord, DocumentVisibility } from '@/domains/documentsDomains';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { FormEvent, ReactNode } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 
 export function DocumentsListView(): ReactNode {
   const { t } = useTranslations();
-  const formatUpdatedAt = useFormatDocumentDate();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
   const { canRender } = useRequireAuth();
@@ -86,6 +85,24 @@ export function DocumentsListView(): ReactNode {
     setSearchInput('');
     setAppliedQ(null);
     setPageState(1);
+  }, []);
+
+  const appendTagToCsv = useCallback((tag: string): void => {
+    const normalized: string = tag.trim().toLowerCase();
+    if (normalized.length === 0) {
+      return;
+    }
+    setNewTagsInput((current: string) => {
+      const existingParts: string[] = current
+        .split(',')
+        .map((part: string) => part.trim().toLowerCase())
+        .filter((part: string) => part.length > 0);
+      if (existingParts.includes(normalized)) {
+        return current;
+      }
+      const nextParts: string[] = [...existingParts, normalized];
+      return nextParts.join(', ');
+    });
   }, []);
 
   const onCreateSubmit = useCallback(
@@ -260,6 +277,10 @@ export function DocumentsListView(): ReactNode {
                 <p className="text-xs text-zinc-500 dark:text-zinc-400">
                   {t('documents.list.tagsHint')}
                 </p>
+                <AutoTagSuggester
+                  title={newTitle}
+                  onTagAccepted={appendTagToCsv}
+                />
               </div>
               <div className="flex flex-col gap-1">
                 <label className="block">
@@ -364,36 +385,7 @@ export function DocumentsListView(): ReactNode {
               <ul className="flex flex-col gap-2">
                 {items.map((doc: DocumentRecord) => (
                   <li key={doc.id}>
-                    <Link
-                      href={`/documents/${doc.id}`}
-                      className="flex flex-col rounded-2xl border border-zinc-200 bg-white px-4 py-3 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950/40 dark:hover:border-zinc-600 dark:hover:bg-zinc-900/50 sm:flex-row sm:items-center sm:justify-between"
-                    >
-                      <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
-                        <span className="font-medium text-zinc-950 dark:text-zinc-50">
-                          {doc.title}
-                        </span>
-                        <span
-                          className={
-                            doc.visibility === 'PUBLIC'
-                              ? 'shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-200'
-                              : 'shrink-0 rounded-full bg-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:bg-zinc-700 dark:text-zinc-100'
-                          }
-                        >
-                          {doc.visibility === 'PUBLIC'
-                            ? t('documents.visibilityPublic')
-                            : t('documents.visibilityPrivate')}
-                        </span>
-                        {doc.category !== null ? (
-                          <span className="shrink-0 rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-900 dark:bg-sky-950/50 dark:text-sky-200">
-                            {doc.category.name}
-                          </span>
-                        ) : null}
-                      </div>
-                      <span className="mt-1 text-xs text-zinc-500 sm:mt-0 sm:text-right">
-                        {t('documents.list.updated')}:{' '}
-                        {formatUpdatedAt(doc.updatedAt)}
-                      </span>
-                    </Link>
+                    <DocumentsListRow document={doc} />
                   </li>
                 ))}
               </ul>

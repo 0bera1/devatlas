@@ -1,21 +1,20 @@
 'use client';
 
 import { isHttpNetworkError } from '@/api/http/execute-request';
+import { DiagramsListRow } from '@/components/diagrams/diagrams-list-row';
+import { GenerateDiagramForm } from '@/components/diagrams/generate/generate-diagram-form';
 import { useCreateDiagramMutation } from '@/features/diagrams/mutations/useDiagramMutation';
 import { useDiagramsListQuery } from '@/features/diagrams/queries/useDiagram';
-import { useFormatDocumentDate } from '@/hooks/use-format-document-date';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useTranslations } from '@/hooks/use-translations';
 import type { DocumentVisibility } from '@/domains/documentsDomains';
 import type { DiagramSummary } from '@/domains/diagramDomains';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import type { FormEvent, ReactNode } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 
 export function DiagramsListView(): ReactNode {
   const { t } = useTranslations();
-  const formatUpdatedAt = useFormatDocumentDate();
   const router = useRouter();
   const { canRender } = useRequireAuth();
 
@@ -146,6 +145,8 @@ export function DiagramsListView(): ReactNode {
         ) : null}
       </section>
 
+      <GenerateDiagramForm />
+
       <div className="flex justify-end">
         <button
           type="button"
@@ -173,32 +174,7 @@ export function DiagramsListView(): ReactNode {
         <ul className="flex flex-col gap-2">
           {items.map((d: DiagramSummary) => (
             <li key={d.id}>
-              <Link
-                href={`/diagrams/${d.id}`}
-                className="flex flex-col rounded-2xl border border-zinc-200 bg-white px-4 py-3 transition-colors hover:border-violet-300 hover:bg-violet-50/40 dark:border-zinc-800 dark:hover:border-violet-800 dark:hover:bg-zinc-900/50 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-medium text-zinc-950 dark:text-zinc-50">
-                    {d.title}
-                  </span>
-                  {d.accessRole === 'collaborator' ? (
-                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-900 dark:bg-amber-950/60 dark:text-amber-200">
-                      {t('diagrams.list.sharedBadge')}
-                    </span>
-                  ) : null}
-                  {d.visibility === 'PUBLIC' ? (
-                    <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-200">
-                      {t('documents.visibilityPublic')}
-                    </span>
-                  ) : null}
-                  <span className="ml-0 text-xs text-zinc-500 sm:ml-2">
-                    {d.nodeCount} {t('diagrams.list.nodes')}
-                  </span>
-                </div>
-                <span className="mt-1 text-xs text-zinc-500 sm:mt-0">
-                  {t('documents.list.updated')}: {formatUpdatedAt(d.updatedAt)}
-                </span>
-              </Link>
+              <DiagramsListRow diagram={d} />
             </li>
           ))}
         </ul>

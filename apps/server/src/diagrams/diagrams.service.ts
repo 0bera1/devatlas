@@ -14,6 +14,10 @@ import {
   type IUserRepository,
 } from '../users/interfaces/user-repository.interface';
 import {
+  USER_ACTIVITY_SERVICE,
+  type IUserActivityService,
+} from '../user-activity/interfaces/user-activity-service.interface';
+import {
   RELATED_DIAGRAMS_LIMIT,
   SEARCH_DIAGRAMS_LIMIT,
 } from './constants/search.constants';
@@ -42,6 +46,8 @@ export class DiagramsService implements IDiagramsService {
     private readonly diagramRepository: IDiagramRepository,
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
+    @Inject(USER_ACTIVITY_SERVICE)
+    private readonly userActivityService: IUserActivityService,
   ) {}
 
   public async createDiagram(
@@ -53,6 +59,9 @@ export class DiagramsService implements IDiagramsService {
       title: command.title,
       visibility: command.visibility,
     });
+
+    await this.userActivityService.recordActivity(ownerId);
+
     return { ...created, viewerAccess: 'owner' };
   }
 
@@ -100,6 +109,8 @@ export class DiagramsService implements IDiagramsService {
         type: n.type,
         x: n.x,
         y: n.y,
+        width: n.width ?? null,
+        height: n.height ?? null,
       }),
     );
 
@@ -117,6 +128,8 @@ export class DiagramsService implements IDiagramsService {
         fromNodeId: e.from,
         toNodeId: e.to,
         label: e.label,
+        type: e.type ?? 'smoothstep',
+        animated: e.animated ?? false,
       });
     }
 
@@ -137,6 +150,8 @@ export class DiagramsService implements IDiagramsService {
       diagramId,
       actorUserId,
     );
+
+    await this.userActivityService.recordActivity(actorUserId);
 
     return { ...updated, viewerAccess };
   }
@@ -164,6 +179,45 @@ export class DiagramsService implements IDiagramsService {
     }
 
     return { ...updated, viewerAccess: 'owner' };
+  }
+
+  public async addFavorite(
+    userId: string,
+    diagramId: string,
+  ): Promise<void> {
+    const accessible: DiagramRecord | null =
+      await this.diagramRepository.selectDiagramByIdForUser(diagramId, userId);
+
+    if (accessible === null) {
+      throw new NotFoundException(`Diagram with id "${diagramId}" not found`);
+    }
+
+    try {
+      await this.diagramRepository.insertDiagramFavorite(userId, diagramId);
+    } catch (error: unknown) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException('Diagram already favorited');
+      }
+      throw error;
+    }
+  }
+
+  public async removeDiagram(
+    ownerId: string,
+    diagramId: string,
+  ): Promise<void> {
+    const removed: boolean =
+      await this.diagramRepository.deleteDiagramByIdAndOwnerId(
+        diagramId,
+        ownerId,
+      );
+
+    if (!removed) {
+      throw new NotFoundException(`Diagram with id "${diagramId}" not found`);
+    }
   }
 
   public async searchPublicDiagrams(

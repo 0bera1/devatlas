@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "Node" ADD COLUMN "width" DOUBLE PRECISION,
+ADD COLUMN "height" DOUBLE PRECISION;
+
+-- AlterTable
+ALTER TABLE "Edge" ADD COLUMN "type" TEXT,
+ADD COLUMN "animated" BOOLEAN NOT NULL DEFAULT false;

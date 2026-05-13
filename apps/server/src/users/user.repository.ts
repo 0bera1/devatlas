@@ -8,6 +8,7 @@ import type { PublicUser } from './interfaces/public-user.interface';
 import type {
   CreateUserData,
   IUserRepository,
+  UpdateUserProfileData,
 } from './interfaces/user-repository.interface';
 
 const publicUserSelect = {
@@ -77,6 +78,55 @@ export class UserRepository implements IUserRepository {
     });
 
     return UserRepository.mapToPublicUser(removed);
+  }
+
+  public async updateProfileById(
+    id: string,
+    patch: UpdateUserProfileData,
+  ): Promise<PublicUser | null> {
+    const data: Prisma.UserUpdateInput = {};
+    if (patch.name !== undefined) {
+      data.name = patch.name;
+    }
+    if (patch.birthDate !== undefined) {
+      data.birthDate = patch.birthDate;
+    }
+    if (Object.keys(data).length === 0) {
+      return this.findById(id);
+    }
+
+    const existing: { id: string } | null = await this.prisma.user.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+    if (existing === null) {
+      return null;
+    }
+
+    return this.prisma.user.update({
+      where: { id },
+      data,
+      select: publicUserSelect,
+    });
+  }
+
+  public async updatePasswordHashById(
+    id: string,
+    newPasswordHash: string,
+  ): Promise<boolean> {
+    const result = await this.prisma.user.updateMany({
+      where: { id },
+      data: { password: newPasswordHash },
+    });
+    return result.count > 0;
+  }
+
+  public async selectPasswordHashById(id: string): Promise<string | null> {
+    const row: { password: string } | null = await this.prisma.user.findUnique({
+      where: { id },
+      select: { password: true },
+    });
+    return row === null ? null : row.password;
   }
 
   private static mapToPublicUser(user: User): PublicUser {

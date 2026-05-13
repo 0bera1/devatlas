@@ -18,6 +18,8 @@ class SaveDiagramNodeBodyDto {
     type;
     x;
     y;
+    width;
+    height;
 }
 exports.SaveDiagramNodeBodyDto = SaveDiagramNodeBodyDto;
 __decorate([
@@ -34,7 +36,7 @@ __decorate([
 ], SaveDiagramNodeBodyDto.prototype, "label", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsIn)(['text', 'db', 'service', 'api']),
+    (0, class_validator_1.IsIn)(['text', 'db', 'service', 'api', 'cache', 'queue']),
     __metadata("design:type", String)
 ], SaveDiagramNodeBodyDto.prototype, "type", void 0);
 __decorate([
@@ -45,10 +47,22 @@ __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], SaveDiagramNodeBodyDto.prototype, "y", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SaveDiagramNodeBodyDto.prototype, "width", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], SaveDiagramNodeBodyDto.prototype, "height", void 0);
 class SaveDiagramEdgeBodyDto {
     from;
     to;
     label;
+    type;
+    animated;
 }
 exports.SaveDiagramEdgeBodyDto = SaveDiagramEdgeBodyDto;
 __decorate([
@@ -69,6 +83,17 @@ __decorate([
     (0, class_validator_1.MaxLength)(200),
     __metadata("design:type", String)
 ], SaveDiagramEdgeBodyDto.prototype, "label", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsIn)(['smoothstep', 'straight', 'step', 'default']),
+    __metadata("design:type", String)
+], SaveDiagramEdgeBodyDto.prototype, "type", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], SaveDiagramEdgeBodyDto.prototype, "animated", void 0);
 class SaveDiagramBodyDto {
     nodes;
     edges;

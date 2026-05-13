@@ -37,6 +37,10 @@ let DiagramsController = DiagramsController_1 = class DiagramsController {
             visibility: dto.visibility,
         });
     }
+    async favoriteDiagram(req, id) {
+        const user = DiagramsController_1.requireUser(req);
+        await this.diagramsService.addFavorite(user.id, id);
+    }
     async list(req) {
         const owner = DiagramsController_1.requireUser(req);
         return this.diagramsService.listDiagramsForUser(owner.id);
@@ -76,6 +80,10 @@ let DiagramsController = DiagramsController_1 = class DiagramsController {
             visibility: dto.visibility,
         });
     }
+    async remove(req, id) {
+        const owner = DiagramsController_1.requireUser(req);
+        await this.diagramsService.removeDiagram(owner.id, id);
+    }
     static requireUser(req) {
         if (req.user === undefined) {
             throw new common_1.UnauthorizedException();
@@ -104,6 +112,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, create_diagram_dto_1.CreateDiagramDto]),
     __metadata("design:returntype", Promise)
 ], DiagramsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Post)(':id/favorite'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], DiagramsController.prototype, "favoriteDiagram", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Req)()),
@@ -174,6 +191,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, patch_diagram_dto_1.PatchDiagramDto]),
     __metadata("design:returntype", Promise)
 ], DiagramsController.prototype, "patchDiagram", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], DiagramsController.prototype, "remove", null);
 exports.DiagramsController = DiagramsController = DiagramsController_1 = __decorate([
     (0, common_1.Controller)('diagrams'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

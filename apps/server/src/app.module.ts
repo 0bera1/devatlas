@@ -6,9 +6,12 @@ import { AuthModule } from './auth/auth.module';
 import { DiagramsModule } from './diagrams/diagrams.module';
 import { DocumentsModule } from './documents/documents.module';
 import { FeedModule } from './feed/feed.module';
+import { IntelligenceModule } from './intelligence/intelligence.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { ProfileModule } from './profile/profile.module';
 import { SearchModule } from './search/search.module';
 import { SystemContentModule } from './system-content/system-content.module';
+import { UserActivityModule } from './user-activity/user-activity.module';
 import { UsersModule } from './users/users.module';
 import { CollaborationModule } from './collaboration/collaboration.module';
 
@@ -21,9 +24,12 @@ import { CollaborationModule } from './collaboration/collaboration.module';
     DocumentsModule,
     DiagramsModule,
     CollaborationModule,
+    IntelligenceModule,
     FeedModule,
     SearchModule,
     SystemContentModule,
+    UserActivityModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

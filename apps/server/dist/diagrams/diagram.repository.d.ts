@@ -19,6 +19,8 @@ export declare class DiagramRepository implements IDiagramRepository {
         title?: string;
         visibility?: Visibility;
     }): Promise<DiagramRecord | null>;
+    deleteDiagramByIdAndOwnerId(id: string, ownerId: string): Promise<boolean>;
+    insertDiagramFavorite(userId: string, diagramId: string): Promise<void>;
     selectPublicDiagramsByQuery(searchTerm: string, take: number): Promise<DiagramSearchRow[]>;
     selectPublicRelatedDiagramsBySharedNodeLabels(sourceDiagramId: string, take: number): Promise<DiagramSummary[]>;
     insertDiagramCollaborator(diagramId: string, userId: string): Promise<void>;

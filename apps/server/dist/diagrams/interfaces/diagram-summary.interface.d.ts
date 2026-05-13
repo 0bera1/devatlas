@@ -7,6 +7,7 @@ export interface DiagramSummary {
     visibility: DocumentVisibility;
     accessRole: DiagramListAccessRole;
     nodeCount: number;
+    favoriteCount: number;
     createdAt: Date;
     updatedAt: Date;
 }

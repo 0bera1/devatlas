@@ -1,7 +1,9 @@
 'use client';
 
+import { DiagramMethods } from '@/api/MethodNames';
 import { diagramApi } from '@/api/diagrams/diagramApi';
 import { diagramQueryKeys } from '@/api/query/diagram-query-keys';
+import { profileQueryKeys } from '@/api/query/profile-query-keys';
 import { useAuth } from '@/components/providers/auth-provider';
 import type {
   CreateDiagramBody,
@@ -134,6 +136,54 @@ export function useAddDiagramCollaboratorMutation(): UseMutationResult<
     },
     onSettled: async (_d, _e, variables) => {
       await invalidateDiagramCaches(queryClient, variables.diagramId);
+    },
+  });
+}
+
+export function useDeleteDiagramMutation(): UseMutationResult<
+  void,
+  Error,
+  string
+> {
+  const queryClient = useQueryClient();
+  const { token } = useAuth();
+
+  return useMutation({
+    mutationKey: [DiagramMethods.Delete],
+    mutationFn: async (diagramId: string): Promise<void> => {
+      if (token === null) {
+        throw new Error('Unauthenticated');
+      }
+      await diagramApi.remove(token, diagramId);
+    },
+    onSettled: async (_d, _e, diagramId) => {
+      await invalidateDiagramCaches(queryClient, diagramId);
+      await queryClient.invalidateQueries({ queryKey: ['search'] });
+    },
+  });
+}
+
+export function useFavoriteDiagramMutation(): UseMutationResult<
+  void,
+  Error,
+  string
+> {
+  const queryClient = useQueryClient();
+  const { token } = useAuth();
+
+  return useMutation({
+    mutationKey: [DiagramMethods.FavoriteDiagram],
+    mutationFn: async (diagramId: string): Promise<void> => {
+      if (token === null) {
+        throw new Error('Unauthenticated');
+      }
+      await diagramApi.favorite(token, diagramId);
+    },
+    onSettled: async (_d, _e, diagramId) => {
+      await invalidateDiagramCaches(queryClient, diagramId);
+      await queryClient.invalidateQueries({
+        queryKey: profileQueryKeys.favoriteDiagrams(),
+      });
     },
   });
 }

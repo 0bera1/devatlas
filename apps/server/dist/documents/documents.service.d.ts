@@ -1,4 +1,6 @@
 import { type Visibility } from '@prisma/client';
+import { type IIntelligenceService } from '../intelligence/interfaces/intelligence-service.interface';
+import { type IUserActivityService } from '../user-activity/interfaces/user-activity-service.interface';
 import type { DocumentRecord } from './interfaces/document-record.interface';
 import type { PublicSearchDocumentHit } from './interfaces/public-search-hit.interface';
 import { type IDocumentRepository } from './interfaces/document-repository.interface';
@@ -8,8 +10,11 @@ import type { CreateDocumentCommand, IDocumentsService, ListDocumentsParams } fr
 export declare class DocumentsService implements IDocumentsService {
     private readonly documentRepository;
     private readonly engagementRepository;
-    constructor(documentRepository: IDocumentRepository, engagementRepository: IEngagementRepository);
+    private readonly intelligenceService;
+    private readonly userActivityService;
+    constructor(documentRepository: IDocumentRepository, engagementRepository: IEngagementRepository, intelligenceService: IIntelligenceService, userActivityService: IUserActivityService);
     createDocument(ownerId: string, command: CreateDocumentCommand): Promise<DocumentRecord>;
+    private resolveCreationTagNames;
     listDocuments(ownerId: string, params: ListDocumentsParams): Promise<PaginatedDocumentList>;
     listPublicDocuments(): Promise<DocumentRecord[]>;
     getDocument(userId: string, id: string): Promise<DocumentRecord>;

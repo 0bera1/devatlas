@@ -15,11 +15,15 @@ export interface SaveDiagramGraphInputNode {
     readonly type: string;
     readonly x: number;
     readonly y: number;
+    readonly width?: number | null;
+    readonly height?: number | null;
 }
 export interface SaveDiagramGraphInputEdge {
     readonly fromNodeId: string;
     readonly toNodeId: string;
     readonly label?: string | null;
+    readonly type?: string | null;
+    readonly animated?: boolean;
 }
 export interface IDiagramRepository {
     insertDiagram(input: CreateDiagramInput): Promise<DiagramRecord>;
@@ -33,6 +37,8 @@ export interface IDiagramRepository {
         title?: string;
         visibility?: Visibility;
     }): Promise<DiagramRecord | null>;
+    deleteDiagramByIdAndOwnerId(id: string, ownerId: string): Promise<boolean>;
+    insertDiagramFavorite(userId: string, diagramId: string): Promise<void>;
     selectPublicDiagramsByQuery(searchTerm: string, take: number): Promise<DiagramSearchRow[]>;
     selectPublicRelatedDiagramsBySharedNodeLabels(sourceDiagramId: string, take: number): Promise<DiagramSummary[]>;
     insertDiagramCollaborator(diagramId: string, userId: string): Promise<void>;

@@ -72,6 +72,44 @@ let UserRepository = UserRepository_1 = class UserRepository {
         });
         return UserRepository_1.mapToPublicUser(removed);
     }
+    async updateProfileById(id, patch) {
+        const data = {};
+        if (patch.name !== undefined) {
+            data.name = patch.name;
+        }
+        if (patch.birthDate !== undefined) {
+            data.birthDate = patch.birthDate;
+        }
+        if (Object.keys(data).length === 0) {
+            return this.findById(id);
+        }
+        const existing = await this.prisma.user.findUnique({
+            where: { id },
+            select: { id: true },
+        });
+        if (existing === null) {
+            return null;
+        }
+        return this.prisma.user.update({
+            where: { id },
+            data,
+            select: publicUserSelect,
+        });
+    }
+    async updatePasswordHashById(id, newPasswordHash) {
+        const result = await this.prisma.user.updateMany({
+            where: { id },
+            data: { password: newPasswordHash },
+        });
+        return result.count > 0;
+    }
+    async selectPasswordHashById(id) {
+        const row = await this.prisma.user.findUnique({
+            where: { id },
+            select: { password: true },
+        });
+        return row === null ? null : row.password;
+    }
     static mapToPublicUser(user) {
         return {
             id: user.id,
