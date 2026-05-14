@@ -10,13 +10,10 @@ export interface DiagramCollaboratorEntry {
   name: string | null;
 }
 
-export type DiagramNodeKind =
-  | 'text'
-  | 'db'
-  | 'service'
-  | 'api'
-  | 'cache'
-  | 'queue';
+import type { DiagramNodeType } from '@/diagram-engine/model/diagram-core.types';
+
+/** @deprecated `DiagramNodeType` kullanın */
+export type { DiagramNodeType as DiagramNodeKind } from '@/diagram-engine/model/diagram-core.types';
 export type DiagramEdgeKind = 'smoothstep' | 'straight' | 'step' | 'default';
 
 export interface DiagramNodeRecord {
@@ -28,6 +25,10 @@ export interface DiagramNodeRecord {
   y: number;
   width: number | null;
   height: number | null;
+  /** Sunucu sürümü öncesi kayıtlarda olmayabilir. */
+  relatedDiagramId?: string | null;
+  /** Düğüm detay JSON’u (açıklama, markdown, etiketler, …); yoksa null. */
+  extras?: unknown | null;
 }
 
 export interface DiagramEdgeRecord {
@@ -68,11 +69,13 @@ export interface DiagramSummary {
 export type DiagramSaveNodeBody = {
   id: string;
   label: string;
-  type: DiagramNodeKind;
+  type: DiagramNodeType;
   x: number;
   y: number;
   width?: number | null;
   height?: number | null;
+  relatedDiagramId?: string | null;
+  extras?: Record<string, unknown> | null;
 };
 
 export interface DiagramSaveEdgeBody {

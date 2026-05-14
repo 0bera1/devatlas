@@ -6,6 +6,8 @@ export declare class SaveDiagramNodeBodyDto {
     readonly y: number;
     readonly width?: number;
     readonly height?: number;
+    readonly relatedDiagramId?: string | null;
+    readonly extras?: Record<string, unknown> | null;
 }
 export declare class SaveDiagramEdgeBodyDto {
     readonly from: string;

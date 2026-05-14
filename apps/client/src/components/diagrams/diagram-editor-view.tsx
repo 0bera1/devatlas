@@ -3,23 +3,24 @@
 import '@xyflow/react/dist/style.css';
 
 import {
-  addEdge,
   Background,
   BackgroundVariant,
   Controls,
-  type Connection,
   type Edge,
-  Handle,
-  MarkerType,
   MiniMap,
-  type Node,
-  NodeProps,
-  Position,
   ReactFlow,
   ReactFlowProvider,
-  useEdgesState,
-  useNodesState,
 } from '@xyflow/react';
+import { applyAtlasFlowPresentation } from '@/components/diagrams/flow/atlas-flow-presentation';
+import { useAtlasDiagramNodeTypes } from '@/components/diagrams/flow/atlas-diagram-node-views';
+import { DiagramCanvasHoverCard } from '@/components/diagrams/flow/diagram-canvas-hover-card';
+import { DiagramCanvasToolbar } from '@/components/diagrams/flow/diagram-canvas-toolbar';
+import { DiagramEdgeDetailPanel } from '@/components/diagrams/flow/diagram-edge-detail-panel';
+import { LinkedDiagramModal } from '@/components/diagrams/flow/linked-diagram-modal';
+import {
+  ATLAS_NODE_DETAIL_PANEL_DOM_ID,
+  DiagramNodeDetailPanel,
+} from '@/components/diagrams/flow/diagram-node-detail-panel';
 import { isHttpNetworkError } from '@/api/http/execute-request';
 import { CollaborationLiveStrip } from '@/components/collaboration/collaboration-live-strip';
 import { DiagramCollaboratorsSection } from '@/components/diagrams/diagram-collaborators-section';
@@ -28,8 +29,27 @@ import { DiagramFavoriteButton } from '@/components/diagrams/diagram-favorite-bu
 import { DiagramRelatedSection } from '@/components/diagrams/diagram-related-section';
 import { useAuth } from '@/components/providers/auth-provider';
 import { useToast } from '@/components/providers/toast-provider';
+import { mapEngineGraphToSaveBody } from '@/diagram-engine/core/diagram-record.adapter';
+import {
+  ATLAS_DEFAULT_EDGE_OPTIONS,
+  type AtlasFlowNode,
+} from '@/diagram-engine/core/react-flow.adapter';
+import { DEFAULT_EDGE_ROUTING } from '@/diagram-engine/edges/diagram-edge.constants';
+import {
+  DiagramEditorStoreProvider,
+} from '@/diagram-engine/hooks/diagram-editor-store';
+import { useDiagramEditorCanvas } from '@/diagram-engine/hooks/use-diagram-editor-canvas';
+import { useDiagramEngine } from '@/diagram-engine/hooks/use-diagram-engine';
+import {
+  useSelectedEngineEdge,
+  useSelectedEngineNode,
+} from '@/diagram-engine/selectors/diagram-editor.selectors';
 import type { DocumentVisibility } from '@/domains/documentsDomains';
-import type { DiagramNodeKind, DiagramRecord } from '@/domains/diagramDomains';
+import type { DiagramRecord } from '@/domains/diagramDomains';
+import type {
+  DiagramEngineEdge,
+  DiagramEngineNode,
+} from '@/diagram-engine/types/diagram-engine.types';
 import {
   useDiagramByIdQuery,
 } from '@/features/diagrams/queries/useDiagram';
@@ -41,198 +61,12 @@ import {
   useDiagramRealtime,
   type RemoteNodeMovePayload,
 } from '@/hooks/use-diagram-realtime';
+import { useDiagramQueryHydration } from '@/hooks/use-diagram-query-hydration';
 import { useRequireAuth } from '@/hooks/use-require-auth';
 import { useTranslations } from '@/hooks/use-translations';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
-type AtlasEdgeType = 'smoothstep' | 'straight' | 'step' | 'default';
-
-type AtlasNodeData = {
-  label: string;
-  nodeType: DiagramNodeKind;
-};
-
-type AtlasNode = Node<AtlasNodeData, 'atlas'>;
-
-const DEFAULT_EDGE_TYPE: AtlasEdgeType = 'smoothstep';
-
-const NODE_TYPE_STYLES: Record<
-  DiagramNodeKind,
-  { readonly border: string; readonly badge: string; readonly accent: string }
-> = {
-  text: {
-    border: 'border-zinc-300 dark:border-zinc-700',
-    badge: 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200',
-    accent: 'bg-zinc-500',
-  },
-  api: {
-    border: 'border-violet-300 dark:border-violet-700',
-    badge:
-      'bg-violet-100 text-violet-800 dark:bg-violet-950/70 dark:text-violet-200',
-    accent: 'bg-violet-500',
-  },
-  service: {
-    border: 'border-sky-300 dark:border-sky-700',
-    badge: 'bg-sky-100 text-sky-800 dark:bg-sky-950/70 dark:text-sky-200',
-    accent: 'bg-sky-500',
-  },
-  db: {
-    border: 'border-emerald-300 dark:border-emerald-700',
-    badge:
-      'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-200',
-    accent: 'bg-emerald-500',
-  },
-  cache: {
-    border: 'border-amber-300 dark:border-amber-700',
-    badge:
-      'bg-amber-100 text-amber-800 dark:bg-amber-950/70 dark:text-amber-200',
-    accent: 'bg-amber-500',
-  },
-  queue: {
-    border: 'border-fuchsia-300 dark:border-fuchsia-700',
-    badge:
-      'bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-950/70 dark:text-fuchsia-200',
-    accent: 'bg-fuchsia-500',
-  },
-};
-
-function parseNodeType(raw: string): DiagramNodeKind {
-  switch (raw) {
-    case 'db':
-    case 'service':
-    case 'api':
-    case 'cache':
-    case 'queue':
-    case 'text':
-      return raw;
-    default:
-      return 'text';
-  }
-}
-
-function parseEdgeType(raw: string | null | undefined): AtlasEdgeType {
-  switch (raw) {
-    case 'straight':
-    case 'step':
-    case 'default':
-    case 'smoothstep':
-      return raw;
-    default:
-      return DEFAULT_EDGE_TYPE;
-  }
-}
-
-function mapRecordToFlow(record: DiagramRecord): {
-  nodes: AtlasNode[];
-  edges: Edge[];
-} {
-  const nodes: AtlasNode[] = record.nodes.map(
-    (n): AtlasNode => ({
-      id: n.id,
-      type: 'atlas',
-      position: { x: n.x, y: n.y },
-      width: n.width ?? undefined,
-      height: n.height ?? undefined,
-      data: {
-        label: n.label,
-        nodeType: parseNodeType(n.type),
-      },
-    }),
-  );
-
-  const edges: Edge[] = record.edges.map(
-    (e): Edge => ({
-      id: e.id,
-      source: e.fromNodeId,
-      target: e.toNodeId,
-      label: e.label ?? undefined,
-      type: parseEdgeType(e.type),
-      animated: e.animated,
-      markerEnd: { type: MarkerType.ArrowClosed },
-    }),
-  );
-
-  return { nodes, edges };
-}
-
-function mapFlowToSaveBody(
-  nodes: AtlasNode[],
-  edges: Edge[],
-): {
-  nodes: {
-    id: string;
-    label: string;
-    type: DiagramNodeKind;
-    x: number;
-    y: number;
-    width?: number | null;
-    height?: number | null;
-  }[];
-  edges: {
-    from: string;
-    to: string;
-    label?: string;
-    type?: AtlasEdgeType;
-    animated?: boolean;
-  }[];
-} {
-  return {
-    nodes: nodes.map((n) => ({
-      id: n.id,
-      label: n.data.label.trim().length > 0 ? n.data.label.trim() : '…',
-      type: n.data.nodeType,
-      x: n.position.x,
-      y: n.position.y,
-      width: n.width ?? null,
-      height: n.height ?? null,
-    })),
-    edges: edges.map((e) => ({
-      from: e.source,
-      to: e.target,
-      label:
-        e.label !== undefined && String(e.label).trim().length > 0
-          ? String(e.label).trim()
-          : undefined,
-      type: parseEdgeType(typeof e.type === 'string' ? e.type : undefined),
-      animated: e.animated ?? false,
-    })),
-  };
-}
-
-const AtlasNodeView = memo(function AtlasNodeView(
-  props: NodeProps<AtlasNode>,
-): ReactNode {
-  const { data } = props;
-  const style = NODE_TYPE_STYLES[data.nodeType];
-  return (
-    <div
-      className={`relative min-w-[148px] rounded-xl border-2 bg-white px-3 py-2 shadow-md dark:bg-zinc-900 ${style.border}`}
-    >
-      <Handle
-        type="target"
-        position={Position.Left}
-        className={`!h-3 !w-3 !border-2 !border-white dark:!border-zinc-900 ${style.accent}`}
-      />
-      <Handle
-        type="source"
-        position={Position.Right}
-        className={`!h-3 !w-3 !border-2 !border-white dark:!border-zinc-900 ${style.accent}`}
-      />
-      <div
-        className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${style.badge}`}
-      >
-        {data.nodeType}
-      </div>
-      <div className="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-        {data.label}
-      </div>
-    </div>
-  );
-});
-
-const nodeTypes = { atlas: AtlasNodeView };
+import type { MouseEvent, ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 interface DiagramEditorInnerProps {
   readonly diagramId: string;
@@ -246,6 +80,11 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
   const { canRender } = useRequireAuth();
 
   const draggingNodeIdRef = useRef<string | null>(null);
+  const [linkedModalDiagramId, setLinkedModalDiagramId] = useState<
+    string | null
+  >(null);
+
+  const engine = useDiagramEngine();
 
   const {
     data,
@@ -260,32 +99,63 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
   const { mutateAsync: patchDiagramAsync, isPending: visibilitySaving } =
     usePatchDiagramMutation();
 
-  const [nodes, setNodes, onNodesChange] = useNodesState<AtlasNode>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const {
+    graph,
+    hydrated,
+    selectedNodeId,
+    selectedEdgeId,
+    visibilityDraft,
+    editorCanvasMode,
+    flowNodes,
+    flowEdges,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    onViewportMoveEnd,
+  } = useDiagramEditorCanvas();
 
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
-  const [hydrated, setHydrated] = useState<boolean>(false);
-  const [visibilityDraft, setVisibilityDraft] =
-    useState<DocumentVisibility>('PRIVATE');
+  const selectedNode: DiagramEngineNode | undefined = useSelectedEngineNode();
+  const selectedEdge: DiagramEngineEdge | undefined = useSelectedEngineEdge();
+
+  const isReadOnlyCanvas: boolean = editorCanvasMode === 'view';
+
+  const nodeTypes = useAtlasDiagramNodeTypes();
+  const { nodes: presentedNodes, edges: presentedEdges } = useMemo(
+    () =>
+      applyAtlasFlowPresentation(
+        flowNodes,
+        flowEdges,
+        selectedNodeId,
+        selectedEdgeId,
+      ),
+    [flowEdges, flowNodes, selectedEdgeId, selectedNodeId],
+  );
+
+  const onNodeDoubleClick = useCallback(
+    (_event: MouseEvent, n: AtlasFlowNode): void => {
+      const link: string | undefined = n.data.relatedDiagramId?.trim();
+      if (link !== undefined && link.length > 0) {
+        setLinkedModalDiagramId(link);
+        return;
+      }
+      engine.selectNode(n.id);
+      requestAnimationFrame((): void => {
+        document
+          .getElementById(ATLAS_NODE_DETAIL_PANEL_DOM_ID)
+          ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    },
+    [engine],
+  );
 
   const onRemoteNodeMove = useCallback(
     (payload: RemoteNodeMovePayload): void => {
       if (draggingNodeIdRef.current === payload.nodeId) {
         return;
       }
-      setNodes((prev: AtlasNode[]) =>
-        prev.map((n: AtlasNode): AtlasNode =>
-          n.id === payload.nodeId
-            ? {
-                ...n,
-                position: { x: payload.x, y: payload.y },
-              }
-            : n,
-        ),
-      );
+      engine.remoteNodePosition(payload.nodeId, payload.x, payload.y);
     },
-    [setNodes],
+    [engine],
   );
 
   const realtimeEnabled: boolean = canRender && hydrated;
@@ -297,53 +167,26 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
       onRemoteNodeMove,
     );
 
-  useEffect(() => {
-    if (data === undefined || data.id !== diagramId) {
-      setHydrated(false);
-      return;
-    }
-    const mapped = mapRecordToFlow(data);
-    setNodes(mapped.nodes);
-    setEdges(mapped.edges);
-    setVisibilityDraft(data.visibility);
-    setHydrated(true);
-    setSelectedId(null);
-    setSelectedEdgeId(null);
-  }, [data, diagramId, setEdges, setNodes]);
+  useDiagramQueryHydration(data, diagramId, engine);
 
-  const onConnect = useCallback(
-    (params: Connection): void => {
-      if (params.source === null || params.target === null) {
-        return;
+  useEffect((): (() => void) => {
+    const handler = (e: Event): void => {
+      const id: string = String(
+        (e as CustomEvent<string>).detail ?? '',
+      ).trim();
+      if (id.length > 0) {
+        setLinkedModalDiagramId(id);
       }
-      setEdges((eds) =>
-        addEdge(
-          {
-            ...params,
-            type: DEFAULT_EDGE_TYPE,
-            animated: false,
-            markerEnd: { type: MarkerType.ArrowClosed },
-          },
-          eds,
-        ),
-      );
-    },
-    [setEdges],
-  );
-
-  const selectedNode: AtlasNode | undefined = useMemo(
-    () => nodes.find((n: AtlasNode): boolean => n.id === selectedId),
-    [nodes, selectedId],
-  );
-
-  const selectedEdge: Edge | undefined = useMemo(
-    () => edges.find((edge: Edge): boolean => edge.id === selectedEdgeId),
-    [edges, selectedEdgeId],
-  );
+    };
+    window.addEventListener('atlas-open-linked-diagram', handler);
+    return (): void => {
+      window.removeEventListener('atlas-open-linked-diagram', handler);
+    };
+  }, []);
 
   const onSave = useCallback(async (): Promise<void> => {
     try {
-      const body = mapFlowToSaveBody(nodes, edges);
+      const body = mapEngineGraphToSaveBody(graph);
       for (const n of body.nodes) {
         if (n.label.trim().length === 0 || n.label === '…') {
           showError(t('diagrams.editor.labelRequired'));
@@ -360,145 +203,111 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
           : t('diagrams.editor.saveFailed');
       showError(msg);
     }
-  }, [diagramId, edges, nodes, saveGraph, showError, showSuccess, t]);
+  }, [diagramId, graph, saveGraph, showError, showSuccess, t]);
 
   const addNode = useCallback((): void => {
     const id: string = crypto.randomUUID();
-    setNodes((nds: AtlasNode[]) => {
-      return [
-        ...nds,
-        {
-          id,
-          type: 'atlas',
-          position: { x: 80 + nds.length * 28, y: 80 + nds.length * 22 },
-          data: {
-            label: t('diagrams.editor.defaultNodeLabel'),
-            nodeType: 'text',
-          },
-        },
-      ];
-    });
-    setSelectedId(id);
-    setSelectedEdgeId(null);
-  }, [setNodes, t]);
+    const count: number = graph.nodes.length;
+    const node: DiagramEngineNode = {
+      id,
+      position: { x: 80 + count * 28, y: 80 + count * 22 },
+      data: {
+        title: t('diagrams.editor.defaultNodeLabel'),
+        type: 'text',
+      },
+    };
+    engine.addNode(node);
+  }, [engine, graph.nodes.length, t]);
 
   const deleteSelectedNode = useCallback((): void => {
-    if (selectedId === null) {
+    if (selectedNodeId === null) {
       return;
     }
-    setNodes((prev: AtlasNode[]) =>
-      prev.filter((node: AtlasNode): boolean => node.id !== selectedId),
-    );
-    setEdges((prev: Edge[]) =>
-      prev.filter(
-        (edge: Edge): boolean =>
-          edge.source !== selectedId && edge.target !== selectedId,
-      ),
-    );
-    setSelectedId(null);
-  }, [selectedId, setEdges, setNodes]);
+    engine.deleteNode(selectedNodeId);
+  }, [engine, selectedNodeId]);
 
   const deleteSelectedEdge = useCallback((): void => {
     if (selectedEdgeId === null) {
       return;
     }
-    setEdges((prev: Edge[]) =>
-      prev.filter((edge: Edge): boolean => edge.id !== selectedEdgeId),
-    );
-    setSelectedEdgeId(null);
-  }, [selectedEdgeId, setEdges]);
+    engine.deleteEdge(selectedEdgeId);
+  }, [engine, selectedEdgeId]);
 
   const addCacheAfterSelectedApi = useCallback((): void => {
-    if (selectedNode === undefined || selectedNode.data.nodeType !== 'api') {
+    if (selectedNode === undefined || selectedNode.data.type !== 'api') {
       return;
     }
     const cacheNodeId: string = crypto.randomUUID();
-    setNodes((prev: AtlasNode[]) => [
-      ...prev,
-      {
-        id: cacheNodeId,
-        type: 'atlas',
-        position: {
-          x: selectedNode.position.x + 260,
-          y: selectedNode.position.y,
-        },
-        data: {
-          label: 'Redis',
-          nodeType: 'cache',
-        },
+    const cacheNode: DiagramEngineNode = {
+      id: cacheNodeId,
+      position: {
+        x: selectedNode.position.x + 260,
+        y: selectedNode.position.y,
       },
-    ]);
-    setEdges((prev: Edge[]) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        source: selectedNode.id,
-        target: cacheNodeId,
-        label: 'cache',
-        type: DEFAULT_EDGE_TYPE,
-        animated: true,
-        markerEnd: { type: MarkerType.ArrowClosed },
+      data: {
+        title: 'Redis',
+        type: 'cache',
       },
-    ]);
-    setSelectedId(cacheNodeId);
-    setSelectedEdgeId(null);
-  }, [selectedNode, setEdges, setNodes]);
+    };
+    const edge: DiagramEngineEdge = {
+      id: crypto.randomUUID(),
+      source: selectedNode.id,
+      target: cacheNodeId,
+      label: 'cache',
+      routing: DEFAULT_EDGE_ROUTING,
+      appearance: 'animated',
+    };
+    engine.addNode(cacheNode);
+    engine.addEngineEdge(edge);
+  }, [engine, selectedNode]);
 
   const addDatabaseAfterSelectedCache = useCallback((): void => {
     if (
       selectedNode === undefined ||
-      (selectedNode.data.nodeType !== 'cache' &&
-        !selectedNode.data.label.toLowerCase().includes('redis'))
+      (selectedNode.data.type !== 'cache' &&
+        !selectedNode.data.title.toLowerCase().includes('redis'))
     ) {
       return;
     }
     const databaseNodeId: string = crypto.randomUUID();
-    setNodes((prev: AtlasNode[]) => [
-      ...prev,
-      {
-        id: databaseNodeId,
-        type: 'atlas',
-        position: {
-          x: selectedNode.position.x,
-          y: selectedNode.position.y + 180,
-        },
-        data: {
-          label: 'PostgreSQL',
-          nodeType: 'db',
-        },
+    const dbNode: DiagramEngineNode = {
+      id: databaseNodeId,
+      position: {
+        x: selectedNode.position.x,
+        y: selectedNode.position.y + 180,
       },
-    ]);
-    setEdges((prev: Edge[]) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        source: selectedNode.id,
-        target: databaseNodeId,
-        label: 'fallback',
-        type: DEFAULT_EDGE_TYPE,
-        animated: false,
-        markerEnd: { type: MarkerType.ArrowClosed },
+      data: {
+        title: 'PostgreSQL',
+        type: 'database',
       },
-    ]);
-    setSelectedId(databaseNodeId);
-    setSelectedEdgeId(null);
-  }, [selectedNode, setEdges, setNodes]);
+    };
+    const edge: DiagramEngineEdge = {
+      id: crypto.randomUUID(),
+      source: selectedNode.id,
+      target: databaseNodeId,
+      label: 'fallback',
+      routing: DEFAULT_EDGE_ROUTING,
+      appearance: 'default',
+    };
+    engine.addNode(dbNode);
+    engine.addEngineEdge(edge);
+  }, [engine, selectedNode]);
 
   const onVisibilityChange = useCallback(
     async (next: DocumentVisibility): Promise<void> => {
       if (data === undefined || data.viewerAccess !== 'owner') {
         return;
       }
-      setVisibilityDraft(next);
+      engine.setVisibilityDraft(next);
       try {
         const record = await patchDiagramAsync({
           diagramId,
           body: { visibility: next },
         });
-        setVisibilityDraft(record.visibility);
+        engine.setVisibilityDraft(record.visibility);
         showSuccess(t('diagrams.editor.visibilitySaved'));
       } catch (err: unknown) {
-        setVisibilityDraft(data.visibility);
+        engine.setVisibilityDraft(data.visibility);
         const msg: string = isHttpNetworkError(err)
           ? t('errors.network')
           : err instanceof Error
@@ -510,6 +319,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
     [
       data,
       diagramId,
+      engine,
       patchDiagramAsync,
       showError,
       showSuccess,
@@ -557,6 +367,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
   const diagram: DiagramRecord = data;
 
   return (
+    <>
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-6 py-10 lg:py-14">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -636,8 +447,8 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_280px] lg:items-start">
-        <div className="relative h-[min(70vh,640px)] min-h-[420px] rounded-2xl border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/40">
+      <div className="grid gap-8 lg:grid-cols-[1fr_minmax(320px,420px)] lg:items-start">
+        <div className="relative h-[min(70vh,640px)] min-h-[420px] overflow-visible rounded-2xl border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/40">
           {connection === 'connected' && peerCount > 0 ? (
             <div
               className="pointer-events-none absolute right-3 top-3 z-10 flex items-center gap-1.5 rounded-full border border-emerald-200/90 bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-800 shadow-sm dark:border-emerald-800/80 dark:bg-zinc-950/95 dark:text-emerald-300"
@@ -650,222 +461,82 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
               {t('collaboration.canvasBadge')}
             </div>
           ) : null}
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            nodeTypes={nodeTypes}
-            onNodeDragStart={(_event, node: AtlasNode): void => {
-              draggingNodeIdRef.current = node.id;
-            }}
-            onNodeDrag={(_event, node: AtlasNode): void => {
-              emitNodeMove(node.id, node.position.x, node.position.y);
-            }}
-            onNodeDragStop={(): void => {
-              draggingNodeIdRef.current = null;
-            }}
-            onNodeClick={(_, n: AtlasNode): void => {
-              setSelectedId(n.id);
-              setSelectedEdgeId(null);
-            }}
-            onEdgeClick={(_, edge: Edge): void => {
-              setSelectedEdgeId(edge.id);
-              setSelectedId(null);
-            }}
-            onPaneClick={(): void => {
-              setSelectedId(null);
-              setSelectedEdgeId(null);
-            }}
-            fitView
-            className="rounded-2xl"
-          >
-            <Background variant={BackgroundVariant.Dots} gap={16} size={1} />
-            <Controls />
-            <MiniMap
-              zoomable
-              pannable
-              className="!bg-white/90 dark:!bg-zinc-950/90"
-            />
-          </ReactFlow>
+          {!hydrated ? (
+            <div className="flex h-full min-h-[420px] w-full items-center justify-center rounded-2xl text-sm text-zinc-500 dark:text-zinc-400">
+              {t('diagrams.editor.loading')}
+            </div>
+          ) : (
+            <ReactFlow
+              key={diagramId}
+              id={diagramId}
+              defaultEdgeOptions={ATLAS_DEFAULT_EDGE_OPTIONS}
+              nodes={presentedNodes}
+              edges={presentedEdges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              nodeTypes={nodeTypes}
+              onInit={(instance): void => {
+                void instance.fitView({ padding: 0.15 });
+              }}
+              onNodeDragStart={(_event, node: AtlasFlowNode): void => {
+                draggingNodeIdRef.current = node.id;
+              }}
+              onNodeDrag={(_event, node: AtlasFlowNode): void => {
+                emitNodeMove(node.id, node.position.x, node.position.y);
+              }}
+              onNodeDragStop={(): void => {
+                draggingNodeIdRef.current = null;
+              }}
+              onNodeClick={(_, n: AtlasFlowNode): void => {
+                engine.selectNode(n.id);
+              }}
+              onNodeDoubleClick={onNodeDoubleClick}
+              onEdgeClick={(_, edge: Edge): void => {
+                engine.selectEdge(edge.id);
+              }}
+              onPaneClick={(): void => {
+                engine.clearSelection();
+              }}
+              onMoveEnd={onViewportMoveEnd}
+              nodesDraggable={!isReadOnlyCanvas}
+              nodesConnectable={!isReadOnlyCanvas}
+              elementsSelectable={!isReadOnlyCanvas}
+              className="h-full w-full rounded-2xl"
+            >
+              <DiagramCanvasToolbar
+                selectedNodeId={selectedNodeId}
+                isReadOnlyCanvas={isReadOnlyCanvas}
+              />
+              <DiagramCanvasHoverCard graph={graph} />
+              <Background variant={BackgroundVariant.Dots} gap={16} size={1} />
+              <Controls showInteractive={false} />
+              <MiniMap
+                zoomable
+                pannable
+                className="!bg-white/90 dark:!bg-zinc-950/90"
+              />
+            </ReactFlow>
+          )}
         </div>
 
         <div className="flex flex-col gap-6">
-          {selectedNode !== undefined ? (
-            <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
-              <div className="flex items-center justify-between gap-2">
-                <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                  {t('diagrams.editor.nodeSettings')}
-                </h2>
-                <button
-                  type="button"
-                  onClick={deleteSelectedNode}
-                  className="rounded-lg border border-red-200 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-50 dark:border-red-900/60 dark:text-red-300 dark:hover:bg-red-950/30"
-                >
-                  {t('diagrams.editor.deleteNode')}
-                </button>
-              </div>
-              <label className="mt-3 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
-                {t('diagrams.editor.nodeLabel')}
-                <input
-                  type="text"
-                  value={selectedNode.data.label}
-                  onChange={(e) => {
-                    const v: string = e.target.value;
-                    setNodes((prev: AtlasNode[]) =>
-                      prev.map((n: AtlasNode): AtlasNode =>
-                        n.id === selectedId
-                          ? {
-                              ...n,
-                              data: { ...n.data, label: v },
-                            }
-                          : n,
-                      ),
-                    );
-                  }}
-                  className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-                />
-              </label>
-              <label className="mt-3 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
-                {t('diagrams.editor.nodeKind')}
-                <select
-                  value={selectedNode.data.nodeType}
-                  onChange={(e) => {
-                    const v = e.target.value as DiagramNodeKind;
-                    setNodes((prev: AtlasNode[]) =>
-                      prev.map((n: AtlasNode): AtlasNode =>
-                        n.id === selectedId
-                          ? {
-                              ...n,
-                              data: { ...n.data, nodeType: v },
-                            }
-                          : n,
-                      ),
-                    );
-                  }}
-                  className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-                >
-                  <option value="text">text</option>
-                  <option value="db">db</option>
-                  <option value="service">service</option>
-                  <option value="api">api</option>
-                  <option value="cache">cache</option>
-                  <option value="queue">queue</option>
-                </select>
-              </label>
-              {selectedNode.data.nodeType === 'api' ? (
-                <button
-                  type="button"
-                  onClick={addCacheAfterSelectedApi}
-                  className="mt-3 w-full rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-left text-xs font-medium text-amber-900 hover:bg-amber-100 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200"
-                >
-                  {t('diagrams.editor.suggestCacheLayer')}
-                </button>
-              ) : null}
-              {selectedNode.data.nodeType === 'cache' ||
-              selectedNode.data.label.toLowerCase().includes('redis') ? (
-                <button
-                  type="button"
-                  onClick={addDatabaseAfterSelectedCache}
-                  className="mt-3 w-full rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-left text-xs font-medium text-emerald-900 hover:bg-emerald-100 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-200"
-                >
-                  {t('diagrams.editor.suggestDatabaseFallback')}
-                </button>
-              ) : null}
-            </section>
-          ) : selectedEdge !== undefined ? (
-            <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
-              <div className="flex items-center justify-between gap-2">
-                <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                  {t('diagrams.editor.edgeSettings')}
-                </h2>
-                <button
-                  type="button"
-                  onClick={deleteSelectedEdge}
-                  className="rounded-lg border border-red-200 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-50 dark:border-red-900/60 dark:text-red-300 dark:hover:bg-red-950/30"
-                >
-                  {t('diagrams.editor.deleteEdge')}
-                </button>
-              </div>
-              <label className="mt-3 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
-                {t('diagrams.editor.edgeLabel')}
-                <input
-                  type="text"
-                  value={
-                    selectedEdge.label === undefined
-                      ? ''
-                      : String(selectedEdge.label)
-                  }
-                  onChange={(e) => {
-                    const value: string = e.target.value;
-                    setEdges((prev: Edge[]) =>
-                      prev.map((edge: Edge): Edge =>
-                        edge.id === selectedEdgeId
-                          ? {
-                              ...edge,
-                              label: value.trim().length === 0 ? undefined : value,
-                            }
-                          : edge,
-                      ),
-                    );
-                  }}
-                  placeholder={t('diagrams.editor.edgeLabelPlaceholder')}
-                  className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-                />
-              </label>
-              <label className="mt-3 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
-                {t('diagrams.editor.edgeKind')}
-                <select
-                  value={parseEdgeType(
-                    typeof selectedEdge.type === 'string'
-                      ? selectedEdge.type
-                      : undefined,
-                  )}
-                  onChange={(e) => {
-                    const value = e.target.value as AtlasEdgeType;
-                    setEdges((prev: Edge[]) =>
-                      prev.map((edge: Edge): Edge =>
-                        edge.id === selectedEdgeId
-                          ? {
-                              ...edge,
-                              type: value,
-                              markerEnd: { type: MarkerType.ArrowClosed },
-                            }
-                          : edge,
-                      ),
-                    );
-                  }}
-                  className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
-                >
-                  <option value="smoothstep">smoothstep</option>
-                  <option value="straight">straight</option>
-                  <option value="step">step</option>
-                  <option value="default">default</option>
-                </select>
-              </label>
-              <label className="mt-3 flex items-center gap-2 text-xs font-medium text-zinc-600 dark:text-zinc-400">
-                <input
-                  type="checkbox"
-                  checked={selectedEdge.animated ?? false}
-                  onChange={(e) => {
-                    const checked: boolean = e.target.checked;
-                    setEdges((prev: Edge[]) =>
-                      prev.map((edge: Edge): Edge =>
-                        edge.id === selectedEdgeId
-                          ? { ...edge, animated: checked }
-                          : edge,
-                      ),
-                    );
-                  }}
-                  className="h-4 w-4 rounded border-zinc-300 text-violet-600"
-                />
-                {t('diagrams.editor.edgeAnimated')}
-              </label>
-              <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
-                {t('diagrams.editor.edgeDirectionHint')}
-              </p>
-            </section>
+          {selectedNode !== undefined && selectedNodeId !== null ? (
+            <DiagramNodeDetailPanel
+              selectedNode={selectedNode}
+              selectedNodeId={selectedNodeId}
+              engine={engine}
+              onSuggestCache={addCacheAfterSelectedApi}
+              onSuggestDatabase={addDatabaseAfterSelectedCache}
+              onDeleteNode={deleteSelectedNode}
+            />
+          ) : selectedEdge !== undefined && selectedEdgeId !== null ? (
+            <DiagramEdgeDetailPanel
+              selectedEdge={selectedEdge}
+              selectedEdgeId={selectedEdgeId}
+              engine={engine}
+              onDeleteEdge={deleteSelectedEdge}
+            />
           ) : (
             <p className="rounded-2xl border border-dashed border-zinc-300 px-4 py-6 text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
               {t('diagrams.editor.selectElement')}
@@ -885,6 +556,13 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
         </div>
       </div>
     </main>
+    {linkedModalDiagramId !== null ? (
+      <LinkedDiagramModal
+        diagramId={linkedModalDiagramId}
+        onClose={(): void => setLinkedModalDiagramId(null)}
+      />
+    ) : null}
+    </>
   );
 }
 
@@ -896,7 +574,9 @@ export function DiagramEditorView(props: DiagramEditorViewProps): ReactNode {
   const { diagramId } = props;
   return (
     <ReactFlowProvider>
-      <DiagramEditorInner diagramId={diagramId} />
+      <DiagramEditorStoreProvider key={diagramId} diagramId={diagramId}>
+        <DiagramEditorInner diagramId={diagramId} />
+      </DiagramEditorStoreProvider>
     </ReactFlowProvider>
   );
 }

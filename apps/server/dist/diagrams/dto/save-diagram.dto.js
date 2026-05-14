@@ -20,6 +20,8 @@ class SaveDiagramNodeBodyDto {
     y;
     width;
     height;
+    relatedDiagramId;
+    extras;
 }
 exports.SaveDiagramNodeBodyDto = SaveDiagramNodeBodyDto;
 __decorate([
@@ -36,7 +38,17 @@ __decorate([
 ], SaveDiagramNodeBodyDto.prototype, "label", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsIn)(['text', 'db', 'service', 'api', 'cache', 'queue']),
+    (0, class_validator_1.IsIn)([
+        'text',
+        'db',
+        'database',
+        'service',
+        'api',
+        'cache',
+        'queue',
+        'external',
+        'custom',
+    ]),
     __metadata("design:type", String)
 ], SaveDiagramNodeBodyDto.prototype, "type", void 0);
 __decorate([
@@ -57,6 +69,17 @@ __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], SaveDiagramNodeBodyDto.prototype, "height", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(128),
+    __metadata("design:type", Object)
+], SaveDiagramNodeBodyDto.prototype, "relatedDiagramId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsObject)(),
+    __metadata("design:type", Object)
+], SaveDiagramNodeBodyDto.prototype, "extras", void 0);
 class SaveDiagramEdgeBodyDto {
     from;
     to;

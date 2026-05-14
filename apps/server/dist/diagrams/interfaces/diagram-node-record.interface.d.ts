@@ -7,4 +7,6 @@ export interface DiagramNodeRecord {
     y: number;
     width: number | null;
     height: number | null;
+    relatedDiagramId: string | null;
+    extras: unknown | null;
 }

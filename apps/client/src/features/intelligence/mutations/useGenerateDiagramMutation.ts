@@ -15,6 +15,7 @@ import type {
   GeneratedDiagramNode,
   GeneratedDiagramTemplate,
 } from '@/domains/intelligenceDomains';
+import { parseDiagramNodeType } from '@/diagram-engine/nodes/atlas-node.constants';
 import {
   useMutation,
   useQueryClient,
@@ -105,7 +106,7 @@ function mapTemplateNodeToSaveBody(
   return {
     id: persistedId,
     label: node.label,
-    type: node.type,
+    type: parseDiagramNodeType(node.type),
     x: node.x,
     y: node.y,
     width: node.width ?? null,

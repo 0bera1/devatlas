@@ -78,6 +78,14 @@ export function useSaveDiagramGraphMutation(): UseMutationResult<
       }
       return diagramApi.saveGraph(token, variables.diagramId, variables.body);
     },
+    onSuccess: (record, variables): void => {
+      if (record !== undefined && record !== null) {
+        queryClient.setQueryData(
+          diagramQueryKeys.detail(variables.diagramId),
+          record,
+        );
+      }
+    },
     onSettled: async (_d, _e, variables) => {
       await invalidateDiagramCaches(queryClient, variables.diagramId);
       await queryClient.invalidateQueries({ queryKey: ['search'] });
@@ -103,6 +111,9 @@ export function usePatchDiagramMutation(): UseMutationResult<
         throw new Error('Unauthenticated');
       }
       return diagramApi.patch(token, variables.diagramId, variables.body);
+    },
+    onSuccess: (record, variables): void => {
+      queryClient.setQueryData(diagramQueryKeys.detail(variables.diagramId), record);
     },
     onSettled: async (_d, _e, variables) => {
       await invalidateDiagramCaches(queryClient, variables.diagramId);

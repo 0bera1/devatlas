@@ -17,6 +17,8 @@ export interface SaveDiagramGraphInputNode {
     readonly y: number;
     readonly width?: number | null;
     readonly height?: number | null;
+    readonly relatedDiagramId?: string | null;
+    readonly extras?: unknown | null;
 }
 export interface SaveDiagramGraphInputEdge {
     readonly fromNodeId: string;

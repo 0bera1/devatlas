@@ -37,6 +37,8 @@ const diagramFullSelect = {
       y: true,
       width: true,
       height: true,
+      relatedDiagramId: true,
+      extras: true,
     },
   },
   edges: {
@@ -66,6 +68,8 @@ function mapPrismaDiagramToRecord(
       y: n.y,
       width: n.width,
       height: n.height,
+      relatedDiagramId: n.relatedDiagramId ?? null,
+      extras: n.extras ?? null,
     }),
   );
   const edges: DiagramEdgeRecord[] = row.edges.map(
@@ -250,6 +254,11 @@ export class DiagramRepository implements IDiagramRepository {
               y: n.y,
               width: n.width ?? null,
               height: n.height ?? null,
+              relatedDiagramId: n.relatedDiagramId ?? null,
+              extras:
+                n.extras === undefined || n.extras === null
+                  ? undefined
+                  : (n.extras as Prisma.InputJsonValue),
             }),
           ),
         });

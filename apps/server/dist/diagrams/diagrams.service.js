@@ -65,6 +65,12 @@ let DiagramsService = class DiagramsService {
             y: n.y,
             width: n.width ?? null,
             height: n.height ?? null,
+            relatedDiagramId: n.relatedDiagramId !== undefined &&
+                n.relatedDiagramId !== null &&
+                String(n.relatedDiagramId).trim().length > 0
+                ? String(n.relatedDiagramId).trim()
+                : null,
+            extras: n.extras === undefined || n.extras === null ? null : n.extras,
         }));
         const edges = [];
         for (const e of command.edges) {

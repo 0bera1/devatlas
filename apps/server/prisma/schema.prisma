@@ -62,6 +62,10 @@ model Node {
   y         Float
   width     Float?
   height    Float?
+  /// İç içe / bağlantılı diyagram önizlemesi için hedef diyagram id (opsiyonel).
+  relatedDiagramId String?
+  /// Düğüm detayı: açıklama, markdown, etiketler, durum vb. (API’de ayrı kolonlar yerine JSON).
+  extras Json?
 
   diagram Diagram @relation(fields: [diagramId], references: [id], onDelete: Cascade)
 

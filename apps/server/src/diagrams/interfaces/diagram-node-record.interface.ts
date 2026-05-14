@@ -7,4 +7,7 @@ export interface DiagramNodeRecord {
   y: number;
   width: number | null;
   height: number | null;
+  relatedDiagramId: string | null;
+  /** Düğüm detay alanları (açıklama, markdown, etiketler, …); eski kayıtlarda yok. */
+  extras: unknown | null;
 }

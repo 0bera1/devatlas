@@ -149,3 +149,18 @@ button:disabled {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Atlas diagram — React Flow kenar anlamsal sınıfları (motor semanticType) */
+.react-flow__edge.atlas-edge-semantic-data-flow path {
+  stroke: #7c3aed;
+}
+.react-flow__edge.atlas-edge-semantic-dependency path {
+  stroke: #0ea5e9;
+}
+.react-flow__edge.atlas-edge-semantic-async path {
+  stroke: #a855f7;
+  stroke-dasharray: 3 6;
+}
+.react-flow__edge.atlas-edge-semantic-dashed path {
+  stroke-dasharray: 6 4;
+}

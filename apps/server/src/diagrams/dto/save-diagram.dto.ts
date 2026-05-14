@@ -4,6 +4,7 @@ import {
   IsBoolean,
   IsIn,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
   MaxLength,
@@ -22,8 +23,19 @@ export class SaveDiagramNodeBodyDto {
   @MaxLength(500)
   public readonly label!: string;
 
+  /** Motor `database` / `external` / `custom`; API geriye dönük `db` kabul eder. */
   @IsString()
-  @IsIn(['text', 'db', 'service', 'api', 'cache', 'queue'])
+  @IsIn([
+    'text',
+    'db',
+    'database',
+    'service',
+    'api',
+    'cache',
+    'queue',
+    'external',
+    'custom',
+  ])
   public readonly type!: string;
 
   @IsNumber()
@@ -39,6 +51,16 @@ export class SaveDiagramNodeBodyDto {
   @IsOptional()
   @IsNumber()
   public readonly height?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(128)
+  public readonly relatedDiagramId?: string | null;
+
+  /** Düğüm detay alanları (açıklama, markdown, etiketler, durum, …). */
+  @IsOptional()
+  @IsObject()
+  public readonly extras?: Record<string, unknown> | null;
 }
 
 export class SaveDiagramEdgeBodyDto {
