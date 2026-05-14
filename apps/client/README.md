@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DevAtlas — İstemci (Next.js)
 
-## Getting Started
+DevAtlas web uygulaması. [NestJS API](../server) ile konuşur; kimlik, dokümanlar, diyagramlar, keşif, arama ve profil ekranlarını sunar.
 
-First, run the development server:
+## Teknolojiler
+
+| Alan | Paket / yaklaşım |
+|------|------------------|
+| Çatı | Next.js 16 (App Router), React 19 |
+| Stil | Tailwind CSS 4 |
+| Sunucu durumu | TanStack React Query |
+| Diyagram editörü | `@xyflow/react` |
+| Diyagram editör durumu | Zustand (ör. `diagram-engine`) |
+| Gerçek zamanlı | `socket.io-client` (işbirliği) |
+| Tema | Özel React Context + `localStorage` + Tailwind `dark` |
+| Dil / yerelleştirme | `src/i18n` (TR / EN) |
+
+## Gereksinimler
+
+- Node.js 22+ (önerilir)
+- Çalışan API: varsayılan `http://localhost:3500` — bkz. [../server/README.md](../server/README.md)
+
+## Kurulum ve çalıştırma
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Tarayıcı: [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Komut | Açıklama |
+|-------|----------|
+| `npm run dev` | Geliştirme sunucusu |
+| `npm run build` | Üretim derlemesi |
+| `npm run start` | Üretim sunucusu (`build` sonrası) |
+| `npm run lint` | ESLint |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Ortam değişkenleri
 
-## Learn More
+Proje kökü yerine bu klasörde `.env.local` oluşturun:
 
-To learn more about Next.js, take a look at the following resources:
+| Değişken | Açıklama |
+|----------|----------|
+| `NEXT_PUBLIC_API_URL` | API tabanı URL’si. Tanımlı değilse `http://localhost:3500` kullanılır (`src/lib/api/base-url.ts`). |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Kaynak yapısı (özet)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/                 # App Router: sayfalar, layout’lar, (auth) / (app) grupları
+├── components/          # UI bileşenleri (domain klasörlerine göre gruplanmış)
+├── features/            # React Query mutation/query kancaları, özellik odaklı parçalar
+├── hooks/               # Paylaşılan özel kancalar
+├── api/                 # HTTP istemcisi, endpoint yardımcıları
+├── domains/             # Socket / gerçek zamanlı domain sabitleri
+├── diagram-engine/      # Diyagram durumu, reducer, canvas kancaları, node tanımları
+├── i18n/                # Çeviri metinleri ve tema anahtarı
+├── lib/                 # `parse-api-error`, API tabanı vb.
+└── components/providers/
+    ├── query-provider.tsx
+    ├── theme-provider.tsx
+    └── locale-provider.tsx
+```
 
-## Deploy on Vercel
+Önemli sayfa grupları: `(auth)` (giriş / kayıt), `(app)` (ana kabuk, dokümanlar, diyagramlar, keşif, arama, bilgi bankası, profil).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## API ve kimlik
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+İstekler `NEXT_PUBLIC_API_URL` üzerinden gider. Korumalı sayfalar `use-require-auth` ve layout ile oturum bekler; token saklama / yenileme akışı auth özellikleri ve API ile uyumludur.
+
+## Tam yığın çalıştırma
+
+Veritabanı, migration ve Docker için depo kökündeki [../../README.md](../../README.md) dosyasına bakın.
