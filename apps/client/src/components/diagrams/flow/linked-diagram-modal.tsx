@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import '@xyflow/react/dist/style.css';
 
@@ -34,9 +34,9 @@ import {
 } from '@/diagram-engine/selectors/diagram-editor.selectors';
 import { useDiagramByIdQuery } from '@/features/diagrams/queries/useDiagram';
 import { useSaveDiagramGraphMutation } from '@/features/diagrams/mutations/useDiagramMutation';
-import { useDiagramQueryHydration } from '@/hooks/use-diagram-query-hydration';
-import { useRequireAuth } from '@/hooks/use-require-auth';
-import { useTranslations } from '@/hooks/use-translations';
+import { useDiagramQueryHydration } from '@/hooks/diagram/use-diagram-query-hydration';
+import { useRequireAuth } from '@/hooks/auth/use-require-auth';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import Link from 'next/link';
 import type { MouseEvent, ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';

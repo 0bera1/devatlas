@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { useToast } from '@/components/providers/toast-provider';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
 
 export function AuthGoogleButton(): ReactNode {

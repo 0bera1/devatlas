@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { documentApi } from '@/api/documents/documentApi';
-import type { PublicSearchHit } from '@/domains/searchDomains';
+import type { PublicSearchHit } from '@/domains/search/searchDomains';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 const searchPublicKey = (q: string): readonly ['search', 'public', string] =>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { diagramApi } from '@/api/diagrams/diagramApi';
 import { diagramQueryKeys } from '@/api/query/diagram-query-keys';
@@ -7,7 +7,7 @@ import type {
   DiagramCollaboratorEntry,
   DiagramRecord,
   DiagramSummary,
-} from '@/domains/diagramDomains';
+} from '@/domains/diagram/diagramDomains';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 export function useDiagramsListQuery(

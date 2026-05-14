@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { SearchPageView } from '@/components/search/search-page-view';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import { Suspense, type ReactNode } from 'react';
 
 function SearchFallback(): ReactNode {

@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { HttpRequestError, isHttpNetworkError } from '@/api/http/execute-request';
 import { useToast } from '@/components/providers/toast-provider';
 import { useFavoriteDiagramMutation } from '@/features/diagrams/mutations/useDiagramMutation';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
 import { useCallback } from 'react';
 

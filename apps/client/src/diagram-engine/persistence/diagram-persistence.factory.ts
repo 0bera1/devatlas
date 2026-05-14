@@ -1,4 +1,4 @@
-import type { DiagramRecord, SaveDiagramGraphBody } from '@/domains/diagramDomains';
+﻿import type { DiagramRecord, SaveDiagramGraphBody } from '@/domains/diagram/diagramDomains';
 import {
   DiagramPersistence,
   type DiagramPersistencePort,

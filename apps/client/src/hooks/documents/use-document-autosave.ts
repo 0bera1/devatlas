@@ -1,15 +1,15 @@
-'use client';
+﻿'use client';
 
 import {
   HttpRequestError,
   isHttpNetworkError,
 } from '@/api/http/execute-request';
-import type { DocumentRecord } from '@/domains/documentsDomains';
+import type { DocumentRecord } from '@/domains/documents/documentsDomains';
 import {
   usePatchDocumentMutation,
   useUpdateDocumentContentMutation,
 } from '@/features/documents/mutations/useDocumentMutation';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const AUTOSAVE_DEBOUNCE_MS = 500;

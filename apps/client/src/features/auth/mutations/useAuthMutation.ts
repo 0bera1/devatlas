@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { authApi } from '@/api/auth/authApi';
 import { AuthMethods } from '@/api/MethodNames';
@@ -6,7 +6,7 @@ import {
   useMutation,
   type UseMutationResult,
 } from '@tanstack/react-query';
-import type { AuthResponse, LoginRequest, RegisterRequest } from '@/domains/authDomains';
+import type { AuthResponse, LoginRequest, RegisterRequest } from '@/domains/auth/authDomains';
 
 /**
  * POST {@link AuthMethods.Login}

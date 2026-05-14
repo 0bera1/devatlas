@@ -1,10 +1,10 @@
-'use client';
+﻿'use client';
 
 import { useDeleteDiagramMutation } from '@/features/diagrams/mutations/useDiagramMutation';
-import { useFormatDocumentDate } from '@/hooks/use-format-document-date';
-import { useConfirmDelete } from '@/hooks/use-confirm-delete';
-import { useTranslations } from '@/hooks/use-translations';
-import type { DiagramSummary } from '@/domains/diagramDomains';
+import { useFormatDocumentDate } from '@/hooks/documents/use-format-document-date';
+import { useConfirmDelete } from '@/hooks/ui/use-confirm-delete';
+import { useTranslations } from '@/hooks/i18n/use-translations';
+import type { DiagramSummary } from '@/domains/diagram/diagramDomains';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 

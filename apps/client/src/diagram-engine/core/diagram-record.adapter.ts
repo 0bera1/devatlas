@@ -1,10 +1,10 @@
-import type {
+﻿import type {
 
   DiagramRecord,
 
   SaveDiagramGraphBody,
 
-} from '@/domains/diagramDomains';
+} from '@/domains/diagram/diagramDomains';
 
 import {
 

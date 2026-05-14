@@ -1,10 +1,10 @@
-'use client';
+﻿'use client';
 
 import { IntelligenceEmptyMessage } from '@/components/diagrams/intelligence/intelligence-empty-message';
 import { IntelligenceErrorMessage } from '@/components/diagrams/intelligence/intelligence-error-message';
 import { IntelligenceResourceBody } from '@/components/diagrams/intelligence/intelligence-resource-body';
 import { IntelligenceSkeleton } from '@/components/diagrams/intelligence/intelligence-skeleton';
-import type { DiagramIntelligenceState } from '@/hooks/use-diagram-intelligence';
+import type { DiagramIntelligenceState } from '@/hooks/diagram/use-diagram-intelligence';
 import type { ReactNode } from 'react';
 
 export interface IntelligenceStatusViewProps {

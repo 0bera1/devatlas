@@ -1,12 +1,12 @@
-'use client';
+﻿'use client';
 
 import { isHttpNetworkError } from '@/api/http/execute-request';
 import { DocumentsListSkeleton } from '@/components/documents/documents-list-skeleton';
 import { useAuth } from '@/components/providers/auth-provider';
 import { usePublicFeedQuery } from '@/features/documents/queries/useDocument';
-import { useFormatDocumentDate } from '@/hooks/use-format-document-date';
-import { useTranslations } from '@/hooks/use-translations';
-import type { DocumentRecord } from '@/domains/documentsDomains';
+import { useFormatDocumentDate } from '@/hooks/documents/use-format-document-date';
+import { useTranslations } from '@/hooks/i18n/use-translations';
+import type { DocumentRecord } from '@/domains/documents/documentsDomains';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { useMemo, useState } from 'react';

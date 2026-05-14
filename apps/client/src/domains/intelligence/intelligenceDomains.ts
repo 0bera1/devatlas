@@ -1,5 +1,5 @@
-import type { DiagramSummary } from './diagramDomains';
-import type { DocumentRecord } from './documentsDomains';
+import type { DiagramSummary } from '@/domains/diagram/diagramDomains';
+import type { DocumentRecord } from '@/domains/documents/documentsDomains';
 
 export interface ScoredDiagramRecommendation extends DiagramSummary {
   score: number;

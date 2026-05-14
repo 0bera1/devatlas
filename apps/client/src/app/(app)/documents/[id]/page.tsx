@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { DocumentEditorView } from '@/components/documents/document-editor-view';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import { useParams } from 'next/navigation';
 import type { ReactNode } from 'react';
 

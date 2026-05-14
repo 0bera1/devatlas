@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { HomeShell } from '@/components/home/home-shell';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import Link from 'next/link';
 
 export default function Home() {

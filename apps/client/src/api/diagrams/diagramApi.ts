@@ -1,4 +1,4 @@
-import { DiagramMethods } from '@/api/MethodNames';
+﻿import { DiagramMethods } from '@/api/MethodNames';
 import {
   buildDiagramPath,
   diagramHttpVerb,
@@ -11,7 +11,7 @@ import type {
   DiagramSummary,
   PatchDiagramBody,
   SaveDiagramGraphBody,
-} from '@/domains/diagramDomains';
+} from '@/domains/diagram/diagramDomains';
 
 export const diagramApi = {
   async list(accessToken: string): Promise<DiagramSummary[]> {

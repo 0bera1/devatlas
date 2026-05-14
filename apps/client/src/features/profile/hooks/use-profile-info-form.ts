@@ -1,10 +1,10 @@
-'use client';
+﻿'use client';
 
 import { isHttpNetworkError } from '@/api/http/execute-request';
 import { useToast } from '@/components/providers/toast-provider';
-import type { UpdateProfileBody, UserProfile } from '@/domains/profileDomains';
+import type { UpdateProfileBody, UserProfile } from '@/domains/profile/profileDomains';
 import { useUpdateProfileMutation } from '@/features/profile/mutations/useProfileMutation';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import { useEffect, useState } from 'react';
 
 export interface ProfileInfoFormState {

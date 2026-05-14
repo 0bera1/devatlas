@@ -1,4 +1,4 @@
-import { DocumentMethods, FeedMethods, SearchMethods } from '@/api/MethodNames';
+﻿import { DocumentMethods, FeedMethods, SearchMethods } from '@/api/MethodNames';
 import {
   buildDocumentPath,
   buildFeedPath,
@@ -14,8 +14,8 @@ import type {
   PatchDocumentBody,
   RecordDocumentViewResponse,
   UpdateDocumentContentBody,
-} from '@/domains/documentsDomains';
-import type { PublicSearchHit } from '@/domains/searchDomains';
+} from '@/domains/documents/documentsDomains';
+import type { PublicSearchHit } from '@/domains/search/searchDomains';
 
 function appendListQuery(basePath: string, query: ListDocumentsQuery): string {
   const params = new URLSearchParams();

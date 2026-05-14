@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
-import type { CollaborationConnection } from '@/domains/collaborationDomains';
-import { useTranslations } from '@/hooks/use-translations';
+import type { CollaborationConnection } from '@/domains/collaboration/collaborationDomains';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
 
 export interface CollaborationLiveStripProps {

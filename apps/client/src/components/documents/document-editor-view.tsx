@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import {
   HttpRequestError,
@@ -13,16 +13,16 @@ import { DocumentsRoadmap } from '@/components/documents/documents-roadmap';
 import { InterviewQuestionsSection } from '@/components/documents/interview-questions/interview-questions-section';
 import { useAuth } from '@/components/providers/auth-provider';
 import { useToast } from '@/components/providers/toast-provider';
-import type { DocumentVisibility } from '@/domains/documentsDomains';
-import { useDocumentAutosave } from '@/hooks/use-document-autosave';
-import { useDocumentCollaboration } from '@/hooks/use-document-collaboration';
-import { useDocumentEditorPermissions } from '@/hooks/use-document-editor-permissions';
+import type { DocumentVisibility } from '@/domains/documents/documentsDomains';
+import { useDocumentAutosave } from '@/hooks/documents/use-document-autosave';
+import { useDocumentCollaboration } from '@/hooks/documents/use-document-collaboration';
+import { useDocumentEditorPermissions } from '@/hooks/documents/use-document-editor-permissions';
 import { useDocumentByIdQuery } from '@/features/documents/queries/useDocument';
 import { useFavoriteDocumentMutation, usePatchDocumentMutation } from '@/features/documents/mutations/useDocumentMutation';
-import { useFormatDocumentDate } from '@/hooks/use-format-document-date';
-import { useRecordPublicDocumentView } from '@/hooks/use-record-public-document-view';
-import { useRequireAuth } from '@/hooks/use-require-auth';
-import { useTranslations } from '@/hooks/use-translations';
+import { useFormatDocumentDate } from '@/hooks/documents/use-format-document-date';
+import { useRecordPublicDocumentView } from '@/hooks/documents/use-record-public-document-view';
+import { useRequireAuth } from '@/hooks/auth/use-require-auth';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import Link from 'next/link';
 import type { FormEvent, ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';

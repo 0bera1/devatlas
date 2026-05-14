@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useUserActivityQuery } from '@/features/profile/queries/useProfileQuery';
 import {
@@ -6,7 +6,7 @@ import {
   type HeatmapLevel,
   type HeatmapMatrix,
 } from '@/features/profile/hooks/use-activity-heatmap';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { MessageKey } from '@/i18n';
 import type { ReactNode } from 'react';
 

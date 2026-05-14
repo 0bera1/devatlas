@@ -1,7 +1,7 @@
-import type {
+﻿import type {
   DiagramRecord,
   SaveDiagramGraphBody,
-} from '@/domains/diagramDomains';
+} from '@/domains/diagram/diagramDomains';
 
 /**
  * REST / transport üzerinden diyagram kaydı; React dışı senaryolarda da kullanılabilir.

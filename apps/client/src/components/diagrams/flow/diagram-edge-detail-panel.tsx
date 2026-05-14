@@ -1,10 +1,10 @@
-'use client';
+﻿'use client';
 
 import type { DiagramEdgeSemanticType } from '@/diagram-engine/model/diagram-core.types';
 import type { DiagramEngine } from '@/diagram-engine/core/diagram-engine';
 import type { DiagramEngineEdge } from '@/diagram-engine/types/diagram-engine.types';
-import type { DiagramEdgeKind } from '@/domains/diagramDomains';
-import { useTranslations } from '@/hooks/use-translations';
+import type { DiagramEdgeKind } from '@/domains/diagram/diagramDomains';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
 
 export interface DiagramEdgeDetailPanelProps {

@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { systemContentApi } from '@/api/system-content/systemContentApi';
 import { systemContentQueryKeys } from '@/api/query/system-content-query-keys';
-import type { SystemContentRecord } from '@/domains/systemContentDomains';
+import type { SystemContentRecord } from '@/domains/system-content/systemContentDomains';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 export function useSystemContentListQuery(): UseQueryResult<

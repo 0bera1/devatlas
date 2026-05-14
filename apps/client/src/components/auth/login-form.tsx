@@ -1,11 +1,11 @@
-'use client';
+﻿'use client';
 
 import { AuthGoogleButton } from '@/components/auth/auth-google-button';
 import { AuthOrDivider } from '@/components/auth/auth-or-divider';
 import { AuthTextField } from '@/components/auth/auth-text-field';
 import { useToast } from '@/components/providers/toast-provider';
-import { useLogin } from '@/hooks/use-login';
-import { useTranslations } from '@/hooks/use-translations';
+import { useLogin } from '@/hooks/auth/use-login';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 

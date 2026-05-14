@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { MatchingKeywordsLine } from '@/components/diagrams/intelligence/matching-keywords-line';
 import { ScoreBadge } from '@/components/diagrams/intelligence/score-badge';
-import type { ScoredDiagramRecommendation } from '@/domains/intelligenceDomains';
-import { useTranslations } from '@/hooks/use-translations';
+import type { ScoredDiagramRecommendation } from '@/domains/intelligence/intelligenceDomains';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 

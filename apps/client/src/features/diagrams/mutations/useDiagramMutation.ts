@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { DiagramMethods } from '@/api/MethodNames';
 import { diagramApi } from '@/api/diagrams/diagramApi';
@@ -11,7 +11,7 @@ import type {
   DiagramRecord,
   PatchDiagramBody,
   SaveDiagramGraphBody,
-} from '@/domains/diagramDomains';
+} from '@/domains/diagram/diagramDomains';
 import {
   useMutation,
   useQueryClient,

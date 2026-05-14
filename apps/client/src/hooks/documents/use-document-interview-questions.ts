@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { isHttpNetworkError } from '@/api/http/execute-request';
-import type { RelatedInterviewQuestionsResource } from '@/domains/intelligenceDomains';
+import type { RelatedInterviewQuestionsResource } from '@/domains/intelligence/intelligenceDomains';
 import { useDocumentInterviewQuestionsQuery } from '@/features/intelligence/queries/useDocumentInterviewQuestionsQuery';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import { useMemo } from 'react';
 
 export type DocumentInterviewQuestionsStatus =

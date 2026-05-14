@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { getDiagramRecordSyncFingerprint } from '@/diagram-engine/core/diagram-record.adapter';
 import type { DiagramEngine } from '@/diagram-engine/core/diagram-engine';
-import type { DiagramRecord } from '@/domains/diagramDomains';
+import type { DiagramRecord } from '@/domains/diagram/diagramDomains';
 import { useLayoutEffect, useRef } from 'react';
 
 /**

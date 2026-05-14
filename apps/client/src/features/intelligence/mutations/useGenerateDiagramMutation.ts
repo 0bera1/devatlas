@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { diagramApi } from '@/api/diagrams/diagramApi';
 import { intelligenceApi } from '@/api/intelligence/intelligenceApi';
@@ -9,12 +9,12 @@ import type {
   DiagramSaveEdgeBody,
   DiagramSaveNodeBody,
   SaveDiagramGraphBody,
-} from '@/domains/diagramDomains';
+} from '@/domains/diagram/diagramDomains';
 import type {
   GeneratedDiagramEdge,
   GeneratedDiagramNode,
   GeneratedDiagramTemplate,
-} from '@/domains/intelligenceDomains';
+} from '@/domains/intelligence/intelligenceDomains';
 import { parseDiagramNodeType } from '@/diagram-engine/nodes/atlas-node.constants';
 import {
   useMutation,

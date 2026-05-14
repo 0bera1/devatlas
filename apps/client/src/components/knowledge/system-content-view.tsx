@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { isHttpNetworkError } from '@/api/http/execute-request';
 import { useSystemContentListQuery } from '@/features/system-content/queries/useSystemContentList';
-import { useTranslations } from '@/hooks/use-translations';
-import type { SystemContentRecord } from '@/domains/systemContentDomains';
+import { useTranslations } from '@/hooks/i18n/use-translations';
+import type { SystemContentRecord } from '@/domains/system-content/systemContentDomains';
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';
 

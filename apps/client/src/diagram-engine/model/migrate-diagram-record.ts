@@ -1,4 +1,4 @@
-import type { DiagramEdgeRecord, DiagramNodeRecord, DiagramRecord } from '@/domains/diagramDomains';
+﻿import type { DiagramEdgeRecord, DiagramNodeRecord, DiagramRecord } from '@/domains/diagram/diagramDomains';
 
 function cloneRecord(record: DiagramRecord): DiagramRecord {
   return {

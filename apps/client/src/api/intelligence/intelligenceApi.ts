@@ -1,4 +1,4 @@
-import { IntelligenceMethods } from '@/api/MethodNames';
+﻿import { IntelligenceMethods } from '@/api/MethodNames';
 import {
   buildIntelligencePath,
   executeJsonRequest,
@@ -11,7 +11,7 @@ import type {
   GenerateDiagramRequestPayload,
   GeneratedDiagramTemplate,
   RelatedInterviewQuestionsResource,
-} from '@/domains/intelligenceDomains';
+} from '@/domains/intelligence/intelligenceDomains';
 
 export const intelligenceApi = {
   async getDiagramResources(

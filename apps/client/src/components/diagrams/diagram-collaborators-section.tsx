@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { isHttpNetworkError } from '@/api/http/execute-request';
 import {
@@ -6,8 +6,8 @@ import {
   useRemoveDiagramCollaboratorMutation,
 } from '@/features/diagrams/mutations/useDiagramMutation';
 import { useDiagramCollaboratorsQuery } from '@/features/diagrams/queries/useDiagram';
-import type { DiagramCollaboratorEntry } from '@/domains/diagramDomains';
-import { useTranslations } from '@/hooks/use-translations';
+import type { DiagramCollaboratorEntry } from '@/domains/diagram/diagramDomains';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { FormEvent, ReactNode } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 

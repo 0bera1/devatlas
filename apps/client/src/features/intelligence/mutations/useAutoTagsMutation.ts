@@ -1,11 +1,11 @@
-'use client';
+﻿'use client';
 
 import { intelligenceApi } from '@/api/intelligence/intelligenceApi';
 import { useAuth } from '@/components/providers/auth-provider';
 import type {
   AutoTagRequestPayload,
   AutoTagResponse,
-} from '@/domains/intelligenceDomains';
+} from '@/domains/intelligence/intelligenceDomains';
 import { useMutation, type UseMutationResult } from '@tanstack/react-query';
 
 /**

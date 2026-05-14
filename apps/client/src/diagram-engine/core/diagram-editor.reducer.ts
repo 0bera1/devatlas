@@ -1,4 +1,4 @@
-import {
+﻿import {
   addEdge,
   type Connection,
   type Edge,
@@ -8,8 +8,8 @@ import {
 import type {
   DiagramEdgeKind,
   DiagramRecord,
-} from '@/domains/diagramDomains';
-import type { DocumentVisibility } from '@/domains/documentsDomains';
+} from '@/domains/diagram/diagramDomains';
+import type { DocumentVisibility } from '@/domains/documents/documentsDomains';
 import {
   createEmptyEngineGraph,
   mapRecordToEngineGraph,

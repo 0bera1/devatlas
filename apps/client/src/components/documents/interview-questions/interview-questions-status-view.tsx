@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import type {
   DocumentInterviewQuestionsState,
   DocumentInterviewQuestionsStatus,
-} from '@/hooks/use-document-interview-questions';
+} from '@/hooks/documents/use-document-interview-questions';
 import type { ReactNode } from 'react';
 import { InterviewQuestionsEmpty } from './interview-questions-empty';
 import { InterviewQuestionsError } from './interview-questions-error';

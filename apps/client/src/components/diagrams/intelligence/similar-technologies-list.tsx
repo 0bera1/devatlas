@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { ResourceGroup } from '@/components/diagrams/intelligence/resource-group';
 import { SimilarTechnologyCard } from '@/components/diagrams/intelligence/similar-technology-card';
-import type { SimilarTechnologyRecommendation } from '@/domains/intelligenceDomains';
-import { useTranslations } from '@/hooks/use-translations';
+import type { SimilarTechnologyRecommendation } from '@/domains/intelligence/intelligenceDomains';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
 
 export interface SimilarTechnologiesListProps {

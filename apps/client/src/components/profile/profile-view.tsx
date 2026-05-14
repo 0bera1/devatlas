@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useAuth } from '@/components/providers/auth-provider';
 import { useMeQuery } from '@/features/profile/queries/useProfileQuery';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { ProfileActivityHeatmap } from './profile-activity-heatmap';

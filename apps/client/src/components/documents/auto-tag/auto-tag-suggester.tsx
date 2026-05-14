@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
-import { useTranslations } from '@/hooks/use-translations';
-import { useAutoTagSuggester } from '@/hooks/use-auto-tag-suggester';
+import { useTranslations } from '@/hooks/i18n/use-translations';
+import { useAutoTagSuggester } from '@/hooks/documents/use-auto-tag-suggester';
 import type { ReactNode } from 'react';
 import { useCallback } from 'react';
 import { AutoTagSuggestionList } from './auto-tag-suggestion-list';

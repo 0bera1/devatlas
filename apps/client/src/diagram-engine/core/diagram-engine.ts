@@ -1,9 +1,9 @@
-import type { Connection, Edge, EdgeChange, NodeChange } from '@xyflow/react';
+﻿import type { Connection, Edge, EdgeChange, NodeChange } from '@xyflow/react';
 import type {
   DiagramEdgeKind,
   DiagramRecord,
-} from '@/domains/diagramDomains';
-import type { DocumentVisibility } from '@/domains/documentsDomains';
+} from '@/domains/diagram/diagramDomains';
+import type { DocumentVisibility } from '@/domains/documents/documentsDomains';
 import type { DiagramEditorAction } from '@/diagram-engine/core/diagram-editor.reducer';
 import type { AtlasFlowNode } from '@/diagram-engine/core/react-flow.adapter';
 import type { DiagramEditorStore } from '@/diagram-engine/state/create-diagram-editor-store';

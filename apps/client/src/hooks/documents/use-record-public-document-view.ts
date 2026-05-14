@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { documentApi } from '@/api/documents/documentApi';
 import { useAuth } from '@/components/providers/auth-provider';
 import { ANONYMOUS_VIEWER_STORAGE_KEY } from '@/lib/engagement/anonymous-viewer-id';
-import type { DocumentVisibility } from '@/domains/documentsDomains';
+import type { DocumentVisibility } from '@/domains/documents/documentsDomains';
 import { useEffect } from 'react';
 
 /**

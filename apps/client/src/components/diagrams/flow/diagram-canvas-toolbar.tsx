@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { Panel, useReactFlow } from '@xyflow/react';
 import { useDiagramEditorStore } from '@/diagram-engine/hooks/diagram-editor-store';
 import type { DiagramEditorCanvasMode } from '@/diagram-engine/state/diagram-editor.store.types';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
 import { useCallback } from 'react';
 

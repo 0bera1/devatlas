@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { isHttpNetworkError } from '@/api/http/execute-request';
 import { useRelatedDocumentsQuery } from '@/features/documents/queries/useDocument';
-import { useTranslations } from '@/hooks/use-translations';
-import type { DocumentRecord } from '@/domains/documentsDomains';
+import { useTranslations } from '@/hooks/i18n/use-translations';
+import type { DocumentRecord } from '@/domains/documents/documentsDomains';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';

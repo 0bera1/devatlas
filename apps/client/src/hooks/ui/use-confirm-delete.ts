@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { isHttpNetworkError } from '@/api/http/execute-request';
 import { useToast } from '@/components/providers/toast-provider';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import { useCallback } from 'react';
 
 export interface ConfirmDeleteOptions {

@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { ScoreBadge } from '@/components/diagrams/intelligence/score-badge';
-import type { SimilarTechnologyRecommendation } from '@/domains/intelligenceDomains';
-import { useTranslations } from '@/hooks/use-translations';
+import type { SimilarTechnologyRecommendation } from '@/domains/intelligence/intelligenceDomains';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
 
 export interface SimilarTechnologyCardProps {

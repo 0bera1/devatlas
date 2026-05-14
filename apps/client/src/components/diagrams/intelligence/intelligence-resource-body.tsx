@@ -1,11 +1,11 @@
-'use client';
+﻿'use client';
 
 import { RelatedDiagramsList } from '@/components/diagrams/intelligence/related-diagrams-list';
 import { RelatedDocumentsList } from '@/components/diagrams/intelligence/related-documents-list';
 import { SemanticTagList } from '@/components/diagrams/intelligence/semantic-tag-list';
 import { SimilarTechnologiesList } from '@/components/diagrams/intelligence/similar-technologies-list';
-import type { DiagramIntelligenceResource } from '@/domains/intelligenceDomains';
-import { useTranslations } from '@/hooks/use-translations';
+import type { DiagramIntelligenceResource } from '@/domains/intelligence/intelligenceDomains';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
 
 export interface IntelligenceResourceBodyProps {

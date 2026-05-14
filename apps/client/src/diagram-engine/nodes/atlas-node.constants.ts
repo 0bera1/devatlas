@@ -1,4 +1,4 @@
-import type { DiagramNodeKind } from '@/domains/diagramDomains';
+﻿import type { DiagramNodeKind } from '@/domains/diagram/diagramDomains';
 import type { DiagramNodeType } from '@/diagram-engine/model/diagram-core.types';
 
 /** API genelde null döner; XYFlow 12 görünürlük/ölçüm için başlangıç boyutu gerekir. */

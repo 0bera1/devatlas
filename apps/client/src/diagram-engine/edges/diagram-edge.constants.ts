@@ -1,4 +1,4 @@
-import type { DiagramEdgeKind } from '@/domains/diagramDomains';
+﻿import type { DiagramEdgeKind } from '@/domains/diagram/diagramDomains';
 import type { DiagramEdgeSemanticType } from '@/diagram-engine/model/diagram-core.types';
 import type { DiagramEdgeAppearance } from '@/diagram-engine/types/diagram-engine.types';
 

@@ -1,4 +1,4 @@
-import { ProfileMethods } from '@/api/MethodNames';
+﻿import { ProfileMethods } from '@/api/MethodNames';
 import {
   buildProfilePath,
   executeJsonRequest,
@@ -12,7 +12,7 @@ import type {
   UpdateProfileBody,
   UserActivityEntry,
   UserProfile,
-} from '@/domains/profileDomains';
+} from '@/domains/profile/profileDomains';
 
 export const profileApi = {
   async getMe(accessToken: string): Promise<UserProfile> {

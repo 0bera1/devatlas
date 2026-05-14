@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
-import type { RelatedInterviewQuestion } from '@/domains/intelligenceDomains';
-import { useTranslations } from '@/hooks/use-translations';
+import type { RelatedInterviewQuestion } from '@/domains/intelligence/intelligenceDomains';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
 import { useCallback, useState } from 'react';
 import { InterviewQuestionDifficultyBadge } from './interview-question-difficulty-badge';

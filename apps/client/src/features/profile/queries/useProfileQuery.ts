@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { profileApi } from '@/api/profile/profileApi';
 import { profileQueryKeys } from '@/api/query/profile-query-keys';
@@ -8,7 +8,7 @@ import type {
   FavoriteDocumentEntry,
   UserActivityEntry,
   UserProfile,
-} from '@/domains/profileDomains';
+} from '@/domains/profile/profileDomains';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 export function useMeQuery(): UseQueryResult<UserProfile, Error> {

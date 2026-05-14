@@ -1,6 +1,6 @@
-'use client';
+﻿'use client';
 
-import { useDocumentInterviewQuestions } from '@/hooks/use-document-interview-questions';
+import { useDocumentInterviewQuestions } from '@/hooks/documents/use-document-interview-questions';
 import type { ReactNode } from 'react';
 import { InterviewQuestionsHeader } from './interview-questions-header';
 import { InterviewQuestionsStatusView } from './interview-questions-status-view';

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { DocumentMethods } from '@/api/MethodNames';
 import { documentApi } from '@/api/documents/documentApi';
@@ -9,7 +9,7 @@ import type {
   DocumentRecord,
   PatchDocumentVariables,
   UpdateDocumentContentVariables,
-} from '@/domains/documentsDomains';
+} from '@/domains/documents/documentsDomains';
 import {
   useMutation,
   useQueryClient,

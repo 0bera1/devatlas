@@ -1,6 +1,6 @@
-'use client';
+﻿'use client';
 
-import type { PublicUser } from '@/domains/authDomains';
+import type { PublicUser } from '@/domains/auth/authDomains';
 import { useAuthProfileQuery } from '@/features/auth/queries/useAuthProfile';
 import { useMemo } from 'react';
 

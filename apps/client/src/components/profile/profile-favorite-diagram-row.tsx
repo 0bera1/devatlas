@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
-import type { FavoriteDiagramEntry } from '@/domains/profileDomains';
-import { useTranslations } from '@/hooks/use-translations';
+import type { FavoriteDiagramEntry } from '@/domains/profile/profileDomains';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 

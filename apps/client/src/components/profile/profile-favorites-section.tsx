@@ -1,10 +1,10 @@
-'use client';
+﻿'use client';
 
 import {
   useFavoriteDiagramsQuery,
   useFavoriteDocumentsQuery,
 } from '@/features/profile/queries/useProfileQuery';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { ProfileFavoriteDiagramRow } from './profile-favorite-diagram-row';

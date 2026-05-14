@@ -1,6 +1,6 @@
-'use client';
+﻿'use client';
 
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { Locale } from '@/i18n';
 import { locales } from '@/i18n';
 import type { ThemeMode } from '@/components/providers/theme-provider';

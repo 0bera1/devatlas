@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { intelligenceApi } from '@/api/intelligence/intelligenceApi';
 import {
@@ -6,7 +6,7 @@ import {
   type IntelligenceAuthBucket,
 } from '@/api/query/intelligence-query-keys';
 import { useAuth } from '@/components/providers/auth-provider';
-import type { DiagramIntelligenceResource } from '@/domains/intelligenceDomains';
+import type { DiagramIntelligenceResource } from '@/domains/intelligence/intelligenceDomains';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 function resolveAuthBucket(token: string | null): IntelligenceAuthBucket {

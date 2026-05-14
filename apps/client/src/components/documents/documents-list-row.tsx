@@ -1,10 +1,10 @@
-'use client';
+﻿'use client';
 
 import { useDeleteDocumentMutation } from '@/features/documents/mutations/useDocumentMutation';
-import { useFormatDocumentDate } from '@/hooks/use-format-document-date';
-import { useConfirmDelete } from '@/hooks/use-confirm-delete';
-import { useTranslations } from '@/hooks/use-translations';
-import type { DocumentRecord } from '@/domains/documentsDomains';
+import { useFormatDocumentDate } from '@/hooks/documents/use-format-document-date';
+import { useConfirmDelete } from '@/hooks/ui/use-confirm-delete';
+import { useTranslations } from '@/hooks/i18n/use-translations';
+import type { DocumentRecord } from '@/domains/documents/documentsDomains';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 

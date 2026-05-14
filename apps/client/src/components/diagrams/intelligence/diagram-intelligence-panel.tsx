@@ -1,11 +1,11 @@
-'use client';
+﻿'use client';
 
 import { IntelligencePanelHeader } from '@/components/diagrams/intelligence/intelligence-panel-header';
 import { IntelligenceStatusView } from '@/components/diagrams/intelligence/intelligence-status-view';
 import {
   useDiagramIntelligence,
   type DiagramIntelligenceState,
-} from '@/hooks/use-diagram-intelligence';
+} from '@/hooks/diagram/use-diagram-intelligence';
 import type { ReactNode } from 'react';
 
 export interface DiagramIntelligencePanelProps {

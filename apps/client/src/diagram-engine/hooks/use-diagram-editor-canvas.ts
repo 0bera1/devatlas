@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useCallback, useMemo } from 'react';
 import type {
@@ -24,7 +24,7 @@ import type {
   DiagramEditorViewportState,
 } from '@/diagram-engine/state/diagram-editor.store.types';
 import type { DiagramEngineGraph } from '@/diagram-engine/types/diagram-engine.types';
-import type { DocumentVisibility } from '@/domains/documentsDomains';
+import type { DocumentVisibility } from '@/domains/documents/documentsDomains';
 import type { Dispatch } from 'react';
 
 export interface UseDiagramEditorCanvasResult {

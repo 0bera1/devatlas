@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { ProfileMethods } from '@/api/MethodNames';
 import { profileApi } from '@/api/profile/profileApi';
@@ -8,7 +8,7 @@ import type {
   ChangePasswordBody,
   UpdateProfileBody,
   UserProfile,
-} from '@/domains/profileDomains';
+} from '@/domains/profile/profileDomains';
 import {
   useMutation,
   useQueryClient,

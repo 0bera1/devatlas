@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { isHttpNetworkError } from '@/api/http/execute-request';
 import { useAutoTagsMutation } from '@/features/intelligence/mutations/useAutoTagsMutation';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import { useCallback, useMemo, useState } from 'react';
 
 export interface AutoTagSuggesterState {

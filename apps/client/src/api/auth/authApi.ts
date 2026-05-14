@@ -1,10 +1,10 @@
-import type {
+﻿import type {
   AuthResponse,
   LoginRequest,
   PublicUser,
   RefreshRequest,
   RegisterRequest,
-} from '@/domains/authDomains';
+} from '@/domains/auth/authDomains';
 import { AuthMethods } from '@/api/MethodNames';
 import { executeJsonRequest } from '@/api/http/execute-request';
 

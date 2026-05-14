@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { useProfilePasswordForm } from '@/features/profile/hooks/use-profile-password-form';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { FormEvent, ReactNode } from 'react';
 
 const inputClassName: string =

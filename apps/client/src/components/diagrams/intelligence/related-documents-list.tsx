@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { RelatedDocumentCard } from '@/components/diagrams/intelligence/related-document-card';
 import { ResourceGroup } from '@/components/diagrams/intelligence/resource-group';
-import type { ScoredDocumentRecommendation } from '@/domains/intelligenceDomains';
+import type { ScoredDocumentRecommendation } from '@/domains/intelligence/intelligenceDomains';
 import type { ReactNode } from 'react';
 
 export interface RelatedDocumentsListProps {

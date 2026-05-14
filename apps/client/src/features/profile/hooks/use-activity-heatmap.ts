@@ -1,6 +1,6 @@
-'use client';
+﻿'use client';
 
-import type { UserActivityEntry } from '@/domains/profileDomains';
+import type { UserActivityEntry } from '@/domains/profile/profileDomains';
 import { useMemo } from 'react';
 
 /**

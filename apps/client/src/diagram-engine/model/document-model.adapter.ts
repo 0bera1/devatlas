@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   DiagramDocumentModel,
   DiagramEdgeModel,
   DiagramMetadataModel,
@@ -8,7 +8,7 @@ import type {
 } from '@/diagram-engine/model/diagram-core.types';
 import { mapRecordToEngineGraph } from '@/diagram-engine/core/diagram-record.adapter';
 import { parseDiagramEdgeRouting } from '@/diagram-engine/edges/diagram-edge.constants';
-import type { DiagramRecord } from '@/domains/diagramDomains';
+import type { DiagramRecord } from '@/domains/diagram/diagramDomains';
 import type {
   DiagramEdgeAppearance,
   DiagramEngineEdge,

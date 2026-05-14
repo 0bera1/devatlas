@@ -1,14 +1,14 @@
-'use client';
+﻿'use client';
 
 import { isHttpNetworkError } from '@/api/http/execute-request';
 import { DiagramsListRow } from '@/components/diagrams/diagrams-list-row';
 import { GenerateDiagramForm } from '@/components/diagrams/generate/generate-diagram-form';
 import { useCreateDiagramMutation } from '@/features/diagrams/mutations/useDiagramMutation';
 import { useDiagramsListQuery } from '@/features/diagrams/queries/useDiagram';
-import { useRequireAuth } from '@/hooks/use-require-auth';
-import { useTranslations } from '@/hooks/use-translations';
-import type { DocumentVisibility } from '@/domains/documentsDomains';
-import type { DiagramSummary } from '@/domains/diagramDomains';
+import { useRequireAuth } from '@/hooks/auth/use-require-auth';
+import { useTranslations } from '@/hooks/i18n/use-translations';
+import type { DocumentVisibility } from '@/domains/documents/documentsDomains';
+import type { DiagramSummary } from '@/domains/diagram/diagramDomains';
 import { useRouter } from 'next/navigation';
 import type { FormEvent, ReactNode } from 'react';
 import { useCallback, useMemo, useState } from 'react';

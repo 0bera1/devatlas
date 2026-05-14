@@ -1,6 +1,6 @@
-'use client';
+﻿'use client';
 
-import type { RelatedInterviewQuestion } from '@/domains/intelligenceDomains';
+import type { RelatedInterviewQuestion } from '@/domains/intelligence/intelligenceDomains';
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';
 import { InterviewQuestionCard } from './interview-question-card';

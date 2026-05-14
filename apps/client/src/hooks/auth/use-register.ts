@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { HttpRequestError, isHttpNetworkError } from '@/api/http/execute-request';
 import { useAuth } from '@/components/providers/auth-provider';
 import { useRegisterMutation } from '@/features/auth/mutations/useAuthMutation';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import { useRouter } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 

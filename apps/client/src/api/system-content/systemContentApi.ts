@@ -1,5 +1,5 @@
-import { executeJsonRequest } from '@/api/http/execute-request';
-import type { SystemContentRecord } from '@/domains/systemContentDomains';
+﻿import { executeJsonRequest } from '@/api/http/execute-request';
+import type { SystemContentRecord } from '@/domains/system-content/systemContentDomains';
 
 export const systemContentApi = {
   /**

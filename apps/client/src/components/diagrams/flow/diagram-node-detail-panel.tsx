@@ -1,11 +1,11 @@
-'use client';
+﻿'use client';
 
 import { MarkdownSafePreview } from '@/components/diagrams/flow/markdown-safe-preview';
 import type { DiagramEngine } from '@/diagram-engine/core/diagram-engine';
 import type { DiagramNodeStatus } from '@/diagram-engine/model/diagram-core.types';
 import type { DiagramEngineNode } from '@/diagram-engine/types/diagram-engine.types';
-import type { DiagramNodeKind } from '@/domains/diagramDomains';
-import { useTranslations } from '@/hooks/use-translations';
+import type { DiagramNodeKind } from '@/domains/diagram/diagramDomains';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 

@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { SemanticTagChip } from '@/components/diagrams/intelligence/semantic-tag-chip';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
 
 export interface SemanticTagListProps {

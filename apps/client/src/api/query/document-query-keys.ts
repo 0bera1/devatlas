@@ -1,4 +1,4 @@
-import type { ListDocumentsQuery } from '@/domains/documentsDomains';
+﻿import type { ListDocumentsQuery } from '@/domains/documents/documentsDomains';
 
 export const documentQueryKeys = {
   all: ['documents'] as const,

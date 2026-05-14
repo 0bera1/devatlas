@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { isHttpNetworkError } from '@/api/http/execute-request';
-import type { DiagramIntelligenceResource } from '@/domains/intelligenceDomains';
+import type { DiagramIntelligenceResource } from '@/domains/intelligence/intelligenceDomains';
 import { useDiagramIntelligenceQuery } from '@/features/intelligence/queries/useDiagramIntelligenceQuery';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import { useMemo } from 'react';
 
 export type DiagramIntelligenceStatus = 'loading' | 'error' | 'empty' | 'ready';

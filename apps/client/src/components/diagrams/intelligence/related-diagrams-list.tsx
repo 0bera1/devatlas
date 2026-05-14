@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { RelatedDiagramCard } from '@/components/diagrams/intelligence/related-diagram-card';
 import { ResourceGroup } from '@/components/diagrams/intelligence/resource-group';
-import type { ScoredDiagramRecommendation } from '@/domains/intelligenceDomains';
-import { useTranslations } from '@/hooks/use-translations';
+import type { ScoredDiagramRecommendation } from '@/domains/intelligence/intelligenceDomains';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
 
 export interface RelatedDiagramsListProps {

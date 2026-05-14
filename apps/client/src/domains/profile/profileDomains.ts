@@ -1,4 +1,4 @@
-import type { DocumentVisibility } from './documentsDomains';
+import type { DocumentVisibility } from '@/domains/documents/documentsDomains';
 
 export interface UserProfile {
   id: string;

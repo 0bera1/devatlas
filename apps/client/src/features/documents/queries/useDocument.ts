@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { documentApi } from '@/api/documents/documentApi';
 import { documentQueryKeys } from '@/api/query/document-query-keys';
-import type { DocumentRecord, ListDocumentsQuery, PaginatedDocumentList } from '@/domains/documentsDomains';
+import type { DocumentRecord, ListDocumentsQuery, PaginatedDocumentList } from '@/domains/documents/documentsDomains';
 import { useAuth } from '@/components/providers/auth-provider';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 

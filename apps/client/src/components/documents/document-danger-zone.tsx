@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useDeleteDocumentMutation } from '@/features/documents/mutations/useDocumentMutation';
-import { useConfirmDelete } from '@/hooks/use-confirm-delete';
-import { useTranslations } from '@/hooks/use-translations';
+import { useConfirmDelete } from '@/hooks/ui/use-confirm-delete';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 

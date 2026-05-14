@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import {
   Handle,
@@ -7,7 +7,7 @@ import {
   Position,
 } from '@xyflow/react';
 import { useDiagramEditorStore } from '@/diagram-engine/hooks/diagram-editor-store';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { AtlasFlowNode } from '@/diagram-engine/core/react-flow.adapter';
 import { NODE_TYPE_STYLES } from '@/diagram-engine/nodes/atlas-node.constants';
 import type {

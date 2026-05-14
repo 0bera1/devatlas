@@ -1,56 +1,50 @@
-'use client';
+﻿'use client';
 
-import type { CollaborationConnection } from '@/domains/collaborationDomains';
+import type { CollaborationConnection } from '@/domains/collaboration/collaborationDomains';
 import { getApiBaseUrl } from '@/lib/api/base-url';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, type Socket } from 'socket.io-client';
 
-const NODE_MOVE_EMIT_MS = 45;
+const SELECTION_EMIT_MS = 120;
 
-export interface RemoteNodeMovePayload {
-  readonly nodeId: string;
-  readonly x: number;
-  readonly y: number;
+export interface RemoteDocumentSelection {
   readonly userId: string;
+  readonly anchor: number;
+  readonly focus: number;
 }
 
-function isNodeMovePayload(
+function isSelectionPayload(
   data: unknown,
-  diagramId: string,
-): data is RemoteNodeMovePayload & { diagramId: string } {
+  documentId: string,
+): data is RemoteDocumentSelection & { documentId: string } {
   if (typeof data !== 'object' || data === null) {
     return false;
   }
   const o = data as Record<string, unknown>;
   return (
-    o.diagramId === diagramId &&
-    typeof o.nodeId === 'string' &&
-    typeof o.x === 'number' &&
-    typeof o.y === 'number' &&
+    o.documentId === documentId &&
     typeof o.userId === 'string' &&
-    !Number.isNaN(o.x) &&
-    !Number.isNaN(o.y)
+    typeof o.anchor === 'number' &&
+    typeof o.focus === 'number'
   );
 }
 
-export function useDiagramRealtime(
-  diagramId: string,
+export function useDocumentCollaboration(
+  documentId: string,
   token: string | null,
   enabled: boolean,
-  onRemoteNodeMove: (payload: RemoteNodeMovePayload) => void,
 ): {
-  readonly emitNodeMove: (nodeId: string, x: number, y: number) => void;
   readonly peerCount: number;
+  readonly remoteSelections: readonly RemoteDocumentSelection[];
+  readonly emitSelection: (anchor: number, focus: number) => void;
   readonly connection: CollaborationConnection;
   readonly connectionError: string | null;
   readonly reconnect: () => void;
 } {
-  const onRemoteRef = useRef<(p: RemoteNodeMovePayload) => void>(
-    onRemoteNodeMove,
-  );
-  onRemoteRef.current = onRemoteNodeMove;
-
   const [peerCount, setPeerCount] = useState<number>(0);
+  const [remoteSelections, setRemoteSelections] = useState<
+    RemoteDocumentSelection[]
+  >([]);
   const [connection, setConnection] =
     useState<CollaborationConnection>('idle');
   const [connectionError, setConnectionError] = useState<string | null>(null);
@@ -68,10 +62,11 @@ export function useDiagramRealtime(
   }, []);
 
   useEffect(() => {
-    if (!enabled || token === null || diagramId.length === 0) {
+    if (!enabled || token === null || documentId.length === 0) {
       setConnection('idle');
       setConnectionError(null);
       setPeerCount(0);
+      setRemoteSelections([]);
       return;
     }
 
@@ -93,7 +88,7 @@ export function useDiagramRealtime(
     const onConnect = (): void => {
       setConnection('connected');
       setConnectionError(null);
-      socket.emit('join-diagram', { diagramId });
+      socket.emit('join-document', { documentId });
     };
 
     const onSnapshot = (payload: unknown): void => {
@@ -110,19 +105,36 @@ export function useDiagramRealtime(
       setPeerCount((c: number): number => c + 1);
     };
 
-    const dropPeer = (): void => {
+    const dropPeer = (payload?: unknown): void => {
       setPeerCount((c: number): number => Math.max(0, c - 1));
+      if (
+        typeof payload === 'object' &&
+        payload !== null &&
+        typeof (payload as { userId?: unknown }).userId === 'string'
+      ) {
+        const leftUserId: string = (payload as { userId: string }).userId;
+        setRemoteSelections((prev: RemoteDocumentSelection[]) =>
+          prev.filter(
+            (r: RemoteDocumentSelection): boolean => r.userId !== leftUserId,
+          ),
+        );
+      }
     };
 
-    const onNodeMove = (data: unknown): void => {
-      if (!isNodeMovePayload(data, diagramId)) {
+    const onSelection = (data: unknown): void => {
+      if (!isSelectionPayload(data, documentId)) {
         return;
       }
-      onRemoteRef.current({
-        nodeId: data.nodeId,
-        x: data.x,
-        y: data.y,
-        userId: data.userId,
+      setRemoteSelections((prev: RemoteDocumentSelection[]) => {
+        const next: RemoteDocumentSelection[] = prev.filter(
+          (r: RemoteDocumentSelection): boolean => r.userId !== data.userId,
+        );
+        next.push({
+          userId: data.userId,
+          anchor: data.anchor,
+          focus: data.focus,
+        });
+        return next;
       });
     };
 
@@ -150,48 +162,54 @@ export function useDiagramRealtime(
     socket.on('connect', onConnect);
     socket.on('connect_error', onConnectError);
     socket.on('disconnect', onDisconnect);
-    socket.on('diagram-room-snapshot', onSnapshot);
-    socket.on('diagram-peer-joined', bumpPeer);
-    socket.on('diagram-peer-left', dropPeer);
-    socket.on('node-move', onNodeMove);
+    socket.on('document-room-snapshot', onSnapshot);
+    socket.on('document-peer-joined', bumpPeer);
+    socket.on('document-peer-left', dropPeer);
+    socket.on('document-selection', onSelection);
 
     return () => {
       unmounting = true;
-      socket.emit('leave-diagram', { diagramId });
+      socket.emit('leave-document', { documentId });
       socket.off('connect', onConnect);
       socket.off('connect_error', onConnectError);
       socket.off('disconnect', onDisconnect);
-      socket.off('diagram-room-snapshot', onSnapshot);
-      socket.off('diagram-peer-joined', bumpPeer);
-      socket.off('diagram-peer-left', dropPeer);
-      socket.off('node-move', onNodeMove);
+      socket.off('document-room-snapshot', onSnapshot);
+      socket.off('document-peer-joined', bumpPeer);
+      socket.off('document-peer-left', dropPeer);
+      socket.off('document-selection', onSelection);
       socket.disconnect();
       socketRef.current = null;
       setPeerCount(0);
+      setRemoteSelections([]);
       setConnection('idle');
       setConnectionError(null);
     };
-  }, [diagramId, token, enabled]);
+  }, [documentId, token, enabled]);
 
-  const emitNodeMove = useCallback(
-    (nodeId: string, x: number, y: number): void => {
+  const emitSelection = useCallback(
+    (anchor: number, focus: number): void => {
       const socket = socketRef.current;
       if (socket === null || !socket.connected) {
         return;
       }
       const now: number = Date.now();
-      if (now - lastEmitRef.current < NODE_MOVE_EMIT_MS) {
+      if (now - lastEmitRef.current < SELECTION_EMIT_MS) {
         return;
       }
       lastEmitRef.current = now;
-      socket.emit('node-move', { diagramId, nodeId, x, y });
+      socket.emit('document-selection', {
+        documentId,
+        anchor,
+        focus,
+      });
     },
-    [diagramId],
+    [documentId],
   );
 
   return {
-    emitNodeMove,
     peerCount,
+    remoteSelections,
+    emitSelection,
     connection,
     connectionError,
     reconnect,

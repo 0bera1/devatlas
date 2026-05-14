@@ -1,10 +1,10 @@
-'use client';
+﻿'use client';
 
 import { isHttpNetworkError } from '@/api/http/execute-request';
 import { useSearchPublicQuery } from '@/features/search/queries/useSearchPublicQuery';
-import { useDebouncedValue } from '@/hooks/use-debounced-value';
-import { useTranslations } from '@/hooks/use-translations';
-import type { PublicSearchHit } from '@/domains/searchDomains';
+import { useDebouncedValue } from '@/hooks/ui/use-debounced-value';
+import { useTranslations } from '@/hooks/i18n/use-translations';
+import type { PublicSearchHit } from '@/domains/search/searchDomains';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { ReactNode } from 'react';

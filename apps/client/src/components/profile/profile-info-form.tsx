@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
-import type { UserProfile } from '@/domains/profileDomains';
+import type { UserProfile } from '@/domains/profile/profileDomains';
 import { useProfileInfoForm } from '@/features/profile/hooks/use-profile-info-form';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { FormEvent, ReactNode } from 'react';
 
 const inputClassName: string =

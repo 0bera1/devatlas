@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { isHttpNetworkError } from '@/api/http/execute-request';
 import { AutoTagSuggester } from '@/components/documents/auto-tag/auto-tag-suggester';
@@ -10,9 +10,9 @@ import {
   useCreateDocumentMutation,
 } from '@/features/documents/mutations/useDocumentMutation';
 import { useDocumentsListQuery } from '@/features/documents/queries/useDocument';
-import { useRequireAuth } from '@/hooks/use-require-auth';
-import { useTranslations } from '@/hooks/use-translations';
-import type { DocumentRecord, DocumentVisibility } from '@/domains/documentsDomains';
+import { useRequireAuth } from '@/hooks/auth/use-require-auth';
+import { useTranslations } from '@/hooks/i18n/use-translations';
+import type { DocumentRecord, DocumentVisibility } from '@/domains/documents/documentsDomains';
 import { useRouter } from 'next/navigation';
 import type { FormEvent, ReactNode } from 'react';
 import { useCallback, useMemo, useState } from 'react';

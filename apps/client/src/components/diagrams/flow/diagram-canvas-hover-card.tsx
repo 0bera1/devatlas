@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { useDiagramEditorStore } from '@/diagram-engine/hooks/diagram-editor-store';
 import type { DiagramEngineGraph } from '@/diagram-engine/types/diagram-engine.types';
 import type { DiagramEngineNode } from '@/diagram-engine/types/diagram-engine.types';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';
 

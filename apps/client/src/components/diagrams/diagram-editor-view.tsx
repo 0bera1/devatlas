@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import '@xyflow/react/dist/style.css';
 
@@ -44,8 +44,8 @@ import {
   useSelectedEngineEdge,
   useSelectedEngineNode,
 } from '@/diagram-engine/selectors/diagram-editor.selectors';
-import type { DocumentVisibility } from '@/domains/documentsDomains';
-import type { DiagramRecord } from '@/domains/diagramDomains';
+import type { DocumentVisibility } from '@/domains/documents/documentsDomains';
+import type { DiagramRecord } from '@/domains/diagram/diagramDomains';
 import type {
   DiagramEngineEdge,
   DiagramEngineNode,
@@ -60,10 +60,10 @@ import {
 import {
   useDiagramRealtime,
   type RemoteNodeMovePayload,
-} from '@/hooks/use-diagram-realtime';
-import { useDiagramQueryHydration } from '@/hooks/use-diagram-query-hydration';
-import { useRequireAuth } from '@/hooks/use-require-auth';
-import { useTranslations } from '@/hooks/use-translations';
+} from '@/hooks/diagram/use-diagram-realtime';
+import { useDiagramQueryHydration } from '@/hooks/diagram/use-diagram-query-hydration';
+import { useRequireAuth } from '@/hooks/auth/use-require-auth';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import Link from 'next/link';
 import type { MouseEvent, ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';

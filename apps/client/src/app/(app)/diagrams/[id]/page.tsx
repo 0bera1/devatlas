@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import { DiagramEditorView } from '@/components/diagrams/diagram-editor-view';
-import { useTranslations } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 import { useParams } from 'next/navigation';
 import type { ReactNode } from 'react';
 
