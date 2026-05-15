@@ -33,7 +33,8 @@ let ProfileController = ProfileController_1 = class ProfileController {
     async updateMe(req, dto) {
         const user = ProfileController_1.requireUser(req);
         return this.profileService.updateProfile(user.id, {
-            name: dto.name,
+            firstName: dto.firstName,
+            lastName: dto.lastName,
             birthDate: dto.birthDate,
         });
     }

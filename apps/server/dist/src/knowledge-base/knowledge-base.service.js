@@ -30,21 +30,21 @@ let KnowledgeBaseService = class KnowledgeBaseService {
         }
         return row;
     }
-    async listDiagrams() {
-        return this.repository.selectDiagramsOrdered();
+    async listDiagrams(locale) {
+        return this.repository.selectDiagramsOrdered(locale);
     }
-    async getDiagramBySlug(slug) {
-        const row = await this.repository.selectDiagramBySlug(slug);
+    async getDiagramBySlug(slug, locale) {
+        const row = await this.repository.selectDiagramBySlug(slug, locale);
         if (row === null) {
             throw new common_1.NotFoundException(`Knowledge diagram "${slug}" not found`);
         }
         return row;
     }
-    async listFlows() {
-        return this.repository.selectFlowsOrdered();
+    async listFlows(locale) {
+        return this.repository.selectFlowsOrdered(locale);
     }
-    async getFlowBySlug(slug) {
-        const row = await this.repository.selectFlowBySlug(slug);
+    async getFlowBySlug(slug, locale) {
+        const row = await this.repository.selectFlowBySlug(slug, locale);
         if (row === null) {
             throw new common_1.NotFoundException(`Knowledge flow "${slug}" not found`);
         }

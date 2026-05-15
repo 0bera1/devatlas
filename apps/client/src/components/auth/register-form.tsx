@@ -12,15 +12,40 @@ export function RegisterForm() {
   const { t } = useTranslations();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [birthDate, setBirthDate] = useState('');
+  const [firstNameError, setFirstNameError] = useState<string | null>(null);
+  const [lastNameError, setLastNameError] = useState<string | null>(null);
   const { submit, status, errorMessage, clearError } = useRegister();
   const busy: boolean = status === 'loading';
+
+  const namesValid: boolean =
+    firstName.trim().length > 0 && lastName.trim().length > 0;
+
+  const submitDisabled: boolean =
+    busy ||
+    email.trim().length === 0 ||
+    password.length < 8 ||
+    birthDate.length === 0 ||
+    !namesValid;
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     clearError();
-    await submit({ email, password, name, birthDate });
+    setFirstNameError(null);
+    setLastNameError(null);
+
+    if (firstName.trim().length === 0) {
+      setFirstNameError(t('auth.validation.firstNameRequired'));
+      return;
+    }
+    if (lastName.trim().length === 0) {
+      setLastNameError(t('auth.validation.lastNameRequired'));
+      return;
+    }
+
+    await submit({ email, password, firstName, lastName, birthDate });
   };
 
   return (
@@ -59,14 +84,38 @@ export function RegisterForm() {
       />
       <p className="-mt-2 text-xs text-zinc-500">{t('auth.register.passwordHint')}</p>
       <AuthTextField
-        id="name"
-        label={t('auth.register.name')}
+        id="firstName"
+        label={t('auth.register.firstName')}
         type="text"
-        autoComplete="name"
-        value={name}
-        onChange={setName}
+        autoComplete="given-name"
+        value={firstName}
+        onChange={(v: string) => {
+          setFirstName(v);
+          if (firstNameError !== null) {
+            setFirstNameError(null);
+          }
+        }}
         disabled={busy}
+        required
         variant="authImmersive"
+        errorText={firstNameError}
+      />
+      <AuthTextField
+        id="lastName"
+        label={t('auth.register.lastName')}
+        type="text"
+        autoComplete="family-name"
+        value={lastName}
+        onChange={(v: string) => {
+          setLastName(v);
+          if (lastNameError !== null) {
+            setLastNameError(null);
+          }
+        }}
+        disabled={busy}
+        required
+        variant="authImmersive"
+        errorText={lastNameError}
       />
       <AuthTextField
         id="birthDate"
@@ -85,7 +134,7 @@ export function RegisterForm() {
 
       <button
         type="submit"
-        disabled={busy}
+        disabled={submitDisabled}
         className="flex w-full justify-center rounded-xl bg-amber-500 px-4 py-3.5 text-sm font-semibold text-zinc-900 shadow-lg shadow-amber-500/15 transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-55"
       >
         {busy ? t('auth.register.submitting') : t('auth.register.submit')}

@@ -3,13 +3,15 @@ import type { DocumentVisibility } from '@/domains/documents/documentsDomains';
 export interface UserProfile {
   id: string;
   email: string;
-  name: string | null;
+  firstName: string;
+  lastName: string;
   createdAt: string;
   birthDate: string;
 }
 
 export interface UpdateProfileBody {
-  name?: string | null;
+  firstName?: string;
+  lastName?: string;
   birthDate?: string;
 }
 

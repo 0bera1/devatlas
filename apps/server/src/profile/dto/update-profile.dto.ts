@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsDate,
   IsOptional,
@@ -7,16 +7,26 @@ import {
   MinLength,
 } from 'class-validator';
 
+function TransformTrimToEmptyString(): PropertyDecorator {
+  return Transform(({ value }: { value: unknown }): unknown =>
+    typeof value === 'string' ? value.trim() : value,
+  );
+}
+
 export class UpdateProfileDto {
-  /**
-   * `null` ⇒ ismi temizle; verilmemişse alan değişmez. Boş string'i kabul
-   * etmiyoruz (kullanıcı boşa düşürmek istiyorsa açıkça `null` göndermeli).
-   */
   @IsOptional()
+  @TransformTrimToEmptyString()
   @IsString()
   @MinLength(1)
   @MaxLength(80)
-  public readonly name?: string | null;
+  public readonly firstName?: string;
+
+  @IsOptional()
+  @TransformTrimToEmptyString()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(80)
+  public readonly lastName?: string;
 
   @IsOptional()
   @Type(() => Date)

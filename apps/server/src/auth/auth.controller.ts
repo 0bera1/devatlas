@@ -35,7 +35,8 @@ export class AuthController {
     return this.authService.register(
       dto.email,
       dto.password,
-      dto.name ?? null,
+      dto.firstName,
+      dto.lastName,
       dto.birthDate,
     );
   }

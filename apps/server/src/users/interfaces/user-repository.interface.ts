@@ -5,13 +5,15 @@ export const USER_REPOSITORY: unique symbol = Symbol('USER_REPOSITORY');
 
 export interface CreateUserData {
   email: string;
-  name?: string | null;
+  firstName: string;
+  lastName: string;
   password: string;
   birthDate: Date;
 }
 
 export interface UpdateUserProfileData {
-  name?: string | null;
+  firstName?: string;
+  lastName?: string;
   birthDate?: Date;
 }
 

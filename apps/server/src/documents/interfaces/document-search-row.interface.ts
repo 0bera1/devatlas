@@ -15,7 +15,8 @@ export interface DocumentSearchRow {
   updatedAt: Date;
   owner: {
     id: string;
-    name: string | null;
+    firstName: string;
+    lastName: string;
     email: string;
   };
 }

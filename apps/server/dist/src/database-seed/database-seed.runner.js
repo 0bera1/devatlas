@@ -5,8 +5,7 @@ const common_1 = require("@nestjs/common");
 const bcrypt = require("bcrypt");
 const documents_data_1 = require("../../prisma/seed/data/documents.data");
 const diagrams_data_1 = require("../../prisma/seed/data/diagrams.data");
-const flows_data_1 = require("../../prisma/seed/data/flows.data");
-const narratives_data_1 = require("../../prisma/seed/data/narratives.data");
+const narratives_seed_1 = require("../../prisma/seed/data/narratives.seed");
 const users_data_1 = require("../../prisma/seed/data/users.data");
 const BCRYPT_SALT_ROUNDS = 10;
 class DatabaseSeedRunner {
@@ -26,26 +25,6 @@ class DatabaseSeedRunner {
         await this.seedKnowledgeFlows(diagramIds);
         this.logger.log('Seed completed.');
     }
-    resolveFlowSeedInputs() {
-        return flows_data_1.seedFlows.map((flow) => {
-            const extra = narratives_data_1.flowNarratives.find((n) => n.slug === flow.slug);
-            if (extra === undefined) {
-                return flow;
-            }
-            return {
-                ...flow,
-                narrative: extra.narrative,
-                steps: flow.steps.map((step) => {
-                    const stepExtra = extra.steps.find((s) => s.diagramSlug === step.diagramSlug);
-                    return {
-                        ...step,
-                        label: stepExtra?.label ?? step.label,
-                        narrative: stepExtra?.narrative ?? step.narrative,
-                    };
-                }),
-            };
-        });
-    }
     async seedUsersTable() {
         for (const user of users_data_1.seedUsers) {
             const hashed = await bcrypt.hash(user.password, BCRYPT_SALT_ROUNDS);
@@ -53,12 +32,14 @@ class DatabaseSeedRunner {
                 where: { email: user.email },
                 create: {
                     email: user.email,
-                    name: user.name,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
                     password: hashed,
                     birthDate: user.birthDate,
                 },
                 update: {
-                    name: user.name,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
                     password: hashed,
                     birthDate: user.birthDate,
                 },
@@ -88,7 +69,9 @@ class DatabaseSeedRunner {
     async seedKnowledgeDiagrams() {
         const slugToId = new Map();
         for (const diagram of diagrams_data_1.seedDiagrams) {
-            const narrative = narratives_data_1.diagramNarratives[diagram.slug] ?? diagram.narrative ?? null;
+            const fromSeed = (0, narratives_seed_1.getDiagramNarrativeTrEn)(diagram.slug);
+            const narrativeTr = diagram.narrativeTr ?? fromSeed.narrativeTr;
+            const narrativeEn = diagram.narrativeEn ?? fromSeed.narrativeEn;
             const existing = await this.persistence.systemDiagram.findUnique({
                 where: { slug: diagram.slug },
                 select: { id: true },
@@ -105,7 +88,8 @@ class DatabaseSeedRunner {
                     data: {
                         title: diagram.title,
                         description: diagram.description,
-                        narrative,
+                        narrativeTr,
+                        narrativeEn,
                         sortOrder: diagram.sortOrder,
                     },
                 });
@@ -117,7 +101,8 @@ class DatabaseSeedRunner {
                         slug: diagram.slug,
                         title: diagram.title,
                         description: diagram.description,
-                        narrative,
+                        narrativeTr,
+                        narrativeEn,
                         sortOrder: diagram.sortOrder,
                     },
                 });
@@ -157,7 +142,7 @@ class DatabaseSeedRunner {
         return slugToId;
     }
     async seedKnowledgeFlows(diagramSlugToId) {
-        const flowsToSeed = this.resolveFlowSeedInputs();
+        const flowsToSeed = (0, narratives_seed_1.resolveFlowSeedInputs)();
         for (const flow of flowsToSeed) {
             const flowRow = await this.persistence.systemFlow.upsert({
                 where: { slug: flow.slug },
@@ -165,13 +150,15 @@ class DatabaseSeedRunner {
                     slug: flow.slug,
                     title: flow.title,
                     description: flow.description,
-                    narrative: flow.narrative ?? null,
+                    narrativeTr: flow.narrativeTr ?? null,
+                    narrativeEn: flow.narrativeEn ?? null,
                     sortOrder: flow.sortOrder,
                 },
                 update: {
                     title: flow.title,
                     description: flow.description,
-                    narrative: flow.narrative ?? null,
+                    narrativeTr: flow.narrativeTr ?? null,
+                    narrativeEn: flow.narrativeEn ?? null,
                     sortOrder: flow.sortOrder,
                 },
             });
@@ -190,7 +177,8 @@ class DatabaseSeedRunner {
                         diagramId,
                         stepOrder: order,
                         label: step.label,
-                        narrative: step.narrative ?? null,
+                        narrativeTr: step.narrativeTr ?? null,
+                        narrativeEn: step.narrativeEn ?? null,
                     },
                 });
                 order += 1;

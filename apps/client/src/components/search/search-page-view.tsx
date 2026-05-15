@@ -5,6 +5,7 @@ import { useSearchPublicQuery } from '@/features/search/queries/useSearchPublicQ
 import { useDebouncedValue } from '@/hooks/ui/use-debounced-value';
 import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { PublicSearchHit } from '@/domains/search/searchDomains';
+import { formatUserDisplayName } from '@/lib/user/format-user-display-name';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { ReactNode } from 'react';
@@ -136,10 +137,12 @@ export function SearchPageView(): ReactNode {
       ) : (
         <ul className="flex flex-col gap-3">
           {hits.map((hit: PublicSearchHit) => {
+            const displayName: string = formatUserDisplayName(
+              hit.author.firstName,
+              hit.author.lastName,
+            );
             const authorLabel: string =
-              hit.author.name !== null && hit.author.name.trim().length > 0
-                ? hit.author.name.trim()
-                : hit.author.email;
+              displayName.length > 0 ? displayName : hit.author.email;
 
             switch (hit.kind) {
               case 'document': {

@@ -43,39 +43,39 @@ export function ProfileInfoForm({
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <label className={labelClassName} htmlFor="profile-name">
-          {t('profile.info.name')}
-        </label>
-        <input
-          id="profile-name"
-          type="text"
-          value={form.state.name}
-          onChange={(event): void => {
-            form.setName(event.target.value);
-            if (form.state.clearName) {
-              form.setClearName(false);
-            }
-          }}
-          placeholder={t('profile.info.namePlaceholder')}
-          disabled={form.state.clearName}
-          className={inputClassName}
-        />
-        <label className="mt-1 inline-flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-1">
+          <label className={labelClassName} htmlFor="profile-first-name">
+            {t('profile.info.firstName')}
+          </label>
           <input
-            type="checkbox"
-            checked={form.state.clearName}
+            id="profile-first-name"
+            type="text"
+            autoComplete="given-name"
+            value={form.state.firstName}
             onChange={(event): void => {
-              form.setClearName(event.target.checked);
+              form.setFirstName(event.target.value);
             }}
+            placeholder={t('profile.info.firstNamePlaceholder')}
+            className={inputClassName}
           />
-          {t('profile.info.clearName')}
-        </label>
-        {form.state.clearName ? (
-          <span className="text-xs text-zinc-500 dark:text-zinc-400">
-            {t('profile.info.cleared')}
-          </span>
-        ) : null}
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className={labelClassName} htmlFor="profile-last-name">
+            {t('profile.info.lastName')}
+          </label>
+          <input
+            id="profile-last-name"
+            type="text"
+            autoComplete="family-name"
+            value={form.state.lastName}
+            onChange={(event): void => {
+              form.setLastName(event.target.value);
+            }}
+            placeholder={t('profile.info.lastNamePlaceholder')}
+            className={inputClassName}
+          />
+        </div>
       </div>
 
       <div className="flex flex-col gap-1">

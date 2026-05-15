@@ -307,7 +307,8 @@ let DiagramRepository = class DiagramRepository {
                 owner: {
                     select: {
                         id: true,
-                        name: true,
+                        firstName: true,
+                        lastName: true,
                         email: true,
                     },
                 },
@@ -410,7 +411,8 @@ let DiagramRepository = class DiagramRepository {
                 user: {
                     select: {
                         email: true,
-                        name: true,
+                        firstName: true,
+                        lastName: true,
                     },
                 },
             },
@@ -418,7 +420,8 @@ let DiagramRepository = class DiagramRepository {
         return rows.map((r) => ({
             userId: r.userId,
             email: r.user.email,
-            name: r.user.name,
+            firstName: r.user.firstName,
+            lastName: r.user.lastName,
         }));
     }
 };

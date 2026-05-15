@@ -14,7 +14,8 @@ import type {
 const publicUserSelect = {
   id: true,
   email: true,
-  name: true,
+  firstName: true,
+  lastName: true,
   createdAt: true,
   birthDate: true,
 } satisfies Prisma.UserSelect;
@@ -63,7 +64,8 @@ export class UserRepository implements IUserRepository {
     const created: User = await this.prisma.user.create({
       data: {
         email: data.email,
-        name: data.name ?? null,
+        firstName: data.firstName,
+        lastName: data.lastName,
         password: data.password,
         birthDate: data.birthDate,
       },
@@ -85,8 +87,11 @@ export class UserRepository implements IUserRepository {
     patch: UpdateUserProfileData,
   ): Promise<PublicUser | null> {
     const data: Prisma.UserUpdateInput = {};
-    if (patch.name !== undefined) {
-      data.name = patch.name;
+    if (patch.firstName !== undefined) {
+      data.firstName = patch.firstName;
+    }
+    if (patch.lastName !== undefined) {
+      data.lastName = patch.lastName;
     }
     if (patch.birthDate !== undefined) {
       data.birthDate = patch.birthDate;
@@ -133,7 +138,8 @@ export class UserRepository implements IUserRepository {
     return {
       id: user.id,
       email: user.email,
-      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       createdAt: user.createdAt,
       birthDate: user.birthDate,
     };

@@ -142,7 +142,8 @@ let DiagramsService = class DiagramsService {
             ownerId: row.ownerId,
             author: {
                 id: row.owner.id,
-                name: row.owner.name,
+                firstName: row.owner.firstName,
+                lastName: row.owner.lastName,
                 email: row.owner.email,
             },
             visibility: row.visibility,

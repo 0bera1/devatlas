@@ -7,7 +7,8 @@ export type DiagramListAccessRole = 'owner' | 'collaborator' | 'viewer';
 export interface DiagramCollaboratorEntry {
   userId: string;
   email: string;
-  name: string | null;
+  firstName: string;
+  lastName: string;
 }
 
 import type { DiagramNodeType } from '@/diagram-engine/model/diagram-core.types';

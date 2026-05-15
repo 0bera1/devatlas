@@ -12,7 +12,8 @@ export type RegisterStatus = 'idle' | 'loading' | 'error';
 export interface RegisterFormValues {
   email: string;
   password: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   birthDate: string;
 }
 
@@ -44,7 +45,8 @@ export function useRegister(): UseRegisterResult {
         const result = await mutation.mutateAsync({
           email: values.email.trim(),
           password: values.password,
-          name: values.name.trim() || undefined,
+          firstName: values.firstName.trim(),
+          lastName: values.lastName.trim(),
           birthDate: toIsoBirthDate(values.birthDate),
         });
         setSession({

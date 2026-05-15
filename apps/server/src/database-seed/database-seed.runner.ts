@@ -5,9 +5,9 @@ import { seedDocuments } from '../../prisma/seed/data/documents.data';
 import { seedDiagrams } from '../../prisma/seed/data/diagrams.data';
 import { seedFlows } from '../../prisma/seed/data/flows.data';
 import {
-  diagramNarratives,
-  flowNarratives,
-} from '../../prisma/seed/data/narratives.data';
+  getDiagramNarrativeTrEn,
+  resolveFlowSeedInputs,
+} from '../../prisma/seed/data/narratives.seed';
 import { seedUsers } from '../../prisma/seed/data/users.data';
 import type { SeedFlowInput } from '../../prisma/seed/types';
 import type { IDatabaseSeedPersistence } from './interfaces/database-seed-persistence.interface';
@@ -37,29 +37,6 @@ export class DatabaseSeedRunner {
     this.logger.log('Seed completed.');
   }
 
-  private resolveFlowSeedInputs(): SeedFlowInput[] {
-    return seedFlows.map((flow: SeedFlowInput): SeedFlowInput => {
-      const extra = flowNarratives.find((n) => n.slug === flow.slug);
-      if (extra === undefined) {
-        return flow;
-      }
-      return {
-        ...flow,
-        narrative: extra.narrative,
-        steps: flow.steps.map((step) => {
-          const stepExtra = extra.steps.find(
-            (s) => s.diagramSlug === step.diagramSlug,
-          );
-          return {
-            ...step,
-            label: stepExtra?.label ?? step.label,
-            narrative: stepExtra?.narrative ?? step.narrative,
-          };
-        }),
-      };
-    });
-  }
-
   private async seedUsersTable(): Promise<void> {
     for (const user of seedUsers) {
       const hashed: string = await bcrypt.hash(
@@ -70,12 +47,14 @@ export class DatabaseSeedRunner {
         where: { email: user.email },
         create: {
           email: user.email,
-          name: user.name,
+          firstName: user.firstName,
+          lastName: user.lastName,
           password: hashed,
           birthDate: user.birthDate,
         },
         update: {
-          name: user.name,
+          firstName: user.firstName,
+          lastName: user.lastName,
           password: hashed,
           birthDate: user.birthDate,
         },
@@ -108,8 +87,12 @@ export class DatabaseSeedRunner {
     const slugToId = new Map<string, string>();
 
     for (const diagram of seedDiagrams) {
-      const narrative: string | null =
-        diagramNarratives[diagram.slug] ?? diagram.narrative ?? null;
+      const fromSeed: ReturnType<typeof getDiagramNarrativeTrEn> =
+        getDiagramNarrativeTrEn(diagram.slug);
+      const narrativeTr: string | null =
+        diagram.narrativeTr ?? fromSeed.narrativeTr;
+      const narrativeEn: string | null =
+        diagram.narrativeEn ?? fromSeed.narrativeEn;
       const existing = await this.persistence.systemDiagram.findUnique({
         where: { slug: diagram.slug },
         select: { id: true },
@@ -127,7 +110,8 @@ export class DatabaseSeedRunner {
           data: {
             title: diagram.title,
             description: diagram.description,
-            narrative,
+            narrativeTr,
+            narrativeEn,
             sortOrder: diagram.sortOrder,
           },
         });
@@ -138,7 +122,8 @@ export class DatabaseSeedRunner {
             slug: diagram.slug,
             title: diagram.title,
             description: diagram.description,
-            narrative,
+            narrativeTr,
+            narrativeEn,
             sortOrder: diagram.sortOrder,
           },
         });
@@ -185,7 +170,7 @@ export class DatabaseSeedRunner {
   private async seedKnowledgeFlows(
     diagramSlugToId: Map<string, string>,
   ): Promise<void> {
-    const flowsToSeed: SeedFlowInput[] = this.resolveFlowSeedInputs();
+    const flowsToSeed: SeedFlowInput[] = resolveFlowSeedInputs();
 
     for (const flow of flowsToSeed) {
       const flowRow = await this.persistence.systemFlow.upsert({
@@ -194,13 +179,15 @@ export class DatabaseSeedRunner {
           slug: flow.slug,
           title: flow.title,
           description: flow.description,
-          narrative: flow.narrative ?? null,
+          narrativeTr: flow.narrativeTr ?? null,
+          narrativeEn: flow.narrativeEn ?? null,
           sortOrder: flow.sortOrder,
         },
         update: {
           title: flow.title,
           description: flow.description,
-          narrative: flow.narrative ?? null,
+          narrativeTr: flow.narrativeTr ?? null,
+          narrativeEn: flow.narrativeEn ?? null,
           sortOrder: flow.sortOrder,
         },
       });
@@ -225,7 +212,8 @@ export class DatabaseSeedRunner {
             diagramId,
             stepOrder: order,
             label: step.label,
-            narrative: step.narrative ?? null,
+            narrativeTr: step.narrativeTr ?? null,
+            narrativeEn: step.narrativeEn ?? null,
           },
         });
         order += 1;

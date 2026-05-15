@@ -3,12 +3,14 @@ import type { PublicUser } from './public-user.interface';
 export declare const USER_REPOSITORY: unique symbol;
 export interface CreateUserData {
     email: string;
-    name?: string | null;
+    firstName: string;
+    lastName: string;
     password: string;
     birthDate: Date;
 }
 export interface UpdateUserProfileData {
-    name?: string | null;
+    firstName?: string;
+    lastName?: string;
     birthDate?: Date;
 }
 export interface IUserRepository {

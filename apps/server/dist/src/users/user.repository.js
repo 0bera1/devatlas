@@ -19,7 +19,8 @@ const prisma_service_interface_1 = require("../prisma/interfaces/prisma-service.
 const publicUserSelect = {
     id: true,
     email: true,
-    name: true,
+    firstName: true,
+    lastName: true,
     createdAt: true,
     birthDate: true,
 };
@@ -59,7 +60,8 @@ let UserRepository = UserRepository_1 = class UserRepository {
         const created = await this.prisma.user.create({
             data: {
                 email: data.email,
-                name: data.name ?? null,
+                firstName: data.firstName,
+                lastName: data.lastName,
                 password: data.password,
                 birthDate: data.birthDate,
             },
@@ -74,8 +76,11 @@ let UserRepository = UserRepository_1 = class UserRepository {
     }
     async updateProfileById(id, patch) {
         const data = {};
-        if (patch.name !== undefined) {
-            data.name = patch.name;
+        if (patch.firstName !== undefined) {
+            data.firstName = patch.firstName;
+        }
+        if (patch.lastName !== undefined) {
+            data.lastName = patch.lastName;
         }
         if (patch.birthDate !== undefined) {
             data.birthDate = patch.birthDate;
@@ -114,7 +119,8 @@ let UserRepository = UserRepository_1 = class UserRepository {
         return {
             id: user.id,
             email: user.email,
-            name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             createdAt: user.createdAt,
             birthDate: user.birthDate,
         };

@@ -4,7 +4,6 @@ export declare class DatabaseSeedRunner {
     private readonly logger;
     constructor(persistence: IDatabaseSeedPersistence);
     run(): Promise<void>;
-    private resolveFlowSeedInputs;
     private seedUsersTable;
     private seedKnowledgeDocuments;
     private seedKnowledgeDiagrams;

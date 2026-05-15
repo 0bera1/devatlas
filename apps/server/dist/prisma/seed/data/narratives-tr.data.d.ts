@@ -1,4 +1,4 @@
-export declare const diagramNarratives: Readonly<Record<string, string>>;
+export declare const diagramNarrativesTr: Readonly<Record<string, string>>;
 export interface SeedFlowStepNarrativeInput {
     readonly diagramSlug: string;
     readonly label: string;
@@ -9,4 +9,4 @@ export interface SeedFlowNarrativeInput {
     readonly narrative: string;
     readonly steps: readonly SeedFlowStepNarrativeInput[];
 }
-export declare const flowNarratives: readonly SeedFlowNarrativeInput[];
+export declare const flowNarrativesTr: readonly SeedFlowNarrativeInput[];

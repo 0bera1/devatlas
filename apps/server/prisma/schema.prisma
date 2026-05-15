@@ -15,7 +15,8 @@ enum Visibility {
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
-  name          String?
+  firstName     String         @map("first_name")
+  lastName      String         @map("last_name")
   password      String
   birthDate     DateTime
   createdAt     DateTime       @default(now())
@@ -248,8 +249,8 @@ model SystemDiagram {
   slug        String   @unique
   title       String
   description String?
-  /// Adım adım okuma metni (markdown).
-  narrative   String?
+  narrativeTr   String? @map("narrative_tr")
+  narrativeEn   String? @map("narrative_en")
   sortOrder   Int      @default(0)
   nodes       SystemDiagramNode[]
   edges       SystemDiagramEdge[]
@@ -303,8 +304,10 @@ model SystemFlow {
   slug        String   @unique
   title       String
   description String?
-  /// Akışın genel amacı ve sıralı okuma rehberi (markdown).
-  narrative   String?
+  /// Akışın genel amacı ve sıralı okuma rehberi (markdown, TR).
+  narrativeTr String? @map("narrative_tr")
+  /// Same narrative in English.
+  narrativeEn String? @map("narrative_en")
   sortOrder   Int      @default(0)
   steps       SystemFlowStep[]
   createdAt   DateTime @default(now())
@@ -319,8 +322,9 @@ model SystemFlowStep {
   diagramId String
   stepOrder Int
   label     String
-  /// Bu adımda diyagramı nasıl okuyacağınız (markdown).
-  narrative String?
+  /// Bu adımda diyagramı nasıl okuyacağınız (markdown, TR).
+  narrativeTr String? @map("narrative_tr")
+  narrativeEn String? @map("narrative_en")
 
   flow    SystemFlow    @relation(fields: [flowId], references: [id], onDelete: Cascade)
   diagram SystemDiagram @relation(fields: [diagramId], references: [id], onDelete: Restrict)

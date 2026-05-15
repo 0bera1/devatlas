@@ -16,6 +16,7 @@ exports.KnowledgeBaseController = void 0;
 const common_1 = require("@nestjs/common");
 const public_decorator_1 = require("../auth/decorators/public.decorator");
 const knowledge_service_interface_1 = require("./interfaces/knowledge-service.interface");
+const knowledge_narrative_locale_util_1 = require("./knowledge-narrative-locale.util");
 let KnowledgeBaseController = class KnowledgeBaseController {
     knowledgeService;
     constructor(knowledgeService) {
@@ -27,17 +28,17 @@ let KnowledgeBaseController = class KnowledgeBaseController {
     async getDocument(slug) {
         return this.knowledgeService.getDocumentBySlug(slug);
     }
-    async listDiagrams() {
-        return this.knowledgeService.listDiagrams();
+    async listDiagrams(acceptLanguage) {
+        return this.knowledgeService.listDiagrams((0, knowledge_narrative_locale_util_1.parseKnowledgeAcceptLanguage)(acceptLanguage));
     }
-    async getDiagram(slug) {
-        return this.knowledgeService.getDiagramBySlug(slug);
+    async getDiagram(slug, acceptLanguage) {
+        return this.knowledgeService.getDiagramBySlug(slug, (0, knowledge_narrative_locale_util_1.parseKnowledgeAcceptLanguage)(acceptLanguage));
     }
-    async listFlows() {
-        return this.knowledgeService.listFlows();
+    async listFlows(acceptLanguage) {
+        return this.knowledgeService.listFlows((0, knowledge_narrative_locale_util_1.parseKnowledgeAcceptLanguage)(acceptLanguage));
     }
-    async getFlow(slug) {
-        return this.knowledgeService.getFlowBySlug(slug);
+    async getFlow(slug, acceptLanguage) {
+        return this.knowledgeService.getFlowBySlug(slug, (0, knowledge_narrative_locale_util_1.parseKnowledgeAcceptLanguage)(acceptLanguage));
     }
 };
 exports.KnowledgeBaseController = KnowledgeBaseController;
@@ -56,28 +57,32 @@ __decorate([
 ], KnowledgeBaseController.prototype, "getDocument", null);
 __decorate([
     (0, common_1.Get)('diagrams'),
+    __param(0, (0, common_1.Headers)('accept-language')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], KnowledgeBaseController.prototype, "listDiagrams", null);
 __decorate([
     (0, common_1.Get)('diagrams/:slug'),
     __param(0, (0, common_1.Param)('slug')),
+    __param(1, (0, common_1.Headers)('accept-language')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], KnowledgeBaseController.prototype, "getDiagram", null);
 __decorate([
     (0, common_1.Get)('flows'),
+    __param(0, (0, common_1.Headers)('accept-language')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], KnowledgeBaseController.prototype, "listFlows", null);
 __decorate([
     (0, common_1.Get)('flows/:slug'),
     __param(0, (0, common_1.Param)('slug')),
+    __param(1, (0, common_1.Headers)('accept-language')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], KnowledgeBaseController.prototype, "getFlow", null);
 exports.KnowledgeBaseController = KnowledgeBaseController = __decorate([

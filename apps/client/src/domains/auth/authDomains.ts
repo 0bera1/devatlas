@@ -3,7 +3,8 @@
 export interface PublicUser {
   id: string;
   email: string;
-  name: string | null;
+  firstName: string;
+  lastName: string;
   createdAt: string;
   birthDate: string;
 }
@@ -22,7 +23,8 @@ export interface LoginRequest {
 export interface RegisterRequest {
   email: string;
   password: string;
-  name?: string;
+  firstName: string;
+  lastName: string;
   birthDate: string;
 }
 

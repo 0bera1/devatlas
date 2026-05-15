@@ -12,18 +12,31 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateProfileDto = void 0;
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
+function TransformTrimToEmptyString() {
+    return (0, class_transformer_1.Transform)(({ value }) => typeof value === 'string' ? value.trim() : value);
+}
 class UpdateProfileDto {
-    name;
+    firstName;
+    lastName;
     birthDate;
 }
 exports.UpdateProfileDto = UpdateProfileDto;
 __decorate([
     (0, class_validator_1.IsOptional)(),
+    TransformTrimToEmptyString(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MinLength)(1),
     (0, class_validator_1.MaxLength)(80),
-    __metadata("design:type", Object)
-], UpdateProfileDto.prototype, "name", void 0);
+    __metadata("design:type", String)
+], UpdateProfileDto.prototype, "firstName", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    TransformTrimToEmptyString(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(1),
+    (0, class_validator_1.MaxLength)(80),
+    __metadata("design:type", String)
+], UpdateProfileDto.prototype, "lastName", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Date),

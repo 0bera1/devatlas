@@ -11,6 +11,7 @@ import type {
   KnowledgeFlowRecord,
   KnowledgeFlowSummary,
 } from '@/domains/knowledge/knowledgeDomains';
+import { useTranslations } from '@/hooks/i18n/use-translations';
 
 export function useKnowledgeDocumentsQuery(): UseQueryResult<
   KnowledgeDocumentSummary[],
@@ -39,10 +40,11 @@ export function useKnowledgeDiagramsQuery(): UseQueryResult<
   KnowledgeDiagramSummary[],
   Error
 > {
+  const { locale } = useTranslations();
   return useQuery({
-    queryKey: knowledgeQueryKeys.diagrams(),
+    queryKey: knowledgeQueryKeys.diagrams(locale),
     queryFn: (): Promise<KnowledgeDiagramSummary[]> =>
-      knowledgeApi.listDiagrams(),
+      knowledgeApi.listDiagrams(locale),
   });
 }
 
@@ -50,10 +52,11 @@ export function useKnowledgeDiagramQuery(
   slug: string,
   enabled: boolean,
 ): UseQueryResult<KnowledgeDiagramRecord, Error> {
+  const { locale } = useTranslations();
   return useQuery({
-    queryKey: knowledgeQueryKeys.diagram(slug),
+    queryKey: knowledgeQueryKeys.diagram(slug, locale),
     queryFn: (): Promise<KnowledgeDiagramRecord> =>
-      knowledgeApi.getDiagram(slug),
+      knowledgeApi.getDiagram(slug, locale),
     enabled: enabled && slug.length > 0,
   });
 }
@@ -62,9 +65,11 @@ export function useKnowledgeFlowsQuery(): UseQueryResult<
   KnowledgeFlowSummary[],
   Error
 > {
+  const { locale } = useTranslations();
   return useQuery({
-    queryKey: knowledgeQueryKeys.flows(),
-    queryFn: (): Promise<KnowledgeFlowSummary[]> => knowledgeApi.listFlows(),
+    queryKey: knowledgeQueryKeys.flows(locale),
+    queryFn: (): Promise<KnowledgeFlowSummary[]> =>
+      knowledgeApi.listFlows(locale),
   });
 }
 
@@ -72,9 +77,11 @@ export function useKnowledgeFlowQuery(
   slug: string,
   enabled: boolean,
 ): UseQueryResult<KnowledgeFlowRecord, Error> {
+  const { locale } = useTranslations();
   return useQuery({
-    queryKey: knowledgeQueryKeys.flow(slug),
-    queryFn: (): Promise<KnowledgeFlowRecord> => knowledgeApi.getFlow(slug),
+    queryKey: knowledgeQueryKeys.flow(slug, locale),
+    queryFn: (): Promise<KnowledgeFlowRecord> =>
+      knowledgeApi.getFlow(slug, locale),
     enabled: enabled && slug.length > 0,
   });
 }

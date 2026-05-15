@@ -19,6 +19,8 @@ export interface AuthTextFieldProps {
   variant?: AuthTextFieldVariant;
   /** Şifre alanında göz ikonu ile metin / nokta görünümü arasında geçiş */
   passwordToggleable?: boolean;
+  /** İstemci doğrulama hatası (ör. kayıt formu). */
+  errorText?: string | null;
 }
 
 export function AuthTextField({
@@ -33,6 +35,7 @@ export function AuthTextField({
   minLength,
   variant = 'default',
   passwordToggleable = false,
+  errorText,
 }: AuthTextFieldProps) {
   const { t } = useTranslations();
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
@@ -116,6 +119,11 @@ export function AuthTextField({
       ) : (
         inputEl
       )}
+      {errorText !== null && errorText !== undefined && errorText.length > 0 ? (
+        <p className="mt-1.5 text-xs text-red-400" role="alert">
+          {errorText}
+        </p>
+      ) : null}
     </div>
   );
 }

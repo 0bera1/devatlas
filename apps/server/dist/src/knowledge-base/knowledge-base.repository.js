@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.KnowledgeBaseRepository = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_interface_1 = require("../prisma/interfaces/prisma-service.interface");
+const knowledge_narrative_locale_util_1 = require("./knowledge-narrative-locale.util");
 const documentSummarySelect = {
     id: true,
     slug: true,
@@ -29,7 +30,8 @@ const diagramSummarySelect = {
     slug: true,
     title: true,
     description: true,
-    narrative: true,
+    narrativeTr: true,
+    narrativeEn: true,
     sortOrder: true,
     createdAt: true,
     updatedAt: true,
@@ -40,7 +42,8 @@ const diagramFullSelect = {
     slug: true,
     title: true,
     description: true,
-    narrative: true,
+    narrativeTr: true,
+    narrativeEn: true,
     sortOrder: true,
     createdAt: true,
     updatedAt: true,
@@ -77,7 +80,8 @@ const flowSummarySelect = {
     slug: true,
     title: true,
     description: true,
-    narrative: true,
+    narrativeTr: true,
+    narrativeEn: true,
     sortOrder: true,
     createdAt: true,
     updatedAt: true,
@@ -100,7 +104,7 @@ let KnowledgeBaseRepository = class KnowledgeBaseRepository {
             select: { ...documentSummarySelect, content: true },
         });
     }
-    async selectDiagramsOrdered() {
+    async selectDiagramsOrdered(locale) {
         const rows = await this.prisma.systemDiagram.findMany({
             select: diagramSummarySelect,
             orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }],
@@ -110,14 +114,14 @@ let KnowledgeBaseRepository = class KnowledgeBaseRepository {
             slug: row.slug,
             title: row.title,
             description: row.description,
-            narrative: row.narrative,
+            narrative: (0, knowledge_narrative_locale_util_1.pickKnowledgeNarrative)(row.narrativeTr, row.narrativeEn, locale),
             sortOrder: row.sortOrder,
             nodeCount: row._count.nodes,
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
         }));
     }
-    async selectDiagramBySlug(slug) {
+    async selectDiagramBySlug(slug, locale) {
         const row = await this.prisma.systemDiagram.findUnique({
             where: { slug },
             select: diagramFullSelect,
@@ -151,7 +155,7 @@ let KnowledgeBaseRepository = class KnowledgeBaseRepository {
             slug: row.slug,
             title: row.title,
             description: row.description,
-            narrative: row.narrative,
+            narrative: (0, knowledge_narrative_locale_util_1.pickKnowledgeNarrative)(row.narrativeTr, row.narrativeEn, locale),
             sortOrder: row.sortOrder,
             nodeCount: nodes.length,
             createdAt: row.createdAt,
@@ -160,7 +164,7 @@ let KnowledgeBaseRepository = class KnowledgeBaseRepository {
             edges,
         };
     }
-    async selectFlowsOrdered() {
+    async selectFlowsOrdered(locale) {
         const rows = await this.prisma.systemFlow.findMany({
             select: flowSummarySelect,
             orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }],
@@ -170,14 +174,14 @@ let KnowledgeBaseRepository = class KnowledgeBaseRepository {
             slug: row.slug,
             title: row.title,
             description: row.description,
-            narrative: row.narrative,
+            narrative: (0, knowledge_narrative_locale_util_1.pickKnowledgeNarrative)(row.narrativeTr, row.narrativeEn, locale),
             sortOrder: row.sortOrder,
             stepCount: row._count.steps,
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
         }));
     }
-    async selectFlowBySlug(slug) {
+    async selectFlowBySlug(slug, locale) {
         const row = await this.prisma.systemFlow.findUnique({
             where: { slug },
             select: {
@@ -188,7 +192,8 @@ let KnowledgeBaseRepository = class KnowledgeBaseRepository {
                         id: true,
                         stepOrder: true,
                         label: true,
-                        narrative: true,
+                        narrativeTr: true,
+                        narrativeEn: true,
                         diagramId: true,
                         diagram: { select: { slug: true, title: true } },
                     },
@@ -202,7 +207,7 @@ let KnowledgeBaseRepository = class KnowledgeBaseRepository {
             id: s.id,
             stepOrder: s.stepOrder,
             label: s.label,
-            narrative: s.narrative,
+            narrative: (0, knowledge_narrative_locale_util_1.pickKnowledgeNarrative)(s.narrativeTr, s.narrativeEn, locale),
             diagramId: s.diagramId,
             diagramSlug: s.diagram.slug,
             diagramTitle: s.diagram.title,
@@ -212,7 +217,7 @@ let KnowledgeBaseRepository = class KnowledgeBaseRepository {
             slug: row.slug,
             title: row.title,
             description: row.description,
-            narrative: row.narrative,
+            narrative: (0, knowledge_narrative_locale_util_1.pickKnowledgeNarrative)(row.narrativeTr, row.narrativeEn, locale),
             sortOrder: row.sortOrder,
             stepCount: steps.length,
             createdAt: row.createdAt,

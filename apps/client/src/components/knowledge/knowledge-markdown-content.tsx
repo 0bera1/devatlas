@@ -1,31 +1,25 @@
 'use client';
 
+import { decodeBasicHtmlEntities } from '@/lib/strings/decode-basic-html-entities';
 import type { ReactNode } from 'react';
 
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
 function renderInline(text: string, keyPrefix: string): ReactNode {
+  const decoded: string = decodeBasicHtmlEntities(text);
   const parts: ReactNode[] = [];
-  const tokenPattern = /(\*\*[^*]+\*\*|`[^`]+`)/g;
+  const re: RegExp = /(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
   let partIndex = 0;
 
-  while ((match = tokenPattern.exec(text)) !== null) {
-    const before: string = text.slice(lastIndex, match.index);
-    if (before.length > 0) {
+  while ((match = re.exec(decoded)) !== null) {
+    if (match.index > lastIndex) {
       parts.push(
-        <span key={`${keyPrefix}-t-${partIndex}`}>{escapeHtml(before)}</span>,
+        <span key={`${keyPrefix}-p-${partIndex}`}>
+          {decoded.slice(lastIndex, match.index)}
+        </span>,
       );
       partIndex += 1;
     }
-
     const token: string = match[0];
     if (token.startsWith('**') && token.endsWith('**')) {
       parts.push(
@@ -33,7 +27,7 @@ function renderInline(text: string, keyPrefix: string): ReactNode {
           key={`${keyPrefix}-b-${partIndex}`}
           className="font-semibold text-zinc-900 dark:text-zinc-50"
         >
-          {escapeHtml(token.slice(2, -2))}
+          {token.slice(2, -2)}
         </strong>,
       );
     } else if (token.startsWith('`') && token.endsWith('`')) {
@@ -42,22 +36,30 @@ function renderInline(text: string, keyPrefix: string): ReactNode {
           key={`${keyPrefix}-c-${partIndex}`}
           className="rounded bg-zinc-200/80 px-1 py-0.5 font-mono text-[0.85em] text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
         >
-          {escapeHtml(token.slice(1, -1))}
+          {token.slice(1, -1)}
         </code>,
+      );
+    } else if (token.startsWith('*') && token.endsWith('*')) {
+      parts.push(
+        <em
+          key={`${keyPrefix}-i-${partIndex}`}
+          className="italic text-zinc-800 dark:text-zinc-200"
+        >
+          {token.slice(1, -1)}
+        </em>,
       );
     }
     partIndex += 1;
     lastIndex = match.index + token.length;
   }
 
-  const tail: string = text.slice(lastIndex);
-  if (tail.length > 0) {
+  if (lastIndex < decoded.length) {
     parts.push(
-      <span key={`${keyPrefix}-t-${partIndex}`}>{escapeHtml(tail)}</span>,
+      <span key={`${keyPrefix}-tail`}>{decoded.slice(lastIndex)}</span>,
     );
   }
 
-  return parts.length > 0 ? parts : escapeHtml(text);
+  return parts.length > 0 ? parts : decoded;
 }
 
 type MarkdownBlock =
@@ -81,7 +83,8 @@ function parseTableRow(line: string): readonly string[] {
 }
 
 function parseMarkdownBlocks(content: string): readonly MarkdownBlock[] {
-  const lines: string[] = content.split('\n');
+  const normalized: string = decodeBasicHtmlEntities(content);
+  const lines: string[] = normalized.split('\n');
   const blocks: MarkdownBlock[] = [];
   let index = 0;
 

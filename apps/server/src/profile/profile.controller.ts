@@ -49,7 +49,8 @@ export class ProfileController {
   ): Promise<PublicUser> {
     const user: PublicUser = ProfileController.requireUser(req);
     return this.profileService.updateProfile(user.id, {
-      name: dto.name,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
       birthDate: dto.birthDate,
     });
   }

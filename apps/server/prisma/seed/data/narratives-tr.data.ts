@@ -1,5 +1,5 @@
-/** Diyagram slug → senaryo tabanlı adım adım anlatım (markdown). */
-export const diagramNarratives: Readonly<Record<string, string>> = {
+/** Diyagram slug → senaryo (Türkçe markdown). */
+export const diagramNarrativesTr: Readonly<Record<string, string>> = {
   'react-app-layer-architecture': `## Senaryo: Diyagramı kaydetmek
 
 **Ayşe** editörde bir diyagramı düzenledi ve **Kaydet**'e bastı. Aşağıdaki sıra, diyagramdaki kutuların üzerinden gerçek zamanlı olarak izlenir.
@@ -116,7 +116,7 @@ export interface SeedFlowNarrativeInput {
   readonly steps: readonly SeedFlowStepNarrativeInput[];
 }
 
-export const flowNarratives: readonly SeedFlowNarrativeInput[] = [
+export const flowNarrativesTr: readonly SeedFlowNarrativeInput[] = [
   {
     slug: 'full-stack-request-journey',
     narrative: `## Senaryo: Herkese açık bir dokümanı açmak

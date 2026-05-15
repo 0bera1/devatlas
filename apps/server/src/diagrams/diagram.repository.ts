@@ -389,7 +389,8 @@ export class DiagramRepository implements IDiagramRepository {
         owner: {
           select: {
             id: true,
-            name: true,
+            firstName: true,
+            lastName: true,
             email: true,
           },
         },
@@ -523,7 +524,8 @@ export class DiagramRepository implements IDiagramRepository {
         user: {
           select: {
             email: true,
-            name: true,
+            firstName: true,
+            lastName: true,
           },
         },
       },
@@ -533,7 +535,8 @@ export class DiagramRepository implements IDiagramRepository {
       (r: (typeof rows)[number]): DiagramCollaboratorEntry => ({
         userId: r.userId,
         email: r.user.email,
-        name: r.user.name,
+        firstName: r.user.firstName,
+        lastName: r.user.lastName,
       }),
     );
   }

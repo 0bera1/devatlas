@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param } from '@nestjs/common';
+import { Controller, Get, Headers, Inject, Param } from '@nestjs/common';
 import { Public } from '../auth/decorators/public.decorator';
 import type { KnowledgeDiagramRecord } from './interfaces/knowledge-diagram-record.interface';
 import type { KnowledgeDiagramSummary } from './interfaces/knowledge-diagram-record.interface';
@@ -10,6 +10,7 @@ import {
   KNOWLEDGE_SERVICE,
   type IKnowledgeService,
 } from './interfaces/knowledge-service.interface';
+import { parseKnowledgeAcceptLanguage } from './knowledge-narrative-locale.util';
 
 @Controller('knowledge')
 @Public()
@@ -32,24 +33,42 @@ export class KnowledgeBaseController {
   }
 
   @Get('diagrams')
-  public async listDiagrams(): Promise<KnowledgeDiagramSummary[]> {
-    return this.knowledgeService.listDiagrams();
+  public async listDiagrams(
+    @Headers('accept-language') acceptLanguage: string | undefined,
+  ): Promise<KnowledgeDiagramSummary[]> {
+    return this.knowledgeService.listDiagrams(
+      parseKnowledgeAcceptLanguage(acceptLanguage),
+    );
   }
 
   @Get('diagrams/:slug')
   public async getDiagram(
     @Param('slug') slug: string,
+    @Headers('accept-language') acceptLanguage: string | undefined,
   ): Promise<KnowledgeDiagramRecord> {
-    return this.knowledgeService.getDiagramBySlug(slug);
+    return this.knowledgeService.getDiagramBySlug(
+      slug,
+      parseKnowledgeAcceptLanguage(acceptLanguage),
+    );
   }
 
   @Get('flows')
-  public async listFlows(): Promise<KnowledgeFlowSummary[]> {
-    return this.knowledgeService.listFlows();
+  public async listFlows(
+    @Headers('accept-language') acceptLanguage: string | undefined,
+  ): Promise<KnowledgeFlowSummary[]> {
+    return this.knowledgeService.listFlows(
+      parseKnowledgeAcceptLanguage(acceptLanguage),
+    );
   }
 
   @Get('flows/:slug')
-  public async getFlow(@Param('slug') slug: string): Promise<KnowledgeFlowRecord> {
-    return this.knowledgeService.getFlowBySlug(slug);
+  public async getFlow(
+    @Param('slug') slug: string,
+    @Headers('accept-language') acceptLanguage: string | undefined,
+  ): Promise<KnowledgeFlowRecord> {
+    return this.knowledgeService.getFlowBySlug(
+      slug,
+      parseKnowledgeAcceptLanguage(acceptLanguage),
+    );
   }
 }

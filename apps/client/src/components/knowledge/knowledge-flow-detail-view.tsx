@@ -106,10 +106,10 @@ export function KnowledgeFlowDetailView(
                   }}
                   className={`w-full rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
                     isActive
-                      ? 'border-indigo-500 bg-indigo-50 dark:border-indigo-600 dark:bg-indigo-950/40'
+                      ? 'border-indigo-500 bg-indigo-50 dark:border-indigo-600 dark:bg-indigo-950/70'
                       : isDone
                         ? 'border-zinc-200 bg-zinc-50 opacity-90 dark:border-zinc-700 dark:bg-zinc-900/60'
-                        : 'border-zinc-200 bg-white hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-950'
+                        : 'border-zinc-200 bg-white hover:bg-zinc-50 dark:hover:border-b-violet-900 dark:hover:bg-indigo-950/50 dark:border-zinc-700 dark:bg-zinc-950'
                   }`}
                 >
                   <span className="font-semibold text-zinc-900 dark:text-zinc-100">

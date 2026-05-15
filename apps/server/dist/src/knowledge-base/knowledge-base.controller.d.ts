@@ -10,8 +10,8 @@ export declare class KnowledgeBaseController {
     constructor(knowledgeService: IKnowledgeService);
     listDocuments(): Promise<KnowledgeDocumentSummary[]>;
     getDocument(slug: string): Promise<KnowledgeDocumentRecord>;
-    listDiagrams(): Promise<KnowledgeDiagramSummary[]>;
-    getDiagram(slug: string): Promise<KnowledgeDiagramRecord>;
-    listFlows(): Promise<KnowledgeFlowSummary[]>;
-    getFlow(slug: string): Promise<KnowledgeFlowRecord>;
+    listDiagrams(acceptLanguage: string | undefined): Promise<KnowledgeDiagramSummary[]>;
+    getDiagram(slug: string, acceptLanguage: string | undefined): Promise<KnowledgeDiagramRecord>;
+    listFlows(acceptLanguage: string | undefined): Promise<KnowledgeFlowSummary[]>;
+    getFlow(slug: string, acceptLanguage: string | undefined): Promise<KnowledgeFlowRecord>;
 }

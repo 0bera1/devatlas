@@ -8,15 +8,15 @@ import { useTranslations } from '@/hooks/i18n/use-translations';
 import { useEffect, useState } from 'react';
 
 export interface ProfileInfoFormState {
-  readonly name: string;
-  readonly clearName: boolean;
+  readonly firstName: string;
+  readonly lastName: string;
   readonly birthDate: string;
 }
 
 export interface ProfileInfoFormHandle {
   readonly state: ProfileInfoFormState;
-  readonly setName: (next: string) => void;
-  readonly setClearName: (next: boolean) => void;
+  readonly setFirstName: (next: string) => void;
+  readonly setLastName: (next: string) => void;
   readonly setBirthDate: (next: string) => void;
   readonly submit: () => Promise<void>;
   readonly isSubmitting: boolean;
@@ -41,27 +41,29 @@ export function useProfileInfoForm(
   const { showSuccess, showError } = useToast();
   const mutation = useUpdateProfileMutation();
 
-  const [name, setName] = useState<string>('');
-  const [clearName, setClearName] = useState<boolean>(false);
+  const [firstName, setFirstName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
   const [birthDate, setBirthDate] = useState<string>('');
-  const [initialName, setInitialName] = useState<string>('');
+  const [initialFirstName, setInitialFirstName] = useState<string>('');
+  const [initialLastName, setInitialLastName] = useState<string>('');
   const [initialBirthDate, setInitialBirthDate] = useState<string>('');
 
   useEffect(() => {
     if (profile === undefined) {
       return;
     }
-    setName(profile.name ?? '');
-    setInitialName(profile.name ?? '');
+    setFirstName(profile.firstName);
+    setLastName(profile.lastName);
+    setInitialFirstName(profile.firstName);
+    setInitialLastName(profile.lastName);
     const initialDate: string = toBirthDateInputValue(profile.birthDate);
     setBirthDate(initialDate);
     setInitialBirthDate(initialDate);
-    setClearName(false);
   }, [profile]);
 
   const isDirty: boolean =
-    clearName ||
-    name.trim() !== initialName.trim() ||
+    firstName.trim() !== initialFirstName.trim() ||
+    lastName.trim() !== initialLastName.trim() ||
     birthDate !== initialBirthDate;
 
   const submit = async (): Promise<void> => {
@@ -70,11 +72,23 @@ export function useProfileInfoForm(
     }
 
     const body: UpdateProfileBody = {};
-    if (clearName) {
-      body.name = null;
-    } else if (name.trim() !== initialName.trim()) {
-      body.name = name.trim();
+    const nameDirty: boolean =
+      firstName.trim() !== initialFirstName.trim() ||
+      lastName.trim() !== initialLastName.trim();
+
+    if (nameDirty) {
+      if (firstName.trim().length === 0) {
+        showError(t('auth.validation.firstNameRequired'));
+        return;
+      }
+      if (lastName.trim().length === 0) {
+        showError(t('auth.validation.lastNameRequired'));
+        return;
+      }
+      body.firstName = firstName.trim();
+      body.lastName = lastName.trim();
     }
+
     if (birthDate !== '' && birthDate !== initialBirthDate) {
       body.birthDate = new Date(birthDate).toISOString();
     }
@@ -85,12 +99,13 @@ export function useProfileInfoForm(
 
     try {
       const updated: UserProfile = await mutation.mutateAsync(body);
-      setName(updated.name ?? '');
-      setInitialName(updated.name ?? '');
+      setFirstName(updated.firstName);
+      setLastName(updated.lastName);
+      setInitialFirstName(updated.firstName);
+      setInitialLastName(updated.lastName);
       const nextBirth: string = toBirthDateInputValue(updated.birthDate);
       setBirthDate(nextBirth);
       setInitialBirthDate(nextBirth);
-      setClearName(false);
       showSuccess(t('toast.profileUpdated'));
     } catch (error: unknown) {
       const msg: string = isHttpNetworkError(error)
@@ -103,9 +118,9 @@ export function useProfileInfoForm(
   };
 
   return {
-    state: { name, clearName, birthDate },
-    setName,
-    setClearName,
+    state: { firstName, lastName, birthDate },
+    setFirstName,
+    setLastName,
     setBirthDate,
     submit,
     isSubmitting: mutation.isPending,

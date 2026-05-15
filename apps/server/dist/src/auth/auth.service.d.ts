@@ -9,7 +9,7 @@ export declare class AuthService implements IAuthService {
     private readonly jwtService;
     private readonly configService;
     constructor(userRepository: IUserRepository, refreshTokenRepository: IRefreshTokenRepository, jwtService: JwtService, configService: ConfigService);
-    register(email: string, password: string, name: string | null | undefined, birthDate: Date): Promise<AuthResult>;
+    register(email: string, password: string, firstName: string, lastName: string, birthDate: Date): Promise<AuthResult>;
     login(email: string, password: string): Promise<AuthResult>;
     refresh(plainRefreshToken: string): Promise<AuthResult>;
     tryGetSubjectFromAccessToken(accessToken: string | undefined): Promise<string | null>;

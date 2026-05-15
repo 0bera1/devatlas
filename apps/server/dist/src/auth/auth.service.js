@@ -32,7 +32,7 @@ let AuthService = class AuthService {
         this.jwtService = jwtService;
         this.configService = configService;
     }
-    async register(email, password, name, birthDate) {
+    async register(email, password, firstName, lastName, birthDate) {
         const existing = await this.userRepository.findByEmailWithPassword(email);
         if (existing !== null) {
             throw new common_1.ConflictException(`User with email "${email}" already exists`);
@@ -40,7 +40,8 @@ let AuthService = class AuthService {
         const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
         const user = await this.userRepository.create({
             email,
-            name: name ?? null,
+            firstName,
+            lastName,
             password: hashedPassword,
             birthDate,
         });
@@ -58,7 +59,8 @@ let AuthService = class AuthService {
         const user = {
             id: stored.id,
             email: stored.email,
-            name: stored.name,
+            firstName: stored.firstName,
+            lastName: stored.lastName,
             createdAt: stored.createdAt,
             birthDate: stored.birthDate,
         };
@@ -125,7 +127,12 @@ let AuthService = class AuthService {
         };
     }
     signAccessToken(user) {
-        const payload = { sub: user.id, email: user.email };
+        const payload = {
+            sub: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+        };
         const expiresIn = (this.configService.get('JWT_ACCESS_EXPIRES_IN') ??
             '10m');
         return this.jwtService.sign(payload, { expiresIn });

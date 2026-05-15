@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.flowNarratives = exports.diagramNarratives = void 0;
-exports.diagramNarratives = {
+exports.flowNarrativesTr = exports.diagramNarrativesTr = void 0;
+exports.diagramNarrativesTr = {
     'react-app-layer-architecture': `## Senaryo: Diyagramı kaydetmek
 
 **Ayşe** editörde bir diyagramı düzenledi ve **Kaydet**'e bastı. Aşağıdaki sıra, diyagramdaki kutuların üzerinden gerçek zamanlı olarak izlenir.
@@ -98,7 +98,7 @@ exports.diagramNarratives = {
 
 > **Diyagramda takip edin:** Host ortada üstte; üç remote'a oklar. Her remote'un altında Design System'e inen oklar paylaşılan UI kütüphanesini gösterir.`,
 };
-exports.flowNarratives = [
+exports.flowNarrativesTr = [
     {
         slug: 'full-stack-request-journey',
         narrative: `## Senaryo: Herkese açık bir dokümanı açmak
@@ -264,4 +264,4 @@ Kural: Sunucudan gelen liste Query'de; her şeyi Zustand'a koymayın.`,
         ],
     },
 ];
-//# sourceMappingURL=narratives.data.js.map
+//# sourceMappingURL=narratives-tr.data.js.map

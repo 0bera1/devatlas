@@ -4,7 +4,8 @@ import type { FavoriteDiagramEntry } from './favorite-diagram-entry.interface';
 import type { FavoriteDocumentEntry } from './favorite-document-entry.interface';
 export declare const PROFILE_SERVICE: unique symbol;
 export interface UpdateProfileCommand {
-    name?: string | null;
+    firstName?: string;
+    lastName?: string;
     birthDate?: Date;
 }
 export interface ChangePasswordCommand {

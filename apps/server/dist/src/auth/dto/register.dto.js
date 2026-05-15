@@ -12,10 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RegisterDto = void 0;
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
+function TransformTrimToEmptyString() {
+    return (0, class_transformer_1.Transform)(({ value }) => typeof value === 'string' ? value.trim() : value);
+}
 class RegisterDto {
     email;
     password;
-    name;
+    firstName;
+    lastName;
     birthDate;
 }
 exports.RegisterDto = RegisterDto;
@@ -29,10 +33,19 @@ __decorate([
     __metadata("design:type", String)
 ], RegisterDto.prototype, "password", void 0);
 __decorate([
-    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
+    TransformTrimToEmptyString(),
+    (0, class_validator_1.IsNotEmpty)({ message: 'firstName is required' }),
+    (0, class_validator_1.MaxLength)(80),
     __metadata("design:type", String)
-], RegisterDto.prototype, "name", void 0);
+], RegisterDto.prototype, "firstName", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    TransformTrimToEmptyString(),
+    (0, class_validator_1.IsNotEmpty)({ message: 'lastName is required' }),
+    (0, class_validator_1.MaxLength)(80),
+    __metadata("design:type", String)
+], RegisterDto.prototype, "lastName", void 0);
 __decorate([
     (0, class_transformer_1.Type)(() => Date),
     (0, class_validator_1.IsDate)(),

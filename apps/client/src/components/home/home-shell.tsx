@@ -1,5 +1,6 @@
 ﻿'use client';
 
+import { NavbarUserSection } from '@/components/navigation/navbar-user-section';
 import { PreferencesControls } from '@/components/preferences/preferences-controls';
 import { useAuth } from '@/components/providers/auth-provider';
 import { useTranslations } from '@/hooks/i18n/use-translations';
@@ -8,7 +9,7 @@ import type { ReactNode } from 'react';
 
 export function HomeShell({ children }: { children: ReactNode }): ReactNode {
   const { t } = useTranslations();
-  const { token, isReady, logout } = useAuth();
+  const { token, isReady } = useAuth();
   const loggedIn: boolean = isReady && token !== null;
 
   return (
@@ -58,24 +59,7 @@ export function HomeShell({ children }: { children: ReactNode }): ReactNode {
                   >
                     {t('nav.diagrams')}
                   </Link>
-                  <Link
-                    href="/profile"
-                    className="text-zinc-600 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50"
-                  >
-                    {t('nav.profile')}
-                  </Link>
-                  <span className="hidden text-zinc-500 sm:inline dark:text-zinc-400">
-                    {t('nav.sessionActive')}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      logout();
-                    }}
-                    className="rounded-lg px-3 py-1.5 text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900"
-                  >
-                    {t('nav.logout')}
-                  </button>
+                  <NavbarUserSection />
                 </>
               ) : (
                 <>

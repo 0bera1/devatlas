@@ -2,7 +2,8 @@ import type { DocumentVisibility } from '@/domains/documents/documentsDomains';
 
 export interface PublicSearchDocumentAuthor {
   id: string;
-  name: string | null;
+  firstName: string;
+  lastName: string;
   email: string;
 }
 

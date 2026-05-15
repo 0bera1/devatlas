@@ -54,16 +54,37 @@ export class ProfileService implements IProfileService {
     userId: string,
     command: UpdateProfileCommand,
   ): Promise<PublicUser> {
-    if (command.name === undefined && command.birthDate === undefined) {
+    const hasFirst: boolean = command.firstName !== undefined;
+    const hasLast: boolean = command.lastName !== undefined;
+    const hasBirth: boolean = command.birthDate !== undefined;
+
+    if (!hasFirst && !hasLast && !hasBirth) {
       throw new BadRequestException(
-        'Provide at least one field: name or birthDate.',
+        'Provide at least one field: firstName, lastName, or birthDate.',
       );
+    }
+
+    if (hasFirst !== hasLast) {
+      throw new BadRequestException(
+        'firstName and lastName must be provided together.',
+      );
+    }
+
+    if (hasFirst && hasLast) {
+      const fn: string = command.firstName as string;
+      const ln: string = command.lastName as string;
+      if (fn.trim().length === 0 || ln.trim().length === 0) {
+        throw new BadRequestException(
+          'firstName and lastName must not be empty or whitespace-only.',
+        );
+      }
     }
 
     const updated: PublicUser | null = await this.userRepository.updateProfileById(
       userId,
       {
-        name: command.name,
+        firstName: command.firstName,
+        lastName: command.lastName,
         birthDate: command.birthDate,
       },
     );

@@ -1,4 +1,5 @@
 export declare class UpdateProfileDto {
-    readonly name?: string | null;
+    readonly firstName?: string;
+    readonly lastName?: string;
     readonly birthDate?: Date;
 }

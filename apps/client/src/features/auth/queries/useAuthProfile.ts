@@ -5,7 +5,7 @@ import { useAuth } from '@/components/providers/auth-provider';
 import type { PublicUser } from '@/domains/auth/authDomains';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
-const authProfileQueryKey = ['auth', 'profile'] as const;
+export const authProfileQueryKey = ['auth', 'profile'] as const;
 
 export function useAuthProfileQuery(
   enabled: boolean,

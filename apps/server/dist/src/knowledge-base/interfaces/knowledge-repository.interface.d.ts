@@ -1,3 +1,4 @@
+import type { KnowledgeContentLocale } from '../knowledge-narrative-locale.util';
 import type { KnowledgeDiagramRecord } from './knowledge-diagram-record.interface';
 import type { KnowledgeDocumentRecord } from './knowledge-document-record.interface';
 import type { KnowledgeFlowRecord } from './knowledge-flow-record.interface';
@@ -8,8 +9,8 @@ export declare const KNOWLEDGE_REPOSITORY: unique symbol;
 export interface IKnowledgeRepository {
     selectDocumentsOrdered(): Promise<KnowledgeDocumentSummary[]>;
     selectDocumentBySlug(slug: string): Promise<KnowledgeDocumentRecord | null>;
-    selectDiagramsOrdered(): Promise<KnowledgeDiagramSummary[]>;
-    selectDiagramBySlug(slug: string): Promise<KnowledgeDiagramRecord | null>;
-    selectFlowsOrdered(): Promise<KnowledgeFlowSummary[]>;
-    selectFlowBySlug(slug: string): Promise<KnowledgeFlowRecord | null>;
+    selectDiagramsOrdered(locale: KnowledgeContentLocale): Promise<KnowledgeDiagramSummary[]>;
+    selectDiagramBySlug(slug: string, locale: KnowledgeContentLocale): Promise<KnowledgeDiagramRecord | null>;
+    selectFlowsOrdered(locale: KnowledgeContentLocale): Promise<KnowledgeFlowSummary[]>;
+    selectFlowBySlug(slug: string, locale: KnowledgeContentLocale): Promise<KnowledgeFlowRecord | null>;
 }

@@ -7,6 +7,11 @@ import type {
   KnowledgeFlowRecord,
   KnowledgeFlowSummary,
 } from '@/domains/knowledge/knowledgeDomains';
+import type { Locale } from '@/i18n';
+
+function knowledgeLocaleHeaders(locale: Locale): Readonly<Record<string, string>> {
+  return { 'Accept-Language': locale };
+}
 
 export const knowledgeApi = {
   async listDocuments(): Promise<KnowledgeDocumentSummary[]> {
@@ -23,31 +28,35 @@ export const knowledgeApi = {
     });
   },
 
-  async listDiagrams(): Promise<KnowledgeDiagramSummary[]> {
+  async listDiagrams(locale: Locale): Promise<KnowledgeDiagramSummary[]> {
     return executeJsonRequest<KnowledgeDiagramSummary[]>({
       method: 'GET',
       path: '/knowledge/diagrams',
+      extraHeaders: knowledgeLocaleHeaders(locale),
     });
   },
 
-  async getDiagram(slug: string): Promise<KnowledgeDiagramRecord> {
+  async getDiagram(slug: string, locale: Locale): Promise<KnowledgeDiagramRecord> {
     return executeJsonRequest<KnowledgeDiagramRecord>({
       method: 'GET',
       path: `/knowledge/diagrams/${encodeURIComponent(slug)}`,
+      extraHeaders: knowledgeLocaleHeaders(locale),
     });
   },
 
-  async listFlows(): Promise<KnowledgeFlowSummary[]> {
+  async listFlows(locale: Locale): Promise<KnowledgeFlowSummary[]> {
     return executeJsonRequest<KnowledgeFlowSummary[]>({
       method: 'GET',
       path: '/knowledge/flows',
+      extraHeaders: knowledgeLocaleHeaders(locale),
     });
   },
 
-  async getFlow(slug: string): Promise<KnowledgeFlowRecord> {
+  async getFlow(slug: string, locale: Locale): Promise<KnowledgeFlowRecord> {
     return executeJsonRequest<KnowledgeFlowRecord>({
       method: 'GET',
       path: `/knowledge/flows/${encodeURIComponent(slug)}`,
+      extraHeaders: knowledgeLocaleHeaders(locale),
     });
   },
 };

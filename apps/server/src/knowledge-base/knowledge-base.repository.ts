@@ -20,6 +20,10 @@ import type {
   KnowledgeFlowSummary,
 } from './interfaces/knowledge-flow-record.interface';
 import type { IKnowledgeRepository } from './interfaces/knowledge-repository.interface';
+import {
+  pickKnowledgeNarrative,
+  type KnowledgeContentLocale,
+} from './knowledge-narrative-locale.util';
 
 const documentSummarySelect = {
   id: true,
@@ -36,7 +40,8 @@ const diagramSummarySelect = {
   slug: true,
   title: true,
   description: true,
-  narrative: true,
+  narrativeTr: true,
+  narrativeEn: true,
   sortOrder: true,
   createdAt: true,
   updatedAt: true,
@@ -48,7 +53,8 @@ const diagramFullSelect = {
   slug: true,
   title: true,
   description: true,
-  narrative: true,
+  narrativeTr: true,
+  narrativeEn: true,
   sortOrder: true,
   createdAt: true,
   updatedAt: true,
@@ -86,7 +92,8 @@ const flowSummarySelect = {
   slug: true,
   title: true,
   description: true,
-  narrative: true,
+  narrativeTr: true,
+  narrativeEn: true,
   sortOrder: true,
   createdAt: true,
   updatedAt: true,
@@ -116,7 +123,9 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
     });
   }
 
-  public async selectDiagramsOrdered(): Promise<KnowledgeDiagramSummary[]> {
+  public async selectDiagramsOrdered(
+    locale: KnowledgeContentLocale,
+  ): Promise<KnowledgeDiagramSummary[]> {
     const rows = await this.prisma.systemDiagram.findMany({
       select: diagramSummarySelect,
       orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }],
@@ -127,7 +136,11 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
         slug: row.slug,
         title: row.title,
         description: row.description,
-        narrative: row.narrative,
+        narrative: pickKnowledgeNarrative(
+          row.narrativeTr,
+          row.narrativeEn,
+          locale,
+        ),
         sortOrder: row.sortOrder,
         nodeCount: row._count.nodes,
         createdAt: row.createdAt,
@@ -138,6 +151,7 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
 
   public async selectDiagramBySlug(
     slug: string,
+    locale: KnowledgeContentLocale,
   ): Promise<KnowledgeDiagramRecord | null> {
     const row = await this.prisma.systemDiagram.findUnique({
       where: { slug },
@@ -176,7 +190,11 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
       slug: row.slug,
       title: row.title,
       description: row.description,
-      narrative: row.narrative,
+      narrative: pickKnowledgeNarrative(
+        row.narrativeTr,
+        row.narrativeEn,
+        locale,
+      ),
       sortOrder: row.sortOrder,
       nodeCount: nodes.length,
       createdAt: row.createdAt,
@@ -186,7 +204,9 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
     };
   }
 
-  public async selectFlowsOrdered(): Promise<KnowledgeFlowSummary[]> {
+  public async selectFlowsOrdered(
+    locale: KnowledgeContentLocale,
+  ): Promise<KnowledgeFlowSummary[]> {
     const rows = await this.prisma.systemFlow.findMany({
       select: flowSummarySelect,
       orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }],
@@ -197,7 +217,11 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
         slug: row.slug,
         title: row.title,
         description: row.description,
-        narrative: row.narrative,
+        narrative: pickKnowledgeNarrative(
+          row.narrativeTr,
+          row.narrativeEn,
+          locale,
+        ),
         sortOrder: row.sortOrder,
         stepCount: row._count.steps,
         createdAt: row.createdAt,
@@ -208,6 +232,7 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
 
   public async selectFlowBySlug(
     slug: string,
+    locale: KnowledgeContentLocale,
   ): Promise<KnowledgeFlowRecord | null> {
     const row = await this.prisma.systemFlow.findUnique({
       where: { slug },
@@ -219,7 +244,8 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
             id: true,
             stepOrder: true,
             label: true,
-            narrative: true,
+            narrativeTr: true,
+            narrativeEn: true,
             diagramId: true,
             diagram: { select: { slug: true, title: true } },
           },
@@ -234,7 +260,11 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
         id: s.id,
         stepOrder: s.stepOrder,
         label: s.label,
-        narrative: s.narrative,
+        narrative: pickKnowledgeNarrative(
+          s.narrativeTr,
+          s.narrativeEn,
+          locale,
+        ),
         diagramId: s.diagramId,
         diagramSlug: s.diagram.slug,
         diagramTitle: s.diagram.title,
@@ -245,7 +275,11 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
       slug: row.slug,
       title: row.title,
       description: row.description,
-      narrative: row.narrative,
+      narrative: pickKnowledgeNarrative(
+        row.narrativeTr,
+        row.narrativeEn,
+        locale,
+      ),
       sortOrder: row.sortOrder,
       stepCount: steps.length,
       createdAt: row.createdAt,

@@ -1,7 +1,8 @@
 import type { DocumentVisibility } from './document-record.interface';
 export interface PublicSearchDocumentAuthor {
     id: string;
-    name: string | null;
+    firstName: string;
+    lastName: string;
     email: string;
 }
 export interface PublicSearchDocumentHit {

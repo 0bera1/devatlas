@@ -6,7 +6,8 @@ import type { FavoriteDocumentEntry } from './favorite-document-entry.interface'
 export const PROFILE_SERVICE: unique symbol = Symbol('PROFILE_SERVICE');
 
 export interface UpdateProfileCommand {
-  name?: string | null;
+  firstName?: string;
+  lastName?: string;
   birthDate?: Date;
 }
 

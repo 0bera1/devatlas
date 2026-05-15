@@ -8,6 +8,7 @@ import {
 import { useDiagramCollaboratorsQuery } from '@/features/diagrams/queries/useDiagram';
 import type { DiagramCollaboratorEntry } from '@/domains/diagram/diagramDomains';
 import { useTranslations } from '@/hooks/i18n/use-translations';
+import { formatUserDisplayName } from '@/lib/user/format-user-display-name';
 import type { FormEvent, ReactNode } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 
@@ -135,11 +136,9 @@ export function DiagramCollaboratorsSection(
                 <div className="truncate font-medium text-zinc-900 dark:text-zinc-50">
                   {c.email}
                 </div>
-                {c.name !== null && c.name.trim().length > 0 ? (
-                  <div className="truncate text-xs text-zinc-500 dark:text-zinc-400">
-                    {c.name}
-                  </div>
-                ) : null}
+                <div className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                  {formatUserDisplayName(c.firstName, c.lastName)}
+                </div>
               </div>
               <button
                 type="button"

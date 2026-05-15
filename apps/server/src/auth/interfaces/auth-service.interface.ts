@@ -12,7 +12,8 @@ export interface IAuthService {
   register(
     email: string,
     password: string,
-    name: string | null | undefined,
+    firstName: string,
+    lastName: string,
     birthDate: Date,
   ): Promise<AuthResult>;
 

@@ -26,7 +26,8 @@ export interface SeedDiagramInput {
     slug: string;
     title: string;
     description: string;
-    narrative?: string;
+    narrativeTr?: string;
+    narrativeEn?: string;
     sortOrder: number;
     nodes: SeedDiagramNodeInput[];
     edges: SeedDiagramEdgeInput[];
@@ -34,19 +35,22 @@ export interface SeedDiagramInput {
 export interface SeedFlowStepInput {
     diagramSlug: string;
     label: string;
-    narrative?: string;
+    narrativeTr?: string | null;
+    narrativeEn?: string | null;
 }
 export interface SeedFlowInput {
     slug: string;
     title: string;
     description: string;
-    narrative?: string;
+    narrativeTr?: string | null;
+    narrativeEn?: string | null;
     sortOrder: number;
     steps: ReadonlyArray<SeedFlowStepInput>;
 }
 export interface SeedUserInput {
     email: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     password: string;
     birthDate: Date;
 }

@@ -41,7 +41,8 @@ export class AuthService implements IAuthService {
   public async register(
     email: string,
     password: string,
-    name: string | null | undefined,
+    firstName: string,
+    lastName: string,
     birthDate: Date,
   ): Promise<AuthResult> {
     const existing: User | null =
@@ -58,7 +59,8 @@ export class AuthService implements IAuthService {
 
     const user: PublicUser = await this.userRepository.create({
       email,
-      name: name ?? null,
+      firstName,
+      lastName,
       password: hashedPassword,
       birthDate,
     });
@@ -83,7 +85,8 @@ export class AuthService implements IAuthService {
     const user: PublicUser = {
       id: stored.id,
       email: stored.email,
-      name: stored.name,
+      firstName: stored.firstName,
+      lastName: stored.lastName,
       createdAt: stored.createdAt,
       birthDate: stored.birthDate,
     };
@@ -171,7 +174,12 @@ export class AuthService implements IAuthService {
   }
 
   private signAccessToken(user: PublicUser): string {
-    const payload: JwtPayload = { sub: user.id, email: user.email };
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    };
     const expiresIn = (this.configService.get<string>('JWT_ACCESS_EXPIRES_IN') ??
       '10m') as StringValue;
     return this.jwtService.sign(payload, { expiresIn });

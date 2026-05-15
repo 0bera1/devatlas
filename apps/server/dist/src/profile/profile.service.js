@@ -37,11 +37,25 @@ let ProfileService = class ProfileService {
         return user;
     }
     async updateProfile(userId, command) {
-        if (command.name === undefined && command.birthDate === undefined) {
-            throw new common_1.BadRequestException('Provide at least one field: name or birthDate.');
+        const hasFirst = command.firstName !== undefined;
+        const hasLast = command.lastName !== undefined;
+        const hasBirth = command.birthDate !== undefined;
+        if (!hasFirst && !hasLast && !hasBirth) {
+            throw new common_1.BadRequestException('Provide at least one field: firstName, lastName, or birthDate.');
+        }
+        if (hasFirst !== hasLast) {
+            throw new common_1.BadRequestException('firstName and lastName must be provided together.');
+        }
+        if (hasFirst && hasLast) {
+            const fn = command.firstName;
+            const ln = command.lastName;
+            if (fn.trim().length === 0 || ln.trim().length === 0) {
+                throw new common_1.BadRequestException('firstName and lastName must not be empty or whitespace-only.');
+            }
         }
         const updated = await this.userRepository.updateProfileById(userId, {
-            name: command.name,
+            firstName: command.firstName,
+            lastName: command.lastName,
             birthDate: command.birthDate,
         });
         if (updated === null) {
