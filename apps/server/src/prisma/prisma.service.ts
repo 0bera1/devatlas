@@ -1,5 +1,6 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { DatabaseSeedStartup } from '../database-seed/database-seed-startup';
 import type { IPrismaService } from './interfaces/prisma-service.interface';
 
 @Injectable()
@@ -12,6 +13,9 @@ export class PrismaService
   public async onModuleInit(): Promise<void> {
     await this.$connect();
     this.logger.log('Prisma connected to database');
+
+    const seedStartup: DatabaseSeedStartup = new DatabaseSeedStartup(this);
+    await seedStartup.runIfEnabled();
   }
 
   public async onModuleDestroy(): Promise<void> {

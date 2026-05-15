@@ -228,6 +228,108 @@ model SystemContent {
   @@index([type])
 }
 
+/// Bilgi tabanı — salt okunur sistem dokümanları.
+model SystemDocument {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  summary   String?
+  content   String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
+}
+
+/// Bilgi tabanı — salt okunur sistem diyagramları.
+model SystemDiagram {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String?
+  /// Adım adım okuma metni (markdown).
+  narrative   String?
+  sortOrder   Int      @default(0)
+  nodes       SystemDiagramNode[]
+  edges       SystemDiagramEdge[]
+  flowSteps   SystemFlowStep[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([sortOrder])
+}
+
+model SystemDiagramNode {
+  id               String  @id
+  diagramId        String
+  label            String
+  type             String
+  x                Float
+  y                Float
+  width            Float?
+  height           Float?
+  relatedDiagramId String?
+  extras           Json?
+
+  diagram        SystemDiagram       @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+  outgoingEdges  SystemDiagramEdge[] @relation("SystemDiagramEdgeFrom")
+  incomingEdges  SystemDiagramEdge[] @relation("SystemDiagramEdgeTo")
+
+  @@index([diagramId])
+}
+
+model SystemDiagramEdge {
+  id         String  @id @default(cuid())
+  diagramId  String
+  fromNodeId String
+  toNodeId   String
+  label      String?
+  type       String?
+  animated   Boolean @default(false)
+
+  diagram  SystemDiagram     @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+  fromNode SystemDiagramNode @relation("SystemDiagramEdgeFrom", fields: [fromNodeId], references: [id], onDelete: Cascade)
+  toNode   SystemDiagramNode @relation("SystemDiagramEdgeTo", fields: [toNodeId], references: [id], onDelete: Cascade)
+
+  @@index([diagramId])
+  @@index([fromNodeId])
+  @@index([toNodeId])
+}
+
+/// Bilgi tabanı — birbirine bağlı sistem diyagramlarından oluşan akışlar.
+model SystemFlow {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String?
+  /// Akışın genel amacı ve sıralı okuma rehberi (markdown).
+  narrative   String?
+  sortOrder   Int      @default(0)
+  steps       SystemFlowStep[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([sortOrder])
+}
+
+model SystemFlowStep {
+  id        String @id @default(cuid())
+  flowId    String
+  diagramId String
+  stepOrder Int
+  label     String
+  /// Bu adımda diyagramı nasıl okuyacağınız (markdown).
+  narrative String?
+
+  flow    SystemFlow    @relation(fields: [flowId], references: [id], onDelete: Cascade)
+  diagram SystemDiagram @relation(fields: [diagramId], references: [id], onDelete: Restrict)
+
+  @@unique([flowId, stepOrder])
+  @@index([flowId])
+  @@index([diagramId])
+}
+
 /// AŞAMA 3 — Bilgi platformu: tag tabanlı önerilen mülakat soruları.
 /// `tags` Postgres String[] alanı; GIN indeks ile çakışma sorgusu hızlandırılır.
 model InterviewQuestion {

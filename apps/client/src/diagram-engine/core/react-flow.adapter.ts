@@ -32,6 +32,9 @@ export type AtlasFlowNode = Node<DiagramStandardNodeData, DiagramNodeType>;
 /** Kenar `data` — XYFlow ile motor `semanticType` arasında taşınır. */
 export const ATLAS_FLOW_EDGE_SEMANTIC_KEY = 'atlasSemantic' as const;
 
+/** Kenar etiketi — SVG yerine `EdgeLabelRenderer` katmanında gösterilir. */
+export const ATLAS_FLOW_EDGE_LABEL_KEY = 'atlasEdgeLabel' as const;
+
 /** Handle kutusu — `<Handle />` ile aynı; XYFlow kenar geometrisi için gerekli. */
 const ATLAS_FLOW_HANDLE_PX = 12;
 
@@ -225,11 +228,17 @@ export function engineEdgeToFlowEdge(edge: DiagramEngineEdge): Edge {
   });
   const useDash: boolean =
     edge.appearance === 'dashed' || edge.semanticType === 'dependency';
+  const flowData: Record<string, unknown> = {};
+  if (edge.semanticType !== undefined && edge.semanticType !== 'default') {
+    flowData[ATLAS_FLOW_EDGE_SEMANTIC_KEY] = edge.semanticType;
+  }
+  if (edge.label !== undefined && edge.label.trim().length > 0) {
+    flowData[ATLAS_FLOW_EDGE_LABEL_KEY] = edge.label;
+  }
   return {
     id: edge.id,
     source: edge.source,
     target: edge.target,
-    label: edge.label,
     type: edge.routing,
     animated:
       edge.appearance === 'animated' || edge.semanticType === 'data-flow',
@@ -239,10 +248,7 @@ export function engineEdgeToFlowEdge(edge: DiagramEngineEdge): Edge {
       ...(useDash ? { strokeDasharray: '6 4' } : {}),
     },
     className: atlasSemanticRfEdgeClass(edge.semanticType),
-    data:
-      edge.semanticType !== undefined && edge.semanticType !== 'default'
-        ? { [ATLAS_FLOW_EDGE_SEMANTIC_KEY]: edge.semanticType }
-        : undefined,
+    data: Object.keys(flowData).length > 0 ? flowData : undefined,
   };
 }
 
@@ -263,16 +269,27 @@ export function flowEdgeToEngineEdge(edge: Edge): DiagramEngineEdge {
       (rawData as Record<string, unknown>)[ATLAS_FLOW_EDGE_SEMANTIC_KEY],
     );
   }
+  const dataRecord: Record<string, unknown> | null =
+    rawData !== undefined &&
+    typeof rawData === 'object' &&
+    rawData !== null &&
+    !Array.isArray(rawData)
+      ? (rawData as Record<string, unknown>)
+      : null;
+  const labelFromData: unknown = dataRecord?.[ATLAS_FLOW_EDGE_LABEL_KEY];
+  const labelRaw: unknown = edge.label ?? labelFromData;
+  const resolvedLabel: string | undefined =
+    labelRaw === undefined || labelRaw === null
+      ? undefined
+      : String(labelRaw).trim().length === 0
+        ? undefined
+        : String(labelRaw).trim();
+
   return {
     id: edge.id,
     source: edge.source,
     target: edge.target,
-    label:
-      edge.label === undefined
-        ? undefined
-        : String(edge.label).trim().length === 0
-          ? undefined
-          : String(edge.label),
+    label: resolvedLabel,
     routing,
     appearance,
     semanticType:

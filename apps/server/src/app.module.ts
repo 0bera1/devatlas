@@ -10,6 +10,7 @@ import { IntelligenceModule } from './intelligence/intelligence.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProfileModule } from './profile/profile.module';
 import { SearchModule } from './search/search.module';
+import { KnowledgeBaseModule } from './knowledge-base/knowledge-base.module';
 import { SystemContentModule } from './system-content/system-content.module';
 import { UserActivityModule } from './user-activity/user-activity.module';
 import { UsersModule } from './users/users.module';
@@ -28,6 +29,7 @@ import { CollaborationModule } from './collaboration/collaboration.module';
     FeedModule,
     SearchModule,
     SystemContentModule,
+    KnowledgeBaseModule,
     UserActivityModule,
     ProfileModule,
   ],

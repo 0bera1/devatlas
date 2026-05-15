@@ -164,3 +164,201 @@ button:disabled {
 .react-flow__edge.atlas-edge-semantic-dashed path {
   stroke-dasharray: 6 4;
 }
+
+/* Kenar çizgileri düğümlerin altında; etiketler EdgeLabelRenderer ile üstte */
+.react-flow .react-flow__edges {
+  z-index: 0;
+}
+
+.react-flow .react-flow__nodes {
+  z-index: 5;
+}
+
+.react-flow .react-flow__edgelabel-renderer {
+  z-index: 10;
+  pointer-events: none;
+}
+
+.react-flow .atlas-edge-label-html {
+  z-index: 1000;
+}
+
+.atlas-edge-label-badge-shell {
+  display: inline-block;
+  animation: atlas-edge-label-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes atlas-edge-label-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.86) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes atlas-edge-label-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 1px 2px rgb(0 0 0 / 0.05),
+      0 0 0 0 rgb(var(--atlas-label-accent) / 0);
+  }
+  50% {
+    box-shadow:
+      0 2px 10px rgb(0 0 0 / 0.08),
+      0 0 0 1px rgb(var(--atlas-label-accent) / 0.22),
+      0 0 14px -2px rgb(var(--atlas-label-accent) / 0.18);
+  }
+}
+
+.atlas-edge-label-badge {
+  --atlas-label-accent: 113 113 122;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(var(--atlas-label-accent) / 0.28);
+  padding: 0.2rem 0.55rem 0.2rem 0.45rem;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+  color: rgb(39 39 42);
+  background: rgb(255 255 255 / 0.94);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.atlas-edge-label-badge::before {
+  content: '';
+  flex-shrink: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: rgb(var(--atlas-label-accent) / 0.9);
+  box-shadow: 0 0 6px rgb(var(--atlas-label-accent) / 0.45);
+}
+
+.dark .atlas-edge-label-badge {
+  color: rgb(244 244 245);
+  background: rgb(9 9 11 / 0.94);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.35);
+}
+
+.atlas-edge-label-badge--live {
+  animation: atlas-edge-label-glow 3.2s ease-in-out infinite;
+}
+
+.atlas-edge-label-badge--default {
+  --atlas-label-accent: 113 113 122;
+}
+
+.atlas-edge-label-badge--dashed {
+  --atlas-label-accent: 82 82 91;
+}
+
+.atlas-edge-label-badge--data-flow {
+  --atlas-label-accent: 124 58 237;
+}
+
+.atlas-edge-label-badge--dependency {
+  --atlas-label-accent: 14 165 233;
+}
+
+.atlas-edge-label-badge--async {
+  --atlas-label-accent: 168 85 247;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-edge-label-badge-shell {
+    animation: none;
+  }
+
+  .atlas-edge-label-badge--live {
+    animation: none;
+  }
+}
+/* Atlas diagram — React Flow zoom controls (toolbar / minimap ile uyumlu) */
+.react-flow__panel.react-flow__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 8px;
+  padding: 4px;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid rgb(228 228 231 / 0.9);
+  background: rgb(255 255 255 / 0.92);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.04),
+    0 4px 12px rgb(0 0 0 / 0.06);
+  backdrop-filter: blur(8px);
+}
+
+.dark .react-flow__panel.react-flow__controls {
+  border-color: rgb(63 63 70 / 0.9);
+  background: rgb(9 9 11 / 0.92);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.2),
+    0 4px 16px rgb(0 0 0 / 0.35);
+}
+
+.react-flow__controls button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  border: none !important;
+  border-radius: 8px;
+  background: transparent;
+  color: rgb(63 63 70);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.12s ease;
+}
+
+.dark .react-flow__controls button {
+  color: rgb(212 212 216);
+}
+
+.react-flow__controls button:hover {
+  background: rgb(244 244 245) !important;
+  color: rgb(124 58 237) !important;
+}
+
+.dark .react-flow__controls button:hover {
+  background: rgb(39 39 42) !important;
+  color: rgb(167 139 250) !important;
+}
+
+.react-flow__controls button:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.react-flow__controls button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.react-flow__controls button svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor !important;
+  stroke: currentColor;
+}

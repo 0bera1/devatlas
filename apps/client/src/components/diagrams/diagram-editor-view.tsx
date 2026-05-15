@@ -15,6 +15,7 @@ import { applyAtlasFlowPresentation } from '@/components/diagrams/flow/atlas-flo
 import { useAtlasDiagramNodeTypes } from '@/components/diagrams/flow/atlas-diagram-node-views';
 import { DiagramCanvasHoverCard } from '@/components/diagrams/flow/diagram-canvas-hover-card';
 import { DiagramCanvasToolbar } from '@/components/diagrams/flow/diagram-canvas-toolbar';
+import { DiagramEdgeLabelsOverlay } from '@/components/diagrams/flow/diagram-edge-labels-overlay';
 import { DiagramEdgeDetailPanel } from '@/components/diagrams/flow/diagram-edge-detail-panel';
 import { LinkedDiagramModal } from '@/components/diagrams/flow/linked-diagram-modal';
 import {
@@ -509,6 +510,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
                 isReadOnlyCanvas={isReadOnlyCanvas}
               />
               <DiagramCanvasHoverCard graph={graph} />
+              <DiagramEdgeLabelsOverlay edges={presentedEdges} />
               <Background variant={BackgroundVariant.Dots} gap={16} size={1} />
               <Controls showInteractive={false} />
               <MiniMap
