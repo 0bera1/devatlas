@@ -14,6 +14,9 @@ export const enMessages: Record<MessageKey, string> = {
   'nav.profile': 'Profile',
   'nav.dropdown.viewProfile': 'View profile',
   'nav.userMenuAria': 'User menu',
+  'nav.menu.guide': 'Guide',
+  'nav.menu.openMenu': 'Open menu',
+  'nav.menu.closeMenu': 'Close menu',
 
   'common.loading': 'Loading…',
 
@@ -28,6 +31,10 @@ export const enMessages: Record<MessageKey, string> = {
   'home.publicFeedMid': '; system and help texts are in the',
   'home.knowledgeLink': 'Knowledge base',
   'home.publicFeedAfter': '.',
+
+  'home.contact.title': 'Contact',
+  'home.contact.body':
+    'For feedback or partnerships, reach us at hello@devatlas.app (example).',
 
   'auth.backHome': '← Home',
   'auth.login.title': 'Welcome to DevAtlas',
@@ -393,6 +400,8 @@ export const enMessages: Record<MessageKey, string> = {
   'preferences.themeLight': 'Light',
   'preferences.themeDark': 'Dark',
   'preferences.themeSystem': 'System',
+  'preferences.localeTr': 'Türkçe',
+  'preferences.localeEn': 'English',
 
   'toast.titleSaved': 'Title saved.',
   'toast.contentSaved': 'Content saved.',

@@ -12,6 +12,9 @@ export const trMessages = {
   'nav.profile': 'Profil',
   'nav.dropdown.viewProfile': 'Profili görüntüle',
   'nav.userMenuAria': 'Kullanıcı menüsü',
+  'nav.menu.guide': 'Rehber',
+  'nav.menu.openMenu': 'Menüyü aç',
+  'nav.menu.closeMenu': 'Menüyü kapat',
 
   'common.loading': 'Yükleniyor…',
 
@@ -26,6 +29,10 @@ export const trMessages = {
   'home.publicFeedMid': 'sayfasında; yardım ve sabit metinler',
   'home.knowledgeLink': 'Bilgi tabanı',
   'home.publicFeedAfter': 'bölümünde.',
+
+  'home.contact.title': 'İletişim',
+  'home.contact.body':
+    'Geri bildirim veya iş birliği için hello@devatlas.app adresinden ulaşabilirsiniz (örnek).',
 
   'auth.backHome': '← Ana sayfa',
   'auth.login.title': 'DevAtlas’a hoş geldiniz',
@@ -392,6 +399,8 @@ export const trMessages = {
   'preferences.themeLight': 'Açık',
   'preferences.themeDark': 'Koyu',
   'preferences.themeSystem': 'Sistem',
+  'preferences.localeTr': 'Türkçe',
+  'preferences.localeEn': 'English',
 
   'toast.titleSaved': 'Başlık kaydedildi.',
   'toast.contentSaved': 'İçerik kaydedildi.',

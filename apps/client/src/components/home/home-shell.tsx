@@ -1,87 +1,19 @@
 ﻿'use client';
 
-import { NavbarUserSection } from '@/components/navigation/navbar-user-section';
-import { PreferencesControls } from '@/components/preferences/preferences-controls';
-import { useAuth } from '@/components/providers/auth-provider';
-import { useTranslations } from '@/hooks/i18n/use-translations';
-import Link from 'next/link';
+import { Navbar } from '@/components/home/navbar';
 import type { ReactNode } from 'react';
 
 export function HomeShell({ children }: { children: ReactNode }): ReactNode {
-  const { t } = useTranslations();
-  const { token, isReady } = useAuth();
-  const loggedIn: boolean = isReady && token !== null;
-
   return (
-    <div className="flex min-h-full flex-1 flex-col">
-      <header className="border-b border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/80">
-        <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-3 px-6">
-          <Link
-            href="/"
-            className="shrink-0 font-semibold tracking-tight text-zinc-950 dark:text-zinc-50"
-          >
-            {t('nav.brand')}
-          </Link>
-          <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-3">
-            <PreferencesControls compact />
-            <nav className="flex items-center gap-3 text-sm font-medium sm:gap-4">
-              <Link
-                href="/explore"
-                className="text-zinc-600 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50"
-              >
-                {t('nav.explore')}
-              </Link>
-              <Link
-                href="/knowledge"
-                className="text-zinc-600 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50"
-              >
-                {t('nav.knowledge')}
-              </Link>
-              <Link
-                href="/search"
-                className="text-zinc-600 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50"
-              >
-                {t('nav.search')}
-              </Link>
-              {!isReady ? (
-                <span className="text-zinc-400">{t('nav.loading')}</span>
-              ) : loggedIn ? (
-                <>
-                  <Link
-                    href="/documents"
-                    className="text-zinc-600 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50"
-                  >
-                    {t('nav.documents')}
-                  </Link>
-                  <Link
-                    href="/diagrams"
-                    className="text-zinc-600 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50"
-                  >
-                    {t('nav.diagrams')}
-                  </Link>
-                  <NavbarUserSection />
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/login"
-                    className="text-zinc-600 transition-colors hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-zinc-50"
-                  >
-                    {t('nav.login')}
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="rounded-lg bg-zinc-900 px-3 py-1.5 text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-                  >
-                    {t('nav.register')}
-                  </Link>
-                </>
-              )}
-            </nav>
-          </div>
-        </div>
-      </header>
-      <div className="flex flex-1 flex-col">{children}</div>
+    <div className="relative flex min-h-full flex-1 flex-col bg-gradient-to-b from-zinc-50 via-white to-zinc-50/90 dark:from-zinc-950 dark:via-zinc-950 dark:to-zinc-950">
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-[28rem] bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(139,92,246,0.14),transparent_55%)] dark:bg-[radial-gradient(ellipse_80%_55%_at_50%_-8%,rgba(167,139,250,0.12),transparent_55%)]"
+        aria-hidden
+      />
+      <div className="relative z-0 flex min-h-full flex-1 flex-col">
+        <Navbar />
+        <div className="flex flex-1 flex-col">{children}</div>
+      </div>
     </div>
   );
 }

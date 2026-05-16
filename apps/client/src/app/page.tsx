@@ -54,6 +54,18 @@ export default function Home() {
           </Link>
           {t('home.publicFeedAfter')}
         </p>
+
+        <section
+          id="contact"
+          className="scroll-mt-28 rounded-2xl border border-zinc-200/80 bg-white/60 px-6 py-8 shadow-sm backdrop-blur-sm dark:border-zinc-800/80 dark:bg-zinc-900/40"
+        >
+          <h2 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+            {t('home.contact.title')}
+          </h2>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+            {t('home.contact.body')}
+          </p>
+        </section>
       </main>
     </HomeShell>
   );
