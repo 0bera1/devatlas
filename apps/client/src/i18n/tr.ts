@@ -402,6 +402,54 @@ export const trMessages = {
   'preferences.localeTr': 'Türkçe',
   'preferences.localeEn': 'English',
 
+  'home.story.scrollHint': 'Keşfetmek için kaydır',
+  'home.story.hero.headline': 'Bilgiyi not gibi değil, sistem gibi inşa et.',
+  'home.story.hero.sub':
+    'DevAtlas; diyagramlar, bilgi grafiği ve yapılandırılmış içerikle düşünceni tek bir zeminde birleştirir.',
+  'home.story.problem.title': 'Bilgi dağınık. Bağlam kayboluyor.',
+  'home.story.problem.body':
+    'Notlar, araçlar ve ekipler arasında sürekli sıçrayan fikirler; zamanla iz sürmeyi imkansızlaştırır.',
+  'home.story.transition.title': 'Yapı ortaya çıktıkça hikâye netleşir.',
+  'home.story.transition.body':
+    'Dağınık düğümler merkeze çekilir, bağlantılar çizilir ve sistem düşüncen görünür hale gelir.',
+  'home.story.feature1.title': 'Diyagram oluşturucu',
+  'home.story.feature1.body':
+    'Kanvas üzerinde düğüm ekleyin; scroll ile adım adım diyagramınızın nasıl büyüdüğünü izleyin.',
+  'home.story.feature2.title': 'Bilgi grafiği',
+  'home.story.feature2.body':
+    'Bağlantılı düğümler vurgulanır; hikâye ilerledikçe odak otomatik olarak farklı ilişkilere kayar.',
+  'home.story.feature3.title': 'Yapay zekâ ile yapılandırma',
+  'home.story.feature3.body':
+    'Kümeleme ve gruplama hareketi; içeriğinizin kendi kendine anlamlı bloklara toplanmasını hissedin.',
+  'home.story.feature4.title': 'İş birliği',
+  'home.story.feature4.body':
+    'Hayalet imleçler ve paylaşılan odak; ekibin aynı zeminde düşündüğünü görselleştirir.',
+  'home.story.demo.title': 'Canlı mini demo',
+  'home.story.demo.body':
+    'Kaydırmaya bağlı olarak düğümler eklenir, bağlantılar oluşur ve yerleşim yeniden düzenlenir.',
+  'home.story.cta.title': 'Kendi bilgi sisteminizi oluşturmaya başlayın',
+  'home.story.cta.button': 'Başlayın',
+  'home.story.footer.tagline': 'Sistem hâlâ ayakta.',
+  'home.story.footer.explore': 'Keşif',
+  'home.story.footer.knowledge': 'Bilgi tabanı',
+
+  'home.scene.scenario.title': 'Senaryolar',
+  'home.scene.scenario.sub': 'Tek sistem; farklı akışlar yan yana.',
+  'home.scene.card1.title': 'Keşif',
+  'home.scene.card1.body': 'Herkese açık fikirlerin izini sür.',
+  'home.scene.card2.title': 'Bilgi tabanı',
+  'home.scene.card2.body': 'Anlatı + diyagram + sabit bağlam.',
+  'home.scene.card3.title': 'Dokümanlar',
+  'home.scene.card3.body': 'Bağlantılı notlar ve tek zemin.',
+  'home.scene.flow.title': 'Akış tablosu',
+  'home.scene.flow.sub': 'Gerçek Atlas düğümleri — mimariyi aşağıdan oku.',
+  'home.scene.interview.title': 'Cam masa',
+  'home.scene.interview.sub': 'Soru–cevap ve canlı bağlam; cam yüzey üzerinde takım ritmi.',
+  'home.scene.interview.label': 'Ekip ritmi',
+  'home.scene.interview.pill1': 'Tasarım',
+  'home.scene.interview.pill2': 'Backend',
+  'home.scene.interview.pill3': 'Veri',
+
   'toast.titleSaved': 'Başlık kaydedildi.',
   'toast.contentSaved': 'İçerik kaydedildi.',
   'toast.documentCreated': 'Doküman oluşturuldu.',

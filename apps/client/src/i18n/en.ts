@@ -403,6 +403,54 @@ export const enMessages: Record<MessageKey, string> = {
   'preferences.localeTr': 'Türkçe',
   'preferences.localeEn': 'English',
 
+  'home.story.scrollHint': 'Scroll to explore',
+  'home.story.hero.headline': 'Build knowledge like a system, not notes.',
+  'home.story.hero.sub':
+    'DevAtlas unifies diagrams, knowledge graphs, and structured content on one canvas for how you actually think.',
+  'home.story.problem.title': 'Information is scattered. Context is lost.',
+  'home.story.problem.body':
+    'Ideas jump between tools, docs, and teams—until tracing what mattered becomes impossible.',
+  'home.story.transition.title': 'As structure emerges, the story becomes clear.',
+  'home.story.transition.body':
+    'Nodes pull toward a center, edges draw themselves, and your system of thought becomes visible.',
+  'home.story.feature1.title': 'Diagram builder',
+  'home.story.feature1.body':
+    'Drop nodes on the canvas—scrub the page and watch the diagram grow step by step.',
+  'home.story.feature2.title': 'Knowledge graph',
+  'home.story.feature2.body':
+    'Linked nodes light up in sequence as the narrative advances—focus moves through relationships.',
+  'home.story.feature3.title': 'AI structuring',
+  'home.story.feature3.body':
+    'Clustering motion shows content self-organizing into meaningful blocks.',
+  'home.story.feature4.title': 'Collaboration',
+  'home.story.feature4.body':
+    'Ghost cursors and shared focus visualize the team thinking on the same surface.',
+  'home.story.demo.title': 'Live mini demo',
+  'home.story.demo.body':
+    'Scroll-driven nodes, connections, and layout rearrangement—this is the wow beat.',
+  'home.story.cta.title': 'Start building your knowledge system',
+  'home.story.cta.button': 'Get started',
+  'home.story.footer.tagline': 'The system stays alive.',
+  'home.story.footer.explore': 'Explore',
+  'home.story.footer.knowledge': 'Knowledge',
+
+  'home.scene.scenario.title': 'Scenarios',
+  'home.scene.scenario.sub': 'One system — different flows side by side.',
+  'home.scene.card1.title': 'Explore',
+  'home.scene.card1.body': 'Trace ideas in the open feed.',
+  'home.scene.card2.title': 'Knowledge base',
+  'home.scene.card2.body': 'Narrative + diagrams + stable context.',
+  'home.scene.card3.title': 'Documents',
+  'home.scene.card3.body': 'Linked notes on one surface.',
+  'home.scene.flow.title': 'Flow table',
+  'home.scene.flow.sub': 'Real Atlas nodes — read architecture top-down.',
+  'home.scene.interview.title': 'Glass table',
+  'home.scene.interview.sub': 'Q&A and live context — team rhythm on glass.',
+  'home.scene.interview.label': 'Team rhythm',
+  'home.scene.interview.pill1': 'Design',
+  'home.scene.interview.pill2': 'Backend',
+  'home.scene.interview.pill3': 'Data',
+
   'toast.titleSaved': 'Title saved.',
   'toast.contentSaved': 'Content saved.',
   'toast.documentCreated': 'Document created.',

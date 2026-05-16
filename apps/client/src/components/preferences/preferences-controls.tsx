@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useTheme } from '@/components/providers/theme-provider';
 import type { ThemeMode } from '@/components/providers/theme-provider';
@@ -53,7 +53,7 @@ export function PreferencesControls(
       <div
         role="radiogroup"
         aria-label={t('preferences.language')}
-        className="min-w-0 shrink-0 rounded-xl bg-zinc-950/[0.04] p-0.5 dark:bg-white/[0]"
+        className="min-w-0 shrink-0 rounded-2xl bg-zinc-950/[0.04] p-0.5 dark:bg-white/[0]"
       >
         <div className="relative flex min-w-0 overflow-hidden rounded-lg">
           <SlidingGlider
@@ -89,7 +89,7 @@ export function PreferencesControls(
       <div
         role="radiogroup"
         aria-label={t('preferences.theme')}
-        className="min-w-0 shrink-0 rounded-xl bg-zinc-950/[0.04] p-0.5 dark:bg-white/[0]"
+        className="min-w-0 shrink-0 rounded-2xl bg-zinc-950/[0.04] p-0.5 dark:bg-black/[0]"
       >
         <div className="relative flex min-w-0 overflow-hidden rounded-lg">
           <SlidingGlider
