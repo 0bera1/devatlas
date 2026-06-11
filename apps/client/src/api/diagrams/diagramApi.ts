@@ -1,9 +1,6 @@
 ﻿import { DiagramMethods } from '@/api/MethodNames';
-import {
-  buildDiagramPath,
-  diagramHttpVerb,
-  executeJsonRequest,
-} from '@/api/http/execute-request';
+import { apiClient } from '@/api/http/api-client';
+import { buildDiagramPath } from '@/api/http/execute-request';
 import type {
   CreateDiagramBody,
   DiagramCollaboratorEntry,
@@ -15,34 +12,33 @@ import type {
 
 export const diagramApi = {
   async list(accessToken: string): Promise<DiagramSummary[]> {
-    return executeJsonRequest<DiagramSummary[]>({
-      method: diagramHttpVerb(DiagramMethods.List),
-      path: buildDiagramPath(DiagramMethods.List),
-      accessToken,
-    });
+    const response = await apiClient.get<DiagramSummary[]>(
+      buildDiagramPath(DiagramMethods.List),
+      { accessToken },
+    );
+    return response.data;
   },
 
   async create(
     accessToken: string,
     body: CreateDiagramBody,
   ): Promise<DiagramRecord> {
-    return executeJsonRequest<DiagramRecord>({
-      method: diagramHttpVerb(DiagramMethods.Create),
-      path: buildDiagramPath(DiagramMethods.Create),
-      accessToken,
-      body,
-    });
+    const response = await apiClient.post<DiagramRecord>(
+      buildDiagramPath(DiagramMethods.Create),
+      { accessToken, body },
+    );
+    return response.data;
   },
 
   async getById(
     accessToken: string,
     diagramId: string,
   ): Promise<DiagramRecord> {
-    return executeJsonRequest<DiagramRecord>({
-      method: diagramHttpVerb(DiagramMethods.GetById),
-      path: buildDiagramPath(DiagramMethods.GetById, { id: diagramId }),
-      accessToken,
-    });
+    const response = await apiClient.get<DiagramRecord>(
+      buildDiagramPath(DiagramMethods.GetById, { id: diagramId }),
+      { accessToken },
+    );
+    return response.data;
   },
 
   async saveGraph(
@@ -50,12 +46,11 @@ export const diagramApi = {
     diagramId: string,
     body: SaveDiagramGraphBody,
   ): Promise<DiagramRecord> {
-    return executeJsonRequest<DiagramRecord>({
-      method: diagramHttpVerb(DiagramMethods.SaveGraph),
-      path: buildDiagramPath(DiagramMethods.SaveGraph, { id: diagramId }),
-      accessToken,
-      body,
-    });
+    const response = await apiClient.put<DiagramRecord>(
+      buildDiagramPath(DiagramMethods.SaveGraph, { id: diagramId }),
+      { accessToken, body },
+    );
+    return response.data;
   },
 
   async patch(
@@ -63,36 +58,32 @@ export const diagramApi = {
     diagramId: string,
     body: PatchDiagramBody,
   ): Promise<DiagramRecord> {
-    return executeJsonRequest<DiagramRecord>({
-      method: diagramHttpVerb(DiagramMethods.Patch),
-      path: buildDiagramPath(DiagramMethods.Patch, { id: diagramId }),
-      accessToken,
-      body,
-    });
+    const response = await apiClient.patch<DiagramRecord>(
+      buildDiagramPath(DiagramMethods.Patch, { id: diagramId }),
+      { accessToken, body },
+    );
+    return response.data;
   },
 
   /**
    * DELETE — {@link DiagramMethods.Delete}
    */
   async remove(accessToken: string, diagramId: string): Promise<void> {
-    await executeJsonRequest<void>({
-      method: diagramHttpVerb(DiagramMethods.Delete),
-      path: buildDiagramPath(DiagramMethods.Delete, { id: diagramId }),
-      accessToken,
-    });
+    await apiClient.delete<void>(
+      buildDiagramPath(DiagramMethods.Delete, { id: diagramId }),
+      { accessToken },
+    );
   },
 
   async listCollaborators(
     accessToken: string,
     diagramId: string,
   ): Promise<DiagramCollaboratorEntry[]> {
-    return executeJsonRequest<DiagramCollaboratorEntry[]>({
-      method: diagramHttpVerb(DiagramMethods.ListCollaborators),
-      path: buildDiagramPath(DiagramMethods.ListCollaborators, {
-        id: diagramId,
-      }),
-      accessToken,
-    });
+    const response = await apiClient.get<DiagramCollaboratorEntry[]>(
+      buildDiagramPath(DiagramMethods.ListCollaborators, { id: diagramId }),
+      { accessToken },
+    );
+    return response.data;
   },
 
   async addCollaborator(
@@ -100,12 +91,11 @@ export const diagramApi = {
     diagramId: string,
     email: string,
   ): Promise<DiagramCollaboratorEntry[]> {
-    return executeJsonRequest<DiagramCollaboratorEntry[]>({
-      method: diagramHttpVerb(DiagramMethods.AddCollaborator),
-      path: buildDiagramPath(DiagramMethods.AddCollaborator, { id: diagramId }),
-      accessToken,
-      body: { email },
-    });
+    const response = await apiClient.post<DiagramCollaboratorEntry[]>(
+      buildDiagramPath(DiagramMethods.AddCollaborator, { id: diagramId }),
+      { accessToken, body: { email } },
+    );
+    return response.data;
   },
 
   async removeCollaborator(
@@ -113,35 +103,34 @@ export const diagramApi = {
     diagramId: string,
     userId: string,
   ): Promise<DiagramCollaboratorEntry[]> {
-    return executeJsonRequest<DiagramCollaboratorEntry[]>({
-      method: diagramHttpVerb(DiagramMethods.RemoveCollaborator),
-      path: buildDiagramPath(DiagramMethods.RemoveCollaborator, {
+    const response = await apiClient.delete<DiagramCollaboratorEntry[]>(
+      buildDiagramPath(DiagramMethods.RemoveCollaborator, {
         id: diagramId,
         userId,
       }),
-      accessToken,
-    });
+      { accessToken },
+    );
+    return response.data;
   },
 
   async listRelated(
     diagramId: string,
     accessToken: string | null | undefined,
   ): Promise<DiagramSummary[]> {
-    return executeJsonRequest<DiagramSummary[]>({
-      method: diagramHttpVerb(DiagramMethods.Related),
-      path: buildDiagramPath(DiagramMethods.Related, { id: diagramId }),
-      accessToken: accessToken ?? undefined,
-    });
+    const response = await apiClient.get<DiagramSummary[]>(
+      buildDiagramPath(DiagramMethods.Related, { id: diagramId }),
+      { accessToken: accessToken ?? undefined },
+    );
+    return response.data;
   },
 
   /**
    * POST — {@link DiagramMethods.FavoriteDiagram}. 409 = zaten favorilenmiş.
    */
   async favorite(accessToken: string, diagramId: string): Promise<void> {
-    await executeJsonRequest<void>({
-      method: diagramHttpVerb(DiagramMethods.FavoriteDiagram),
-      path: buildDiagramPath(DiagramMethods.FavoriteDiagram, { id: diagramId }),
-      accessToken,
-    });
+    await apiClient.post<void>(
+      buildDiagramPath(DiagramMethods.FavoriteDiagram, { id: diagramId }),
+      { accessToken },
+    );
   },
 } as const;

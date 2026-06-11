@@ -6,7 +6,7 @@
   RegisterRequest,
 } from '@/domains/auth/authDomains';
 import { AuthMethods } from '@/api/MethodNames';
-import { executeJsonRequest } from '@/api/http/execute-request';
+import { apiClient } from '@/api/http/api-client';
 
 function authPath(method: AuthMethods): string {
   switch (method) {
@@ -25,53 +25,36 @@ function authPath(method: AuthMethods): string {
   }
 }
 
-function authVerb(
-  method: AuthMethods,
-): 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' {
-  switch (method) {
-    case AuthMethods.Profile:
-      return 'GET';
-    case AuthMethods.Login:
-    case AuthMethods.Register:
-    case AuthMethods.Refresh:
-      return 'POST';
-    default: {
-      const _e: never = method;
-      return _e;
-    }
-  }
-}
-
 export const authApi = {
   async login(body: LoginRequest): Promise<AuthResponse> {
-    return executeJsonRequest<AuthResponse>({
-      method: authVerb(AuthMethods.Login),
-      path: authPath(AuthMethods.Login),
-      body,
-    });
+    const response = await apiClient.post<AuthResponse>(
+      authPath(AuthMethods.Login),
+      { body },
+    );
+    return response.data;
   },
 
   async register(body: RegisterRequest): Promise<AuthResponse> {
-    return executeJsonRequest<AuthResponse>({
-      method: authVerb(AuthMethods.Register),
-      path: authPath(AuthMethods.Register),
-      body,
-    });
+    const response = await apiClient.post<AuthResponse>(
+      authPath(AuthMethods.Register),
+      { body },
+    );
+    return response.data;
   },
 
   async refresh(body: RefreshRequest): Promise<AuthResponse> {
-    return executeJsonRequest<AuthResponse>({
-      method: authVerb(AuthMethods.Refresh),
-      path: authPath(AuthMethods.Refresh),
-      body,
-    });
+    const response = await apiClient.post<AuthResponse>(
+      authPath(AuthMethods.Refresh),
+      { body },
+    );
+    return response.data;
   },
 
   async getProfile(accessToken: string): Promise<PublicUser> {
-    return executeJsonRequest<PublicUser>({
-      method: authVerb(AuthMethods.Profile),
-      path: authPath(AuthMethods.Profile),
-      accessToken,
-    });
+    const response = await apiClient.get<PublicUser>(
+      authPath(AuthMethods.Profile),
+      { accessToken },
+    );
+    return response.data;
   },
 } as const;

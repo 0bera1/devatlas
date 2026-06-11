@@ -1,6 +1,8 @@
-import { getApiBaseUrl } from '@/lib/api/base-url';
-import { parseApiError } from '@/lib/api/parse-api-error';
-import { API_NETWORK_ERROR_CODE, type ApiNetworkFailure } from '@/lib/api/api-error';
+import {
+  apiClient,
+  HttpRequestError,
+  type ApiClientRequestConfig,
+} from '@/api/http/api-client';
 import {
   DiagramMethods,
   DocumentMethods,
@@ -10,27 +12,19 @@ import {
   SearchMethods,
 } from '@/api/MethodNames';
 
-export class HttpRequestError extends Error {
-  public constructor(
-    message: string,
-    public readonly status: number,
-    public readonly code?: typeof API_NETWORK_ERROR_CODE,
-  ) {
-    super(message);
-    this.name = 'HttpRequestError';
-  }
-}
-
-export function isHttpNetworkError(error: unknown): error is HttpRequestError {
-  return (
-    error instanceof HttpRequestError &&
-    error.code === API_NETWORK_ERROR_CODE
-  );
-}
-
-export function isNotFoundHttpError(error: unknown): boolean {
-  return error instanceof HttpRequestError && error.status === 404;
-}
+export {
+  ApiClient,
+  apiClient,
+  HttpRequestError,
+  isHttpNetworkError,
+  isNotFoundHttpError,
+  toApiFailure,
+} from '@/api/http/api-client';
+export type {
+  ApiClientRequestConfig,
+  ApiClientResponse,
+  HttpMethod,
+} from '@/api/http/api-client';
 
 export interface ExecuteJsonRequestOptions {
   readonly method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -41,80 +35,43 @@ export interface ExecuteJsonRequestOptions {
 }
 
 /**
- * Başarılı yanıtta çözümlenmiş gövdeyi döner (axios `response.data` eşleniği).
+ * @deprecated {@link apiClient} kullanın (`apiClient.get`, `apiClient.post`, …).
  */
 export async function executeJsonRequest<TResponse>(
   options: ExecuteJsonRequestOptions,
 ): Promise<TResponse> {
-  const url: string = `${getApiBaseUrl()}${options.path}`;
-  const headers: Record<string, string> = {};
+  const config: ApiClientRequestConfig = {
+    accessToken: options.accessToken,
+    body: options.body,
+    headers: options.extraHeaders,
+  };
 
-  if (options.body !== undefined) {
-    headers['Content-Type'] = 'application/json';
-  }
-
-  if (options.accessToken !== undefined && options.accessToken !== null) {
-    headers.Authorization = `Bearer ${options.accessToken}`;
-  }
-
-  if (options.extraHeaders !== undefined) {
-    for (const [key, value] of Object.entries(options.extraHeaders)) {
-      headers[key] = value;
+  switch (options.method) {
+    case 'GET': {
+      const response = await apiClient.get<TResponse>(options.path, config);
+      return response.data;
+    }
+    case 'POST': {
+      const response = await apiClient.post<TResponse>(options.path, config);
+      return response.data;
+    }
+    case 'PUT': {
+      const response = await apiClient.put<TResponse>(options.path, config);
+      return response.data;
+    }
+    case 'PATCH': {
+      const response = await apiClient.patch<TResponse>(options.path, config);
+      return response.data;
+    }
+    case 'DELETE': {
+      const response = await apiClient.delete<TResponse>(options.path, config);
+      return response.data;
+    }
+    default: {
+      const _exhaustive: never = options.method;
+      return _exhaustive;
     }
   }
-
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      method: options.method,
-      headers,
-      body:
-        options.body !== undefined
-          ? JSON.stringify(options.body)
-          : undefined,
-    });
-  } catch {
-    throw new HttpRequestError('', 0, API_NETWORK_ERROR_CODE);
-  }
-
-  if (!response.ok) {
-    const message: string = await parseApiError(response);
-    throw new HttpRequestError(message, response.status);
-  }
-
-  if (response.status === 204) {
-    return undefined as TResponse;
-  }
-
-  const contentType: string | null = response.headers.get('content-type');
-  if (contentType !== null && contentType.includes('application/json')) {
-    return (await response.json()) as TResponse;
-  }
-
-  return undefined as TResponse;
-}
-
-/** Eski api-error ile uyum (query / mutation onError içinde) */
-export function toApiFailure(error: unknown): {
-  ok: false;
-  error: string;
-  code?: typeof API_NETWORK_ERROR_CODE;
-} {
-  if (error instanceof HttpRequestError) {
-    if (error.code === API_NETWORK_ERROR_CODE) {
-      const n: ApiNetworkFailure = {
-        ok: false,
-        error: '',
-        code: API_NETWORK_ERROR_CODE,
-      };
-      return n;
-    }
-    return { ok: false, error: error.message };
-  }
-  if (error instanceof Error) {
-    return { ok: false, error: error.message };
-  }
-  return { ok: false, error: 'Unknown error' };
 }
 
 export function buildDocumentPath(

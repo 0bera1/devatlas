@@ -1,10 +1,9 @@
 ﻿import { DocumentMethods, FeedMethods, SearchMethods } from '@/api/MethodNames';
+import { apiClient } from '@/api/http/api-client';
 import {
   buildDocumentPath,
   buildFeedPath,
   buildSearchPath,
-  documentHttpVerb,
-  executeJsonRequest,
 } from '@/api/http/execute-request';
 import type {
   CreateDocumentBody,
@@ -47,20 +46,20 @@ export const documentApi = {
    * GET /feed/latest — son herkese açık dokümanlar.
    */
   async listFeedLatest(): Promise<DocumentRecord[]> {
-    return executeJsonRequest<DocumentRecord[]>({
-      method: 'GET',
-      path: buildFeedPath(FeedMethods.Latest),
-    });
+    const response = await apiClient.get<DocumentRecord[]>(
+      buildFeedPath(FeedMethods.Latest),
+    );
+    return response.data;
   },
 
   /**
    * GET /feed/trending — favoriteCount, ardından viewCount azalan.
    */
   async listFeedTrending(): Promise<DocumentRecord[]> {
-    return executeJsonRequest<DocumentRecord[]>({
-      method: 'GET',
-      path: buildFeedPath(FeedMethods.Trending),
-    });
+    const response = await apiClient.get<DocumentRecord[]>(
+      buildFeedPath(FeedMethods.Trending),
+    );
+    return response.data;
   },
 
   /**
@@ -71,10 +70,10 @@ export const documentApi = {
     if (q.length === 0) {
       return [];
     }
-    return executeJsonRequest<PublicSearchHit[]>({
-      method: 'GET',
-      path: buildSearchPath(SearchMethods.PublicDocuments, { q }),
-    });
+    const response = await apiClient.get<PublicSearchHit[]>(
+      buildSearchPath(SearchMethods.PublicDocuments, { q }),
+    );
+    return response.data;
   },
 
   /**
@@ -93,11 +92,10 @@ export const documentApi = {
   ): Promise<PaginatedDocumentList> {
     const base: string = buildDocumentPath(DocumentMethods.List);
     const path: string = appendListQuery(base, query);
-    return executeJsonRequest<PaginatedDocumentList>({
-      method: documentHttpVerb(DocumentMethods.List),
-      path,
+    const response = await apiClient.get<PaginatedDocumentList>(path, {
       accessToken,
     });
+    return response.data;
   },
 
   /**
@@ -107,12 +105,11 @@ export const documentApi = {
     accessToken: string,
     body: CreateDocumentBody,
   ): Promise<DocumentRecord> {
-    return executeJsonRequest<DocumentRecord>({
-      method: documentHttpVerb(DocumentMethods.Create),
-      path: buildDocumentPath(DocumentMethods.Create),
-      accessToken,
-      body,
-    });
+    const response = await apiClient.post<DocumentRecord>(
+      buildDocumentPath(DocumentMethods.Create),
+      { accessToken, body },
+    );
+    return response.data;
   },
 
   /**
@@ -122,11 +119,11 @@ export const documentApi = {
     accessToken: string,
     documentId: string,
   ): Promise<DocumentRecord> {
-    return executeJsonRequest<DocumentRecord>({
-      method: documentHttpVerb(DocumentMethods.GetById),
-      path: buildDocumentPath(DocumentMethods.GetById, { id: documentId }),
-      accessToken,
-    });
+    const response = await apiClient.get<DocumentRecord>(
+      buildDocumentPath(DocumentMethods.GetById, { id: documentId }),
+      { accessToken },
+    );
+    return response.data;
   },
 
   /**
@@ -137,11 +134,11 @@ export const documentApi = {
     documentId: string,
     accessToken: string | null | undefined,
   ): Promise<DocumentRecord[]> {
-    return executeJsonRequest<DocumentRecord[]>({
-      method: documentHttpVerb(DocumentMethods.Related),
-      path: buildDocumentPath(DocumentMethods.Related, { id: documentId }),
-      accessToken: accessToken ?? undefined,
-    });
+    const response = await apiClient.get<DocumentRecord[]>(
+      buildDocumentPath(DocumentMethods.Related, { id: documentId }),
+      { accessToken: accessToken ?? undefined },
+    );
+    return response.data;
   },
 
   /**
@@ -152,14 +149,11 @@ export const documentApi = {
     documentId: string,
     body: UpdateDocumentContentBody,
   ): Promise<DocumentRecord> {
-    return executeJsonRequest<DocumentRecord>({
-      method: documentHttpVerb(DocumentMethods.UpdateContent),
-      path: buildDocumentPath(DocumentMethods.UpdateContent, {
-        id: documentId,
-      }),
-      accessToken,
-      body,
-    });
+    const response = await apiClient.put<DocumentRecord>(
+      buildDocumentPath(DocumentMethods.UpdateContent, { id: documentId }),
+      { accessToken, body },
+    );
+    return response.data;
   },
 
   /**
@@ -170,14 +164,11 @@ export const documentApi = {
     documentId: string,
     patch: PatchDocumentBody,
   ): Promise<DocumentRecord> {
-    return executeJsonRequest<DocumentRecord>({
-      method: documentHttpVerb(DocumentMethods.PatchDocument),
-      path: buildDocumentPath(DocumentMethods.PatchDocument, {
-        id: documentId,
-      }),
-      accessToken,
-      body: compactPatch(patch),
-    });
+    const response = await apiClient.patch<DocumentRecord>(
+      buildDocumentPath(DocumentMethods.PatchDocument, { id: documentId }),
+      { accessToken, body: compactPatch(patch) },
+    );
+    return response.data;
   },
 
   /**
@@ -187,11 +178,10 @@ export const documentApi = {
     accessToken: string,
     documentId: string,
   ): Promise<void> {
-    await executeJsonRequest<void>({
-      method: documentHttpVerb(DocumentMethods.Delete),
-      path: buildDocumentPath(DocumentMethods.Delete, { id: documentId }),
-      accessToken,
-    });
+    await apiClient.delete<void>(
+      buildDocumentPath(DocumentMethods.Delete, { id: documentId }),
+      { accessToken },
+    );
   },
 
   /**
@@ -202,32 +192,31 @@ export const documentApi = {
     accessToken: string | null | undefined,
     anonymousId: string | null | undefined,
   ): Promise<RecordDocumentViewResponse> {
-    const extra: Record<string, string> = {};
+    const headers: Record<string, string> = {};
     if (
       anonymousId !== undefined &&
       anonymousId !== null &&
       anonymousId.trim().length > 0
     ) {
-      extra['X-Anonymous-Id'] = anonymousId.trim();
+      headers['X-Anonymous-Id'] = anonymousId.trim();
     }
-    return executeJsonRequest<RecordDocumentViewResponse>({
-      method: documentHttpVerb(DocumentMethods.RecordView),
-      path: buildDocumentPath(DocumentMethods.RecordView, { id: documentId }),
-      accessToken: accessToken ?? undefined,
-      extraHeaders: Object.keys(extra).length > 0 ? extra : undefined,
-    });
+    const response = await apiClient.post<RecordDocumentViewResponse>(
+      buildDocumentPath(DocumentMethods.RecordView, { id: documentId }),
+      {
+        accessToken: accessToken ?? undefined,
+        headers: Object.keys(headers).length > 0 ? headers : undefined,
+      },
+    );
+    return response.data;
   },
 
   /**
    * POST /documents/:id/favorite — favori + favoriteCount (+1).
    */
   async addFavorite(accessToken: string, documentId: string): Promise<void> {
-    await executeJsonRequest<void>({
-      method: documentHttpVerb(DocumentMethods.FavoriteDocument),
-      path: buildDocumentPath(DocumentMethods.FavoriteDocument, {
-        id: documentId,
-      }),
-      accessToken,
-    });
+    await apiClient.post<void>(
+      buildDocumentPath(DocumentMethods.FavoriteDocument, { id: documentId }),
+      { accessToken },
+    );
   },
 } as const;

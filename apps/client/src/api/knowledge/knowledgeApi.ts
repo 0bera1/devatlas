@@ -1,4 +1,4 @@
-import { executeJsonRequest } from '@/api/http/execute-request';
+import { apiClient } from '@/api/http/api-client';
 import type {
   KnowledgeDiagramRecord,
   KnowledgeDiagramSummary,
@@ -15,48 +15,48 @@ function knowledgeLocaleHeaders(locale: Locale): Readonly<Record<string, string>
 
 export const knowledgeApi = {
   async listDocuments(): Promise<KnowledgeDocumentSummary[]> {
-    return executeJsonRequest<KnowledgeDocumentSummary[]>({
-      method: 'GET',
-      path: '/knowledge/documents',
-    });
+    const response = await apiClient.get<KnowledgeDocumentSummary[]>(
+      '/knowledge/documents',
+    );
+    return response.data;
   },
 
   async getDocument(slug: string): Promise<KnowledgeDocumentRecord> {
-    return executeJsonRequest<KnowledgeDocumentRecord>({
-      method: 'GET',
-      path: `/knowledge/documents/${encodeURIComponent(slug)}`,
-    });
+    const response = await apiClient.get<KnowledgeDocumentRecord>(
+      `/knowledge/documents/${encodeURIComponent(slug)}`,
+    );
+    return response.data;
   },
 
   async listDiagrams(locale: Locale): Promise<KnowledgeDiagramSummary[]> {
-    return executeJsonRequest<KnowledgeDiagramSummary[]>({
-      method: 'GET',
-      path: '/knowledge/diagrams',
-      extraHeaders: knowledgeLocaleHeaders(locale),
-    });
+    const response = await apiClient.get<KnowledgeDiagramSummary[]>(
+      '/knowledge/diagrams',
+      { headers: knowledgeLocaleHeaders(locale) },
+    );
+    return response.data;
   },
 
   async getDiagram(slug: string, locale: Locale): Promise<KnowledgeDiagramRecord> {
-    return executeJsonRequest<KnowledgeDiagramRecord>({
-      method: 'GET',
-      path: `/knowledge/diagrams/${encodeURIComponent(slug)}`,
-      extraHeaders: knowledgeLocaleHeaders(locale),
-    });
+    const response = await apiClient.get<KnowledgeDiagramRecord>(
+      `/knowledge/diagrams/${encodeURIComponent(slug)}`,
+      { headers: knowledgeLocaleHeaders(locale) },
+    );
+    return response.data;
   },
 
   async listFlows(locale: Locale): Promise<KnowledgeFlowSummary[]> {
-    return executeJsonRequest<KnowledgeFlowSummary[]>({
-      method: 'GET',
-      path: '/knowledge/flows',
-      extraHeaders: knowledgeLocaleHeaders(locale),
-    });
+    const response = await apiClient.get<KnowledgeFlowSummary[]>(
+      '/knowledge/flows',
+      { headers: knowledgeLocaleHeaders(locale) },
+    );
+    return response.data;
   },
 
   async getFlow(slug: string, locale: Locale): Promise<KnowledgeFlowRecord> {
-    return executeJsonRequest<KnowledgeFlowRecord>({
-      method: 'GET',
-      path: `/knowledge/flows/${encodeURIComponent(slug)}`,
-      extraHeaders: knowledgeLocaleHeaders(locale),
-    });
+    const response = await apiClient.get<KnowledgeFlowRecord>(
+      `/knowledge/flows/${encodeURIComponent(slug)}`,
+      { headers: knowledgeLocaleHeaders(locale) },
+    );
+    return response.data;
   },
 };
