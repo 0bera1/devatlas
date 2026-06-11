@@ -4,6 +4,7 @@ import { isHttpNetworkError, isNotFoundHttpError } from '@/api/http/execute-requ
 import { KnowledgeDiagramReadonlyView } from '@/components/knowledge/knowledge-diagram-readonly-view';
 import { KnowledgeNarrativeSection } from '@/components/knowledge/knowledge-narrative-section';
 import type { KnowledgeFlowStepRecord } from '@/domains/knowledge/knowledgeDomains';
+import { KnowledgeBackLink } from '@/components/knowledge/knowledge-back-link';
 import { useKnowledgeFlowQuery } from '@/features/knowledge/queries/useKnowledgeQueries';
 import { useTranslations } from '@/hooks/i18n/use-translations';
 import Link from 'next/link';
@@ -48,9 +49,7 @@ export function KnowledgeFlowDetailView(
         <p className="text-sm text-red-700 dark:text-red-300">
           {errorMessage ?? t('knowledge.flow.notFound')}
         </p>
-        <Link href="/knowledge" className="text-sm font-medium underline">
-          {t('knowledge.backToBase')}
-        </Link>
+        <KnowledgeBackLink className="text-sm font-medium underline" />
       </div>
     );
   }
@@ -63,12 +62,7 @@ export function KnowledgeFlowDetailView(
   return (
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-3">
-        <Link
-          href="/knowledge"
-          className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400"
-        >
-          {t('knowledge.backToBase')}
-        </Link>
+        <KnowledgeBackLink className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400" />
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-2xl font-semibold text-zinc-950 dark:text-zinc-50">
             {data.title}
@@ -90,7 +84,7 @@ export function KnowledgeFlowDetailView(
       <KnowledgeNarrativeSection narrative={data.narrative} variant="flow" />
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
           {t('knowledge.flow.stepsHeading')}
         </h2>
         <ol className="flex flex-col gap-2">
@@ -109,7 +103,7 @@ export function KnowledgeFlowDetailView(
                       ? 'border-indigo-500 bg-indigo-50 dark:border-indigo-600 dark:bg-indigo-950/70'
                       : isDone
                         ? 'border-zinc-200 bg-zinc-50 opacity-90 dark:border-zinc-700 dark:bg-zinc-900/60'
-                        : 'border-zinc-200 bg-white hover:bg-zinc-50 dark:hover:border-b-violet-900 dark:hover:bg-indigo-950/50 dark:border-zinc-700 dark:bg-zinc-950'
+                        : 'border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-950 dark:hover:border-indigo-700 dark:hover:bg-indigo-950/50'
                   }`}
                 >
                   <span className="font-semibold text-zinc-900 dark:text-zinc-100">
@@ -157,11 +151,11 @@ export function KnowledgeFlowDetailView(
           onClick={() => {
             setActiveStepIndex((i: number) => Math.max(0, i - 1));
           }}
-          className="rounded-lg border border-zinc-200 px-3 py-2 text-sm font-medium disabled:opacity-40 dark:border-zinc-700"
+          className="rounded-lg border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
         >
           {t('knowledge.flow.prev')}
         </button>
-        <span className="flex items-center px-2 text-sm text-zinc-500">
+        <span className="flex items-center px-2 text-sm text-zinc-500 dark:text-zinc-400">
           {activeStepIndex + 1} / {steps.length}
         </span>
         <button
@@ -172,7 +166,7 @@ export function KnowledgeFlowDetailView(
               Math.min(steps.length - 1, i + 1),
             );
           }}
-          className="rounded-lg border border-zinc-200 px-3 py-2 text-sm font-medium disabled:opacity-40 dark:border-zinc-700"
+          className="rounded-lg border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
         >
           {t('knowledge.flow.next')}
         </button>

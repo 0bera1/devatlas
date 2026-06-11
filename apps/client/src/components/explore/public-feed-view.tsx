@@ -127,7 +127,7 @@ export function PublicFeedView(): ReactNode {
                     {t('documents.engagement.favorites')}: {doc.favoriteCount}
                   </p>
                 </div>
-                <span className="mt-2 text-xs text-zinc-500 sm:mt-0 sm:shrink-0 sm:text-right">
+                <span className="mt-2 text-xs text-zinc-500 dark:text-zinc-400 sm:mt-0 sm:shrink-0 sm:text-right">
                   {t('explore.updated')}: {formatUpdatedAt(doc.updatedAt)}
                 </span>
               </Link>

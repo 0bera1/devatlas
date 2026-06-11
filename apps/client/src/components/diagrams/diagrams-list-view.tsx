@@ -135,7 +135,7 @@ export function DiagramsListView(): ReactNode {
           <button
             type="submit"
             disabled={createPending || newTitle.trim().length === 0}
-            className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 disabled:opacity-50"
+            className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-700 disabled:opacity-50 dark:bg-violet-500 dark:hover:bg-violet-400"
           >
             {createPending ? t('diagrams.list.creating') : t('diagrams.list.create')}
           </button>
@@ -154,7 +154,7 @@ export function DiagramsListView(): ReactNode {
             void refetch();
           }}
           disabled={isPending}
-          className="rounded-lg border border-zinc-200 px-3 py-2 text-sm dark:border-zinc-700"
+          className="rounded-lg border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
         >
           {t('documents.list.refresh')}
         </button>
@@ -165,9 +165,9 @@ export function DiagramsListView(): ReactNode {
       ) : null}
 
       {isPending && data === undefined ? (
-        <p className="text-sm text-zinc-500">{t('diagrams.list.loading')}</p>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">{t('diagrams.list.loading')}</p>
       ) : items.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-zinc-300 px-6 py-12 text-center text-sm text-zinc-600 dark:border-zinc-700">
+        <p className="rounded-2xl border border-dashed border-zinc-300 px-6 py-12 text-center text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
           {t('diagrams.list.empty')}
         </p>
       ) : (

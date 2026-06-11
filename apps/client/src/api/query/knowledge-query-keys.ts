@@ -1,3 +1,4 @@
+import type { InterviewPrepCategory } from '@/domains/knowledge/knowledgeDomains';
 import type { Locale } from '@/i18n';
 
 export const knowledgeQueryKeys = {
@@ -22,4 +23,14 @@ export const knowledgeQueryKeys = {
     locale: Locale,
   ): readonly ['knowledge', 'flows', typeof locale, string] =>
     [...knowledgeQueryKeys.all, 'flows', locale, slug] as const,
+  interviewCategories: (): readonly ['knowledge', 'interview', 'categories'] =>
+    [...knowledgeQueryKeys.all, 'interview', 'categories'] as const,
+  interviewQuestions: (
+    category: InterviewPrepCategory | 'all',
+  ): readonly ['knowledge', 'interview', 'questions', typeof category] =>
+    [...knowledgeQueryKeys.all, 'interview', 'questions', category] as const,
+  interviewQuestion: (
+    slug: string,
+  ): readonly ['knowledge', 'interview', 'question', string] =>
+    [...knowledgeQueryKeys.all, 'interview', 'question', slug] as const,
 };

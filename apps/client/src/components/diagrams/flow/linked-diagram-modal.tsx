@@ -275,7 +275,7 @@ function LinkedDiagramModalInner(
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-auto p-4 lg:grid-cols-[1fr_minmax(280px,340px)]">
         <div className="relative min-h-[320px] rounded-xl border border-zinc-200/80 bg-zinc-100/50 dark:border-zinc-800 dark:bg-zinc-900/50">
           {!canRender || isPending ? (
-            <div className="flex h-full min-h-[320px] items-center justify-center text-sm text-zinc-500">
+            <div className="flex h-full min-h-[320px] items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
               {t('diagrams.editor.loading')}
             </div>
           ) : isError && error !== null ? (
@@ -283,7 +283,7 @@ function LinkedDiagramModalInner(
               {error.message}
             </div>
           ) : !hydrated ? (
-            <div className="flex h-full min-h-[320px] items-center justify-center text-sm text-zinc-500">
+            <div className="flex h-full min-h-[320px] items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
               {t('diagrams.editor.loading')}
             </div>
           ) : (

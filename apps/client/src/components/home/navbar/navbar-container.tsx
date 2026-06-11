@@ -20,7 +20,7 @@ export function NavbarContainer({
   children,
 }: NavbarContainerProps): ReactNode {
   return (
-    <div className="mx-auto w-full max-w-6xl px-0 sm:px-1">
+    <div className="mx-auto w-full max-w-7xl px-0 sm:px-1">
       <div
         className={`${surfaceEase} ${
           isScrolled

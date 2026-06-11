@@ -32,10 +32,10 @@ export function Navbar(): ReactNode {
         }`}
       >
         <NavbarContainer isScrolled={isScrolled}>
-          <div className="relative flex w-full min-w-0 items-center justify-between gap-2 sm:gap-3">
+          <div className="grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-8 xl:gap-10">
             <Link
               href="/"
-              className={`relative z-20 shrink-0 font-semibold tracking-tight text-zinc-950 transition-[font-size] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none dark:text-zinc-50 ${
+              className={`justify-self-start font-semibold tracking-tight text-zinc-950 transition-[font-size] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none dark:text-zinc-50 ${
                 isScrolled
                   ? 'text-lg sm:text-[1.05rem]'
                   : 'text-lg sm:text-xl md:text-2xl'
@@ -44,11 +44,11 @@ export function Navbar(): ReactNode {
               {t('nav.brand')}
             </Link>
 
-            <div className="pointer-events-none absolute left-1/2 top-1/2 z-10 hidden -translate-x-1/2 -translate-y-1/2 lg:pointer-events-auto lg:block">
+            <div className="hidden min-w-0 justify-self-center lg:block">
               <NavbarMenu isScrolled={isScrolled} />
             </div>
 
-            <div className="relative z-20 flex shrink-0 items-center justify-end gap-2 sm:gap-2.5">
+            <div className="flex shrink-0 items-center justify-end justify-self-end gap-2 sm:gap-3 lg:col-start-3">
               <div className="hidden lg:flex">
                 <NavbarActions
                   isScrolled={isScrolled}

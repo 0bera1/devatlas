@@ -1,5 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { Prisma } from '@prisma/client';
+import type { InterviewQuestionCategory, Prisma } from '@prisma/client';
+import type {
+  InterviewPrepCategorySummary,
+  InterviewPrepFollowUpSummary,
+  InterviewPrepQuestionDetail,
+  InterviewPrepQuestionSummary,
+} from './interfaces/interview-prep-record.interface';
 import {
   PRISMA_SERVICE,
   type IPrismaService,
@@ -285,6 +291,111 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
       steps,
+    };
+  }
+
+  public async selectInterviewPrepCategoryCounts(): Promise<
+    InterviewPrepCategorySummary[]
+  > {
+    const grouped = await this.prisma.interviewQuestion.groupBy({
+      by: ['category'],
+      where: { parentId: null },
+      _count: { _all: true },
+      orderBy: { category: 'asc' },
+    });
+
+    return grouped.map(
+      (row): InterviewPrepCategorySummary => ({
+        category: row.category,
+        questionCount: row._count._all,
+      }),
+    );
+  }
+
+  public async selectInterviewPrepQuestionsByCategory(
+    category: InterviewQuestionCategory | null,
+  ): Promise<InterviewPrepQuestionSummary[]> {
+    const where: Prisma.InterviewQuestionWhereInput = { parentId: null };
+    if (category !== null) {
+      where.category = category;
+    }
+
+    const rows = await this.prisma.interviewQuestion.findMany({
+      where,
+      orderBy: [{ category: 'asc' }, { question: 'asc' }],
+      select: {
+        id: true,
+        slug: true,
+        question: true,
+        category: true,
+        tags: true,
+        difficulty: true,
+        _count: { select: { followUps: true } },
+      },
+    });
+
+    return rows.map(
+      (row): InterviewPrepQuestionSummary => ({
+        id: row.id,
+        slug: row.slug,
+        question: row.question,
+        category: row.category,
+        tags: [...row.tags],
+        difficulty: row.difficulty,
+        followUpCount: row._count.followUps,
+      }),
+    );
+  }
+
+  public async selectInterviewPrepQuestionBySlug(
+    slug: string,
+  ): Promise<InterviewPrepQuestionDetail | null> {
+    const row = await this.prisma.interviewQuestion.findFirst({
+      where: { slug, parentId: null },
+      select: {
+        id: true,
+        slug: true,
+        question: true,
+        answer: true,
+        category: true,
+        tags: true,
+        difficulty: true,
+        followUps: {
+          orderBy: { question: 'asc' },
+          select: {
+            id: true,
+            slug: true,
+            question: true,
+            answer: true,
+          },
+        },
+        _count: { select: { followUps: true } },
+      },
+    });
+
+    if (row === null) {
+      return null;
+    }
+
+    const followUps: InterviewPrepFollowUpSummary[] = row.followUps.map(
+      (fu): InterviewPrepFollowUpSummary => ({
+        id: fu.id,
+        slug: fu.slug,
+        question: fu.question,
+        answer: fu.answer,
+      }),
+    );
+
+    return {
+      id: row.id,
+      slug: row.slug,
+      question: row.question,
+      answer: row.answer,
+      category: row.category,
+      tags: [...row.tags],
+      difficulty: row.difficulty,
+      followUpCount: row._count.followUps,
+      followUps,
     };
   }
 }

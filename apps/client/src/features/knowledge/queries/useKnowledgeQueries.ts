@@ -4,6 +4,10 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { knowledgeApi } from '@/api/knowledge/knowledgeApi';
 import { knowledgeQueryKeys } from '@/api/query/knowledge-query-keys';
 import type {
+  InterviewPrepCategory,
+  InterviewPrepCategorySummary,
+  InterviewPrepQuestionDetail,
+  InterviewPrepQuestionSummary,
   KnowledgeDiagramRecord,
   KnowledgeDiagramSummary,
   KnowledgeDocumentRecord,
@@ -82,6 +86,40 @@ export function useKnowledgeFlowQuery(
     queryKey: knowledgeQueryKeys.flow(slug, locale),
     queryFn: (): Promise<KnowledgeFlowRecord> =>
       knowledgeApi.getFlow(slug, locale),
+    enabled: enabled && slug.length > 0,
+  });
+}
+
+export function useInterviewPrepCategoriesQuery(): UseQueryResult<
+  InterviewPrepCategorySummary[],
+  Error
+> {
+  return useQuery({
+    queryKey: knowledgeQueryKeys.interviewCategories(),
+    queryFn: (): Promise<InterviewPrepCategorySummary[]> =>
+      knowledgeApi.listInterviewCategories(),
+  });
+}
+
+export function useInterviewPrepQuestionsQuery(
+  category: InterviewPrepCategory | null,
+): UseQueryResult<InterviewPrepQuestionSummary[], Error> {
+  const categoryKey: InterviewPrepCategory | 'all' = category ?? 'all';
+  return useQuery({
+    queryKey: knowledgeQueryKeys.interviewQuestions(categoryKey),
+    queryFn: (): Promise<InterviewPrepQuestionSummary[]> =>
+      knowledgeApi.listInterviewQuestions(category),
+  });
+}
+
+export function useInterviewPrepQuestionQuery(
+  slug: string,
+  enabled: boolean,
+): UseQueryResult<InterviewPrepQuestionDetail, Error> {
+  return useQuery({
+    queryKey: knowledgeQueryKeys.interviewQuestion(slug),
+    queryFn: (): Promise<InterviewPrepQuestionDetail> =>
+      knowledgeApi.getInterviewQuestion(slug),
     enabled: enabled && slug.length > 0,
   });
 }

@@ -8,6 +8,7 @@ import {
   getDiagramNarrativeTrEn,
   resolveFlowSeedInputs,
 } from '../../prisma/seed/data/narratives.seed';
+import { seedInterviewQuestions } from '../../prisma/seed/data/interview-questions.data';
 import { seedUsers } from '../../prisma/seed/data/users.data';
 import type { SeedFlowInput } from '../../prisma/seed/types';
 import type { IDatabaseSeedPersistence } from './interfaces/database-seed-persistence.interface';
@@ -33,6 +34,9 @@ export class DatabaseSeedRunner {
 
     this.logger.log('Seeding knowledge flows…');
     await this.seedKnowledgeFlows(diagramIds);
+
+    this.logger.log('Seeding interview prep questions…');
+    await this.seedInterviewQuestionsTable();
 
     this.logger.log('Seed completed.');
   }
@@ -218,6 +222,57 @@ export class DatabaseSeedRunner {
         });
         order += 1;
       }
+    }
+  }
+
+  private async seedInterviewQuestionsTable(): Promise<void> {
+    await this.persistence.interviewQuestion.deleteMany({});
+
+    const slugToId = new Map<string, string>();
+    const mains = seedInterviewQuestions.filter(
+      (item) => item.parentSlug === null,
+    );
+    const followUps = seedInterviewQuestions.filter(
+      (item) => item.parentSlug !== null,
+    );
+
+    for (const item of mains) {
+      const row = await this.persistence.interviewQuestion.create({
+        data: {
+          slug: item.slug,
+          question: item.question,
+          answer: item.answer,
+          category: item.category,
+          tags: [...item.tags],
+          difficulty: item.difficulty,
+          questionKey: item.questionKey,
+        },
+      });
+      slugToId.set(item.slug, row.id);
+    }
+
+    for (const item of followUps) {
+      const parentId: string | undefined = slugToId.get(
+        item.parentSlug as string,
+      );
+      if (parentId === undefined) {
+        throw new Error(
+          `Interview follow-up "${item.slug}" references unknown parent "${item.parentSlug}"`,
+        );
+      }
+
+      await this.persistence.interviewQuestion.create({
+        data: {
+          slug: item.slug,
+          question: item.question,
+          answer: item.answer,
+          category: item.category,
+          tags: [...item.tags],
+          difficulty: item.difficulty,
+          questionKey: item.questionKey,
+          parentId,
+        },
+      });
     }
   }
 }

@@ -1,4 +1,17 @@
-import { Controller, Get, Headers, Inject, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Headers,
+  Inject,
+  Param,
+  Query,
+} from '@nestjs/common';
+import type { InterviewQuestionCategory } from '@prisma/client';
+import type {
+  InterviewPrepCategorySummary,
+  InterviewPrepQuestionDetail,
+  InterviewPrepQuestionSummary,
+} from './interfaces/interview-prep-record.interface';
 import { Public } from '../auth/decorators/public.decorator';
 import type { KnowledgeDiagramRecord } from './interfaces/knowledge-diagram-record.interface';
 import type { KnowledgeDiagramSummary } from './interfaces/knowledge-diagram-record.interface';
@@ -70,5 +83,26 @@ export class KnowledgeBaseController {
       slug,
       parseKnowledgeAcceptLanguage(acceptLanguage),
     );
+  }
+
+  @Get('interview/categories')
+  public async listInterviewPrepCategories(): Promise<
+    InterviewPrepCategorySummary[]
+  > {
+    return this.knowledgeService.listInterviewPrepCategories();
+  }
+
+  @Get('interview/questions')
+  public async listInterviewPrepQuestions(
+    @Query('category') category: InterviewQuestionCategory | undefined,
+  ): Promise<InterviewPrepQuestionSummary[]> {
+    return this.knowledgeService.listInterviewPrepQuestions(category ?? null);
+  }
+
+  @Get('interview/questions/:slug')
+  public async getInterviewPrepQuestion(
+    @Param('slug') slug: string,
+  ): Promise<InterviewPrepQuestionDetail> {
+    return this.knowledgeService.getInterviewPrepQuestionBySlug(slug);
   }
 }

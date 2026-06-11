@@ -2,9 +2,9 @@
 
 import { isHttpNetworkError, isNotFoundHttpError } from '@/api/http/execute-request';
 import { MarkdownSafePreview } from '@/components/diagrams/flow/markdown-safe-preview';
+import { KnowledgeBackLink } from '@/components/knowledge/knowledge-back-link';
 import { useKnowledgeDocumentQuery } from '@/features/knowledge/queries/useKnowledgeQueries';
 import { useTranslations } from '@/hooks/i18n/use-translations';
-import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { useMemo } from 'react';
 
@@ -44,12 +44,7 @@ export function KnowledgeDocumentDetailView(
         <p className="text-sm text-red-700 dark:text-red-300">
           {errorMessage ?? t('knowledge.document.notFound')}
         </p>
-        <Link
-          href="/knowledge"
-          className="text-sm font-medium text-zinc-800 underline dark:text-zinc-200"
-        >
-          {t('knowledge.backToBase')}
-        </Link>
+        <KnowledgeBackLink className="text-sm font-medium text-zinc-800 underline dark:text-zinc-200" />
       </div>
     );
   }
@@ -57,12 +52,7 @@ export function KnowledgeDocumentDetailView(
   return (
     <article className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
-        <Link
-          href="/knowledge"
-          className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-        >
-          {t('knowledge.backToBase')}
-        </Link>
+        <KnowledgeBackLink />
         <h1 className="text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
           {data.title}
         </h1>

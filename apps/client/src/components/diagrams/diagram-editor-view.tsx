@@ -339,7 +339,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
   if (isPending && data === undefined) {
     return (
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
-        <p className="text-sm text-zinc-500">{t('diagrams.editor.loading')}</p>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">{t('diagrams.editor.loading')}</p>
       </main>
     );
   }

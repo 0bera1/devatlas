@@ -10,4 +10,5 @@ export type IDatabaseSeedPersistence = Pick<
   | 'systemDiagramEdge'
   | 'systemFlow'
   | 'systemFlowStep'
+  | 'interviewQuestion'
 >;

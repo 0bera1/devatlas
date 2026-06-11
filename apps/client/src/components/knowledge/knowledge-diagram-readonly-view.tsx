@@ -17,6 +17,7 @@ import { useAtlasDiagramNodeTypes } from '@/components/diagrams/flow/atlas-diagr
 import { DiagramCanvasHoverCard } from '@/components/diagrams/flow/diagram-canvas-hover-card';
 import { DiagramCanvasToolbar } from '@/components/diagrams/flow/diagram-canvas-toolbar';
 import { DiagramEdgeLabelsOverlay } from '@/components/diagrams/flow/diagram-edge-labels-overlay';
+import { KnowledgeBackLink } from '@/components/knowledge/knowledge-back-link';
 import { KnowledgeNarrativeSection } from '@/components/knowledge/knowledge-narrative-section';
 import { mapKnowledgeDiagramToDiagramRecord } from '@/diagram-engine/core/knowledge-diagram.adapter';
 import {
@@ -33,7 +34,6 @@ import type { DiagramRecord } from '@/domains/diagram/diagramDomains';
 import { useKnowledgeDiagramQuery } from '@/features/knowledge/queries/useKnowledgeQueries';
 import { useDiagramQueryHydration } from '@/hooks/diagram/use-diagram-query-hydration';
 import { useTranslations } from '@/hooks/i18n/use-translations';
-import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { useEffect, useMemo } from 'react';
 
@@ -109,7 +109,7 @@ function KnowledgeDiagramCanvas(props: KnowledgeDiagramCanvasProps): ReactNode {
           <DiagramEdgeLabelsOverlay edges={presentedEdges} />
         </ReactFlow>
       ) : (
-        <div className="flex h-full items-center justify-center text-sm text-zinc-500">
+        <div className="flex h-full items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
           {t('diagrams.editor.loading')}
         </div>
       )}
@@ -159,9 +159,7 @@ export function KnowledgeDiagramReadonlyView(
     return (
       <div className="flex flex-col gap-4">
         <p className="text-sm text-red-700 dark:text-red-300">{msg}</p>
-        <Link href="/knowledge" className="text-sm font-medium underline">
-          {t('knowledge.backToBase')}
-        </Link>
+        <KnowledgeBackLink className="text-sm font-medium underline" />
       </div>
     );
   }
@@ -195,12 +193,7 @@ export function KnowledgeDiagramReadonlyView(
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
-        <Link
-          href="/knowledge"
-          className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400"
-        >
-          {t('knowledge.backToBase')}
-        </Link>
+        <KnowledgeBackLink className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400" />
         <h1 className="text-2xl font-semibold text-zinc-950 dark:text-zinc-50">
           {record.title}
         </h1>

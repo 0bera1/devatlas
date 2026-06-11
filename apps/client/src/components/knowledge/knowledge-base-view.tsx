@@ -3,17 +3,17 @@
 import { KnowledgeDiagramsPanel } from '@/components/knowledge/knowledge-diagrams-panel';
 import { KnowledgeFlowsPanel } from '@/components/knowledge/knowledge-flows-panel';
 import { KnowledgeDocumentsPanel } from '@/components/knowledge/knowledge-documents-panel';
-import { KnowledgeInterviewPlaceholder } from '@/components/knowledge/knowledge-interview-placeholder';
+import { KnowledgeInterviewPanel } from '@/components/knowledge/interview/knowledge-interview-panel';
 import { KnowledgeSectionTabs } from '@/components/knowledge/knowledge-section-tabs';
 import type { KnowledgeSection } from '@/domains/knowledge/knowledgeDomains';
+import { useKnowledgeSection } from '@/hooks/knowledge/use-knowledge-section';
 import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
-import { useState } from 'react';
 
 function renderSection(section: KnowledgeSection): ReactNode {
   switch (section) {
     case 'interview':
-      return <KnowledgeInterviewPlaceholder />;
+      return <KnowledgeInterviewPanel />;
     case 'documents':
       return <KnowledgeDocumentsPanel />;
     case 'diagrams':
@@ -25,7 +25,7 @@ function renderSection(section: KnowledgeSection): ReactNode {
 
 export function KnowledgeBaseView(): ReactNode {
   const { t } = useTranslations();
-  const [section, setSection] = useState<KnowledgeSection>('documents');
+  const { section, setSection } = useKnowledgeSection();
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-10 lg:py-14">

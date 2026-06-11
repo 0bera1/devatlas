@@ -169,6 +169,14 @@ export function computeCameraStyle(state: GraphSimulationState): CSSProperties {
   rotZ *= 1 - settle * 0.85;
   scale = scale + (1 - scale) * ctaEase * 0.12;
 
+  /** Akış tablosu beat’inde kamera zoom/tilt yapmasın */
+  const flowStabilize: number = ease(state.beatFlow);
+  scale = 1 + (scale - 1) * (1 - flowStabilize);
+  rotX *= 1 - flowStabilize;
+  rotZ *= 1 - flowStabilize;
+  driftX *= 1 - flowStabilize * 0.85;
+  driftY *= 1 - flowStabilize * 0.85;
+
   return {
     transform: `translate3d(${driftX}px, ${driftY}px, 0) scale(${scale}) rotateX(${rotX}deg) rotateZ(${rotZ}deg)`,
     transformOrigin: '50% 45%',

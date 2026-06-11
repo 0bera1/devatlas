@@ -19,8 +19,9 @@ import {
   ReactFlow,
   ReactFlowProvider,
   applyNodeChanges,
+  useReactFlow,
 } from '@xyflow/react';
-import { useCallback, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 const LANDING_EDGE_TYPE = 'landingScrollDraw' as const;
 
@@ -135,6 +136,44 @@ interface LandingMiniAtlasFlowProps {
   readonly flowTimeline: number;
 }
 
+interface LandingFlowViewportLockProps {
+  readonly visible: number;
+}
+
+/** Panel görünür olunca bir kez ortala; scroll sırasında zoom oynamasın */
+function LandingFlowViewportLock(
+  props: LandingFlowViewportLockProps,
+): null {
+  const { visible } = props;
+  const reactFlow = useReactFlow();
+  const didFitRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (didFitRef.current || visible < 0.12) {
+      return;
+    }
+
+    const frameId: number = requestAnimationFrame(() => {
+      const nodes = reactFlow.getNodes();
+      if (nodes.length === 0) {
+        return;
+      }
+      const bounds = reactFlow.getNodesBounds(nodes);
+      void reactFlow
+        .fitBounds(bounds, { padding: 0.28, duration: 0 })
+        .then(() => {
+          didFitRef.current = true;
+        });
+    });
+
+    return (): void => {
+      cancelAnimationFrame(frameId);
+    };
+  }, [reactFlow, visible]);
+
+  return null;
+}
+
 /**
  * Gerçek Atlas node görünümleri + scroll ile kademeli düğüm ve çizilen kenarlar.
  */
@@ -192,24 +231,18 @@ export function LandingMiniAtlasFlow(
     });
   }, [flowTimeline, presentedNodes]);
 
-  const pulseTransform: string =
-    graphPulse > 0.02
-      ? `scale(${1 + graphPulse * 0.02}) translateZ(0)`
-      : 'translateZ(0)';
-
   return (
     <DiagramEditorStoreProvider diagramId="landing-cinematic-demo">
       <div
-        className="pointer-events-auto relative mx-auto h-[min(48vh,400px)] w-full max-w-3xl origin-center transition-transform duration-300 ease-out"
+        className="pointer-events-auto relative mx-auto h-[min(48vh,400px)] w-full max-w-3xl origin-center"
         style={{
           opacity: visible,
-          transform: pulseTransform,
-          filter: `saturate(${1 + graphPulse * 0.15})`,
+          filter: `saturate(${1 + graphPulse * 0.12})`,
         }}
       >
         <ReactFlowProvider>
           <ReactFlow
-            className="rounded-2xl border border-zinc-200/85 bg-white/90 shadow-[0_0_0_1px_rgba(15,23,42,0.06),0_24px_80px_-32px_rgba(99,102,241,0.22)] dark:border-white/10 dark:bg-zinc-950/80 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_24px_80px_-32px_rgba(99,102,241,0.45)]"
+            className="h-full w-full rounded-2xl border border-zinc-200/85 bg-white/90 shadow-[0_0_0_1px_rgba(15,23,42,0.06),0_24px_80px_-32px_rgba(99,102,241,0.22)] dark:border-white/10 dark:bg-zinc-950/80 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.04),0_24px_80px_-32px_rgba(99,102,241,0.45)]"
             nodes={nodesForFlow}
             edges={presentedEdges}
             nodeTypes={nodeTypes}
@@ -219,14 +252,19 @@ export function LandingMiniAtlasFlow(
             onNodeClick={(_, node) => {
               setSelectedId(node.id);
             }}
-            fitView
-            minZoom={0.4}
-            maxZoom={1.2}
+            minZoom={1}
+            maxZoom={1}
+            zoomOnScroll={false}
+            zoomOnPinch={false}
+            zoomOnDoubleClick={false}
+            panOnScroll={false}
+            panOnDrag
             proOptions={{ hideAttribution: true }}
             nodesDraggable
             nodesConnectable={false}
             elementsSelectable
           >
+            <LandingFlowViewportLock visible={visible} />
             <Background
               variant={BackgroundVariant.Dots}
               gap={18}

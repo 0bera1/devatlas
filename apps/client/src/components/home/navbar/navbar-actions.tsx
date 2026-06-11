@@ -29,7 +29,7 @@ export function NavbarActions({
 
   return (
     <div
-      className={`flex shrink-0 items-center justify-end gap-2 sm:gap-3 ${isScrolled ? '' : 'sm:gap-3.5'} transition-[gap] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]`}
+      className={`flex shrink-0 items-center justify-end gap-2.5 sm:gap-3 ${isScrolled ? '' : 'sm:gap-4'} transition-[gap] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]`}
     >
       {!isReady ? (
         <span className="text-sm text-zinc-400">{t('nav.loading')}</span>

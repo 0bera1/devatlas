@@ -55,7 +55,7 @@ export function KnowledgeDiagramsPanel(): ReactNode {
           <li key={row.id}>
             <Link
               href={`/knowledge/diagrams/${row.slug}`}
-              className="block rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950/50 dark:hover:border-zinc-700"
+              className="block rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950/50 dark:hover:border-zinc-700 dark:hover:bg-zinc-900/50"
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
@@ -77,7 +77,7 @@ export function KnowledgeDiagramsPanel(): ReactNode {
                   {excerpt}
                 </p>
               ) : null}
-              <p className="mt-2 text-xs text-zinc-500">
+              <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
                 {row.nodeCount} {t('knowledge.diagrams.nodesLabel')}
               </p>
             </Link>

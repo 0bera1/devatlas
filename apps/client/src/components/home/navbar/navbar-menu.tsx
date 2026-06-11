@@ -28,7 +28,7 @@ export function NavbarMenu({ isScrolled }: NavbarMenuProps): ReactNode {
     >
       <nav
         aria-label="Primary"
-        className="flex max-w-full flex-wrap items-center justify-center gap-0.5 sm:gap-1 "
+        className="flex max-w-full flex-wrap items-center justify-center gap-1 sm:gap-1.5"
       >
         {landingNavLinks.map((item) => {
           const active: boolean = item.isActive(pathname);

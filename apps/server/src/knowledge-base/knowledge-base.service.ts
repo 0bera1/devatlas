@@ -1,4 +1,10 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import type { InterviewQuestionCategory } from '@prisma/client';
+import type {
+  InterviewPrepCategorySummary,
+  InterviewPrepQuestionDetail,
+  InterviewPrepQuestionSummary,
+} from './interfaces/interview-prep-record.interface';
 import type {
   KnowledgeDiagramRecord,
   KnowledgeDiagramSummary,
@@ -70,6 +76,31 @@ export class KnowledgeBaseService implements IKnowledgeService {
       await this.repository.selectFlowBySlug(slug, locale);
     if (row === null) {
       throw new NotFoundException(`Knowledge flow "${slug}" not found`);
+    }
+    return row;
+  }
+
+  public async listInterviewPrepCategories(): Promise<
+    InterviewPrepCategorySummary[]
+  > {
+    return this.repository.selectInterviewPrepCategoryCounts();
+  }
+
+  public async listInterviewPrepQuestions(
+    category: InterviewQuestionCategory | null,
+  ): Promise<InterviewPrepQuestionSummary[]> {
+    return this.repository.selectInterviewPrepQuestionsByCategory(category);
+  }
+
+  public async getInterviewPrepQuestionBySlug(
+    slug: string,
+  ): Promise<InterviewPrepQuestionDetail> {
+    const row: InterviewPrepQuestionDetail | null =
+      await this.repository.selectInterviewPrepQuestionBySlug(slug);
+    if (row === null) {
+      throw new NotFoundException(
+        `Interview question "${slug}" not found`,
+      );
     }
     return row;
   }

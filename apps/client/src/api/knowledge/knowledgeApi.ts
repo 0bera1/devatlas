@@ -1,5 +1,9 @@
 import { apiClient } from '@/api/http/api-client';
 import type {
+  InterviewPrepCategory,
+  InterviewPrepCategorySummary,
+  InterviewPrepQuestionDetail,
+  InterviewPrepQuestionSummary,
   KnowledgeDiagramRecord,
   KnowledgeDiagramSummary,
   KnowledgeDocumentRecord,
@@ -56,6 +60,33 @@ export const knowledgeApi = {
     const response = await apiClient.get<KnowledgeFlowRecord>(
       `/knowledge/flows/${encodeURIComponent(slug)}`,
       { headers: knowledgeLocaleHeaders(locale) },
+    );
+    return response.data;
+  },
+
+  async listInterviewCategories(): Promise<InterviewPrepCategorySummary[]> {
+    const response = await apiClient.get<InterviewPrepCategorySummary[]>(
+      '/knowledge/interview/categories',
+    );
+    return response.data;
+  },
+
+  async listInterviewQuestions(
+    category: InterviewPrepCategory | null,
+  ): Promise<InterviewPrepQuestionSummary[]> {
+    const path: string =
+      category === null
+        ? '/knowledge/interview/questions'
+        : `/knowledge/interview/questions?category=${encodeURIComponent(category)}`;
+    const response = await apiClient.get<InterviewPrepQuestionSummary[]>(path);
+    return response.data;
+  },
+
+  async getInterviewQuestion(
+    slug: string,
+  ): Promise<InterviewPrepQuestionDetail> {
+    const response = await apiClient.get<InterviewPrepQuestionDetail>(
+      `/knowledge/interview/questions/${encodeURIComponent(slug)}`,
     );
     return response.data;
   },

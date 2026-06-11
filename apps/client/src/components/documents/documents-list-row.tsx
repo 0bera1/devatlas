@@ -57,7 +57,7 @@ export function DocumentsListRow(props: DocumentsListRowProps): ReactNode {
             </span>
           ) : null}
         </div>
-        <span className="text-xs text-zinc-500 sm:text-right">
+        <span className="text-xs text-zinc-500 dark:text-zinc-400 sm:text-right">
           {t('documents.list.updated')}: {formatUpdatedAt(document.updatedAt)}
         </span>
       </Link>

@@ -62,7 +62,7 @@ export function KnowledgeDocumentsPanel(): ReactNode {
                 {doc.summary}
               </p>
             ) : null}
-            <span className="mt-3 inline-block text-xs font-medium text-zinc-500 dark:text-zinc-500">
+            <span className="mt-3 inline-block text-xs font-medium text-zinc-500 dark:text-zinc-400">
               {t('knowledge.readOnly')}
             </span>
           </Link>

@@ -1,5 +1,11 @@
+import type { InterviewQuestionCategory } from '@prisma/client';
 import type { KnowledgeContentLocale } from '../knowledge-narrative-locale.util';
 import type { KnowledgeDiagramRecord } from './knowledge-diagram-record.interface';
+import type {
+  InterviewPrepCategorySummary,
+  InterviewPrepQuestionDetail,
+  InterviewPrepQuestionSummary,
+} from './interview-prep-record.interface';
 import type { KnowledgeDocumentRecord } from './knowledge-document-record.interface';
 import type { KnowledgeFlowRecord } from './knowledge-flow-record.interface';
 import type { KnowledgeDiagramSummary } from './knowledge-diagram-record.interface';
@@ -25,4 +31,11 @@ export interface IKnowledgeRepository {
     slug: string,
     locale: KnowledgeContentLocale,
   ): Promise<KnowledgeFlowRecord | null>;
+  selectInterviewPrepCategoryCounts(): Promise<InterviewPrepCategorySummary[]>;
+  selectInterviewPrepQuestionsByCategory(
+    category: InterviewQuestionCategory | null,
+  ): Promise<InterviewPrepQuestionSummary[]>;
+  selectInterviewPrepQuestionBySlug(
+    slug: string,
+  ): Promise<InterviewPrepQuestionDetail | null>;
 }

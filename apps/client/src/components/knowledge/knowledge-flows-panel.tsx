@@ -55,7 +55,7 @@ export function KnowledgeFlowsPanel(): ReactNode {
           <li key={flow.id}>
             <Link
               href={`/knowledge/flows/${flow.slug}`}
-              className="block rounded-2xl border border-indigo-200 bg-indigo-50/50 p-5 shadow-sm transition-colors hover:border-indigo-300 dark:border-indigo-900/50 dark:bg-indigo-950/20 dark:hover:border-indigo-800"
+              className="block rounded-2xl border border-indigo-200 bg-indigo-50/50 p-5 shadow-sm transition-colors hover:border-indigo-300 hover:bg-indigo-50 dark:border-indigo-900/50 dark:bg-indigo-950/20 dark:hover:border-indigo-800 dark:hover:bg-indigo-950/40"
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
