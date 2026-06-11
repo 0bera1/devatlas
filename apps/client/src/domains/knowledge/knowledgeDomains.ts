@@ -1,3 +1,18 @@
+export const KNOWLEDGE_LIST_PAGE_SIZE = 15;
+
+export interface KnowledgeListQuery {
+  readonly page: number;
+  readonly pageSize: number;
+}
+
+export interface PaginatedKnowledgeList<T> {
+  readonly items: readonly T[];
+  readonly total: number;
+  readonly page: number;
+  readonly pageSize: number;
+  readonly totalPages: number;
+}
+
 export interface KnowledgeDocumentSummary {
   id: string;
   slug: string;

@@ -2,15 +2,18 @@
 
 import { InterviewCategoryFilter } from '@/components/knowledge/interview/interview-category-filter';
 import { InterviewQuestionList } from '@/components/knowledge/interview/interview-question-list';
+import { KnowledgeInfiniteScrollFooter } from '@/components/knowledge/knowledge-infinite-scroll-footer';
 import type { InterviewPrepCategory } from '@/domains/knowledge/knowledgeDomains';
 import {
   useInterviewPrepCategoriesQuery,
-  useInterviewPrepQuestionsQuery,
+  useInterviewPrepQuestionsInfiniteQuery,
 } from '@/features/knowledge/queries/useKnowledgeQueries';
 import { isHttpNetworkError } from '@/api/http/execute-request';
+import { useKnowledgeInfiniteScroll } from '@/hooks/knowledge/use-knowledge-infinite-scroll';
 import { useTranslations } from '@/hooks/i18n/use-translations';
+import { flattenKnowledgeInfiniteData } from '@/lib/knowledge/flatten-knowledge-pages';
 import type { ReactNode } from 'react';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 export function KnowledgeInterviewPanel(): ReactNode {
   const { t } = useTranslations();
@@ -25,11 +28,14 @@ export function KnowledgeInterviewPanel(): ReactNode {
   } = useInterviewPrepCategoriesQuery();
 
   const {
-    data: questions,
+    data: questionsData,
     isPending: questionsPending,
     isError: questionsError,
     error: questionsErrorRaw,
-  } = useInterviewPrepQuestionsQuery(selectedCategory);
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInterviewPrepQuestionsInfiniteQuery(selectedCategory);
 
   const errorMessage = useMemo((): string | null => {
     const err: Error | null =
@@ -46,6 +52,21 @@ export function KnowledgeInterviewPanel(): ReactNode {
     }
     return categories.map((entry) => entry.category);
   }, [categories]);
+
+  const questions = useMemo(
+    () => flattenKnowledgeInfiniteData(questionsData),
+    [questionsData],
+  );
+
+  const handleFetchNextPage = useCallback((): void => {
+    void fetchNextPage();
+  }, [fetchNextPage]);
+
+  const { sentinelRef } = useKnowledgeInfiniteScroll({
+    hasNextPage: hasNextPage ?? false,
+    isFetchingNextPage,
+    fetchNextPage: handleFetchNextPage,
+  });
 
   const isPending: boolean = categoriesPending || questionsPending;
 
@@ -77,7 +98,16 @@ export function KnowledgeInterviewPanel(): ReactNode {
         selected={selectedCategory}
         onChange={setSelectedCategory}
       />
-      <InterviewQuestionList questions={questions ?? []} />
+      <InterviewQuestionList
+        questions={questions}
+        footer={
+          <KnowledgeInfiniteScrollFooter
+            sentinelRef={sentinelRef}
+            isFetchingNextPage={isFetchingNextPage}
+            hasNextPage={hasNextPage ?? false}
+          />
+        }
+      />
     </div>
   );
 }

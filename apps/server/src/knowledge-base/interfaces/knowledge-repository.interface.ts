@@ -15,25 +15,40 @@ import type { KnowledgeFlowSummary } from './knowledge-flow-record.interface';
 export const KNOWLEDGE_REPOSITORY: unique symbol = Symbol('KNOWLEDGE_REPOSITORY');
 
 export interface IKnowledgeRepository {
-  selectDocumentsOrdered(): Promise<KnowledgeDocumentSummary[]>;
+  countDocuments(): Promise<number>;
+  selectDocumentsPage(
+    skip: number,
+    take: number,
+  ): Promise<KnowledgeDocumentSummary[]>;
   selectDocumentBySlug(slug: string): Promise<KnowledgeDocumentRecord | null>;
-  selectDiagramsOrdered(
+  countDiagrams(): Promise<number>;
+  selectDiagramsPage(
     locale: KnowledgeContentLocale,
+    skip: number,
+    take: number,
   ): Promise<KnowledgeDiagramSummary[]>;
   selectDiagramBySlug(
     slug: string,
     locale: KnowledgeContentLocale,
   ): Promise<KnowledgeDiagramRecord | null>;
-  selectFlowsOrdered(
+  countFlows(): Promise<number>;
+  selectFlowsPage(
     locale: KnowledgeContentLocale,
+    skip: number,
+    take: number,
   ): Promise<KnowledgeFlowSummary[]>;
   selectFlowBySlug(
     slug: string,
     locale: KnowledgeContentLocale,
   ): Promise<KnowledgeFlowRecord | null>;
   selectInterviewPrepCategoryCounts(): Promise<InterviewPrepCategorySummary[]>;
-  selectInterviewPrepQuestionsByCategory(
+  countInterviewPrepQuestionsByCategory(
     category: InterviewQuestionCategory | null,
+  ): Promise<number>;
+  selectInterviewPrepQuestionsByCategoryPage(
+    category: InterviewQuestionCategory | null,
+    skip: number,
+    take: number,
   ): Promise<InterviewPrepQuestionSummary[]>;
   selectInterviewPrepQuestionBySlug(
     slug: string,

@@ -17,18 +17,28 @@ import type {
   InterviewPrepQuestionDetail,
   InterviewPrepQuestionSummary,
 } from './interview-prep-record.interface';
+import type { PaginatedKnowledgeList } from './paginated-knowledge-list.interface';
+import type { KnowledgePaginationParams } from '../knowledge-pagination.util';
 
 export const KNOWLEDGE_SERVICE: unique symbol = Symbol('KNOWLEDGE_SERVICE');
 
 export interface IKnowledgeService {
-  listDocuments(): Promise<KnowledgeDocumentSummary[]>;
+  listDocuments(
+    pagination: KnowledgePaginationParams,
+  ): Promise<PaginatedKnowledgeList<KnowledgeDocumentSummary>>;
   getDocumentBySlug(slug: string): Promise<KnowledgeDocumentRecord>;
-  listDiagrams(locale: KnowledgeContentLocale): Promise<KnowledgeDiagramSummary[]>;
+  listDiagrams(
+    locale: KnowledgeContentLocale,
+    pagination: KnowledgePaginationParams,
+  ): Promise<PaginatedKnowledgeList<KnowledgeDiagramSummary>>;
   getDiagramBySlug(
     slug: string,
     locale: KnowledgeContentLocale,
   ): Promise<KnowledgeDiagramRecord>;
-  listFlows(locale: KnowledgeContentLocale): Promise<KnowledgeFlowSummary[]>;
+  listFlows(
+    locale: KnowledgeContentLocale,
+    pagination: KnowledgePaginationParams,
+  ): Promise<PaginatedKnowledgeList<KnowledgeFlowSummary>>;
   getFlowBySlug(
     slug: string,
     locale: KnowledgeContentLocale,
@@ -36,7 +46,8 @@ export interface IKnowledgeService {
   listInterviewPrepCategories(): Promise<InterviewPrepCategorySummary[]>;
   listInterviewPrepQuestions(
     category: InterviewQuestionCategory | null,
-  ): Promise<InterviewPrepQuestionSummary[]>;
+    pagination: KnowledgePaginationParams,
+  ): Promise<PaginatedKnowledgeList<InterviewPrepQuestionSummary>>;
   getInterviewPrepQuestionBySlug(
     slug: string,
   ): Promise<InterviewPrepQuestionDetail>;

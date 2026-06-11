@@ -8,10 +8,12 @@ import type { ReactNode } from 'react';
 
 interface InterviewQuestionListProps {
   readonly questions: readonly InterviewPrepQuestionSummary[];
+  readonly footer?: ReactNode;
 }
 
 export function InterviewQuestionList({
   questions,
+  footer,
 }: InterviewQuestionListProps): ReactNode {
   const { t } = useTranslations();
   const categoryLabel = useInterviewPrepCategoryLabel();
@@ -46,6 +48,7 @@ export function InterviewQuestionList({
           </Link>
         </li>
       ))}
+      {footer !== undefined ? <li>{footer}</li> : null}
     </ul>
   );
 }

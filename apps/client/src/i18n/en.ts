@@ -296,6 +296,7 @@ export const enMessages: Record<MessageKey, string> = {
   'knowledge.section.flows': 'Flows',
   'knowledge.readOnly': 'Read-only',
   'knowledge.backToBase': '← Knowledge base',
+  'knowledge.loadingMore': 'Loading more…',
   'knowledge.interview.intro':
     'Interview questions by category, each with related follow-up questions.',
   'knowledge.interview.categoryFilter': 'Interview category',

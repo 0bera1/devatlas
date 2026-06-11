@@ -19,11 +19,13 @@ import type { KnowledgeDocumentRecord } from './interfaces/knowledge-document-re
 import type { KnowledgeDocumentSummary } from './interfaces/knowledge-document-record.interface';
 import type { KnowledgeFlowRecord } from './interfaces/knowledge-flow-record.interface';
 import type { KnowledgeFlowSummary } from './interfaces/knowledge-flow-record.interface';
+import type { PaginatedKnowledgeList } from './interfaces/paginated-knowledge-list.interface';
 import {
   KNOWLEDGE_SERVICE,
   type IKnowledgeService,
 } from './interfaces/knowledge-service.interface';
 import { parseKnowledgeAcceptLanguage } from './knowledge-narrative-locale.util';
+import { parseKnowledgePagination } from './knowledge-pagination.util';
 
 @Controller('knowledge')
 @Public()
@@ -34,8 +36,13 @@ export class KnowledgeBaseController {
   ) {}
 
   @Get('documents')
-  public async listDocuments(): Promise<KnowledgeDocumentSummary[]> {
-    return this.knowledgeService.listDocuments();
+  public async listDocuments(
+    @Query('page') page: string | undefined,
+    @Query('pageSize') pageSize: string | undefined,
+  ): Promise<PaginatedKnowledgeList<KnowledgeDocumentSummary>> {
+    return this.knowledgeService.listDocuments(
+      parseKnowledgePagination(page, pageSize),
+    );
   }
 
   @Get('documents/:slug')
@@ -48,9 +55,12 @@ export class KnowledgeBaseController {
   @Get('diagrams')
   public async listDiagrams(
     @Headers('accept-language') acceptLanguage: string | undefined,
-  ): Promise<KnowledgeDiagramSummary[]> {
+    @Query('page') page: string | undefined,
+    @Query('pageSize') pageSize: string | undefined,
+  ): Promise<PaginatedKnowledgeList<KnowledgeDiagramSummary>> {
     return this.knowledgeService.listDiagrams(
       parseKnowledgeAcceptLanguage(acceptLanguage),
+      parseKnowledgePagination(page, pageSize),
     );
   }
 
@@ -68,9 +78,12 @@ export class KnowledgeBaseController {
   @Get('flows')
   public async listFlows(
     @Headers('accept-language') acceptLanguage: string | undefined,
-  ): Promise<KnowledgeFlowSummary[]> {
+    @Query('page') page: string | undefined,
+    @Query('pageSize') pageSize: string | undefined,
+  ): Promise<PaginatedKnowledgeList<KnowledgeFlowSummary>> {
     return this.knowledgeService.listFlows(
       parseKnowledgeAcceptLanguage(acceptLanguage),
+      parseKnowledgePagination(page, pageSize),
     );
   }
 
@@ -95,8 +108,13 @@ export class KnowledgeBaseController {
   @Get('interview/questions')
   public async listInterviewPrepQuestions(
     @Query('category') category: InterviewQuestionCategory | undefined,
-  ): Promise<InterviewPrepQuestionSummary[]> {
-    return this.knowledgeService.listInterviewPrepQuestions(category ?? null);
+    @Query('page') page: string | undefined,
+    @Query('pageSize') pageSize: string | undefined,
+  ): Promise<PaginatedKnowledgeList<InterviewPrepQuestionSummary>> {
+    return this.knowledgeService.listInterviewPrepQuestions(
+      category ?? null,
+      parseKnowledgePagination(page, pageSize),
+    );
   }
 
   @Get('interview/questions/:slug')

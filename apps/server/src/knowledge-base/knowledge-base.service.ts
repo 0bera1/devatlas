@@ -21,8 +21,13 @@ import {
   KNOWLEDGE_REPOSITORY,
   type IKnowledgeRepository,
 } from './interfaces/knowledge-repository.interface';
+import type { PaginatedKnowledgeList } from './interfaces/paginated-knowledge-list.interface';
 import type { KnowledgeContentLocale } from './knowledge-narrative-locale.util';
 import type { IKnowledgeService } from './interfaces/knowledge-service.interface';
+import {
+  buildPaginatedKnowledgeList,
+  type KnowledgePaginationParams,
+} from './knowledge-pagination.util';
 
 @Injectable()
 export class KnowledgeBaseService implements IKnowledgeService {
@@ -31,8 +36,20 @@ export class KnowledgeBaseService implements IKnowledgeService {
     private readonly repository: IKnowledgeRepository,
   ) {}
 
-  public async listDocuments(): Promise<KnowledgeDocumentSummary[]> {
-    return this.repository.selectDocumentsOrdered();
+  public async listDocuments(
+    pagination: KnowledgePaginationParams,
+  ): Promise<PaginatedKnowledgeList<KnowledgeDocumentSummary>> {
+    const skip: number = (pagination.page - 1) * pagination.pageSize;
+    const [total, items] = await Promise.all([
+      this.repository.countDocuments(),
+      this.repository.selectDocumentsPage(skip, pagination.pageSize),
+    ]);
+    return buildPaginatedKnowledgeList(
+      items,
+      total,
+      pagination.page,
+      pagination.pageSize,
+    );
   }
 
   public async getDocumentBySlug(slug: string): Promise<KnowledgeDocumentRecord> {
@@ -46,8 +63,19 @@ export class KnowledgeBaseService implements IKnowledgeService {
 
   public async listDiagrams(
     locale: KnowledgeContentLocale,
-  ): Promise<KnowledgeDiagramSummary[]> {
-    return this.repository.selectDiagramsOrdered(locale);
+    pagination: KnowledgePaginationParams,
+  ): Promise<PaginatedKnowledgeList<KnowledgeDiagramSummary>> {
+    const skip: number = (pagination.page - 1) * pagination.pageSize;
+    const [total, items] = await Promise.all([
+      this.repository.countDiagrams(),
+      this.repository.selectDiagramsPage(locale, skip, pagination.pageSize),
+    ]);
+    return buildPaginatedKnowledgeList(
+      items,
+      total,
+      pagination.page,
+      pagination.pageSize,
+    );
   }
 
   public async getDiagramBySlug(
@@ -64,8 +92,19 @@ export class KnowledgeBaseService implements IKnowledgeService {
 
   public async listFlows(
     locale: KnowledgeContentLocale,
-  ): Promise<KnowledgeFlowSummary[]> {
-    return this.repository.selectFlowsOrdered(locale);
+    pagination: KnowledgePaginationParams,
+  ): Promise<PaginatedKnowledgeList<KnowledgeFlowSummary>> {
+    const skip: number = (pagination.page - 1) * pagination.pageSize;
+    const [total, items] = await Promise.all([
+      this.repository.countFlows(),
+      this.repository.selectFlowsPage(locale, skip, pagination.pageSize),
+    ]);
+    return buildPaginatedKnowledgeList(
+      items,
+      total,
+      pagination.page,
+      pagination.pageSize,
+    );
   }
 
   public async getFlowBySlug(
@@ -88,8 +127,23 @@ export class KnowledgeBaseService implements IKnowledgeService {
 
   public async listInterviewPrepQuestions(
     category: InterviewQuestionCategory | null,
-  ): Promise<InterviewPrepQuestionSummary[]> {
-    return this.repository.selectInterviewPrepQuestionsByCategory(category);
+    pagination: KnowledgePaginationParams,
+  ): Promise<PaginatedKnowledgeList<InterviewPrepQuestionSummary>> {
+    const skip: number = (pagination.page - 1) * pagination.pageSize;
+    const [total, items] = await Promise.all([
+      this.repository.countInterviewPrepQuestionsByCategory(category),
+      this.repository.selectInterviewPrepQuestionsByCategoryPage(
+        category,
+        skip,
+        pagination.pageSize,
+      ),
+    ]);
+    return buildPaginatedKnowledgeList(
+      items,
+      total,
+      pagination.page,
+      pagination.pageSize,
+    );
   }
 
   public async getInterviewPrepQuestionBySlug(

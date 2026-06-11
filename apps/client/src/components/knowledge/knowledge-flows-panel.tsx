@@ -1,17 +1,28 @@
 'use client';
 
 import { isHttpNetworkError } from '@/api/http/execute-request';
+import { KnowledgeInfiniteScrollFooter } from '@/components/knowledge/knowledge-infinite-scroll-footer';
 import { buildKnowledgeNarrativeExcerpt } from '@/components/knowledge/knowledge-narrative-excerpt';
 import type { KnowledgeFlowSummary } from '@/domains/knowledge/knowledgeDomains';
-import { useKnowledgeFlowsQuery } from '@/features/knowledge/queries/useKnowledgeQueries';
+import { useKnowledgeFlowsInfiniteQuery } from '@/features/knowledge/queries/useKnowledgeQueries';
+import { useKnowledgeInfiniteScroll } from '@/hooks/knowledge/use-knowledge-infinite-scroll';
 import { useTranslations } from '@/hooks/i18n/use-translations';
+import { flattenKnowledgeInfiniteData } from '@/lib/knowledge/flatten-knowledge-pages';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 export function KnowledgeFlowsPanel(): ReactNode {
   const { t } = useTranslations();
-  const { data, isPending, isError, error } = useKnowledgeFlowsQuery();
+  const {
+    data,
+    isPending,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useKnowledgeFlowsInfiniteQuery();
 
   const errorMessage = useMemo((): string | null => {
     if (!isError || error === null) {
@@ -20,7 +31,20 @@ export function KnowledgeFlowsPanel(): ReactNode {
     return isHttpNetworkError(error) ? t('errors.network') : error.message;
   }, [error, isError, t]);
 
-  const flows: KnowledgeFlowSummary[] = data ?? [];
+  const flows: readonly KnowledgeFlowSummary[] = useMemo(
+    () => flattenKnowledgeInfiniteData(data),
+    [data],
+  );
+
+  const handleFetchNextPage = useCallback((): void => {
+    void fetchNextPage();
+  }, [fetchNextPage]);
+
+  const { sentinelRef } = useKnowledgeInfiniteScroll({
+    hasNextPage: hasNextPage ?? false,
+    isFetchingNextPage,
+    fetchNextPage: handleFetchNextPage,
+  });
 
   if (isPending) {
     return (
@@ -84,6 +108,13 @@ export function KnowledgeFlowsPanel(): ReactNode {
           </li>
         );
       })}
+      <li>
+        <KnowledgeInfiniteScrollFooter
+          sentinelRef={sentinelRef}
+          isFetchingNextPage={isFetchingNextPage}
+          hasNextPage={hasNextPage ?? false}
+        />
+      </li>
     </ul>
   );
 }

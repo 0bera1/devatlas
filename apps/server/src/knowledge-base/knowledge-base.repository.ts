@@ -113,10 +113,19 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
     private readonly prisma: IPrismaService,
   ) {}
 
-  public async selectDocumentsOrdered(): Promise<KnowledgeDocumentSummary[]> {
+  public async countDocuments(): Promise<number> {
+    return this.prisma.systemDocument.count();
+  }
+
+  public async selectDocumentsPage(
+    skip: number,
+    take: number,
+  ): Promise<KnowledgeDocumentSummary[]> {
     return this.prisma.systemDocument.findMany({
       select: documentSummarySelect,
       orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }],
+      skip,
+      take,
     });
   }
 
@@ -129,12 +138,20 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
     });
   }
 
-  public async selectDiagramsOrdered(
+  public async countDiagrams(): Promise<number> {
+    return this.prisma.systemDiagram.count();
+  }
+
+  public async selectDiagramsPage(
     locale: KnowledgeContentLocale,
+    skip: number,
+    take: number,
   ): Promise<KnowledgeDiagramSummary[]> {
     const rows = await this.prisma.systemDiagram.findMany({
       select: diagramSummarySelect,
       orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }],
+      skip,
+      take,
     });
     return rows.map(
       (row: (typeof rows)[number]): KnowledgeDiagramSummary => ({
@@ -210,12 +227,20 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
     };
   }
 
-  public async selectFlowsOrdered(
+  public async countFlows(): Promise<number> {
+    return this.prisma.systemFlow.count();
+  }
+
+  public async selectFlowsPage(
     locale: KnowledgeContentLocale,
+    skip: number,
+    take: number,
   ): Promise<KnowledgeFlowSummary[]> {
     const rows = await this.prisma.systemFlow.findMany({
       select: flowSummarySelect,
       orderBy: [{ sortOrder: 'asc' }, { title: 'asc' }],
+      skip,
+      take,
     });
     return rows.map(
       (row: (typeof rows)[number]): KnowledgeFlowSummary => ({
@@ -312,8 +337,20 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
     );
   }
 
-  public async selectInterviewPrepQuestionsByCategory(
+  public async countInterviewPrepQuestionsByCategory(
     category: InterviewQuestionCategory | null,
+  ): Promise<number> {
+    const where: Prisma.InterviewQuestionWhereInput = { parentId: null };
+    if (category !== null) {
+      where.category = category;
+    }
+    return this.prisma.interviewQuestion.count({ where });
+  }
+
+  public async selectInterviewPrepQuestionsByCategoryPage(
+    category: InterviewQuestionCategory | null,
+    skip: number,
+    take: number,
   ): Promise<InterviewPrepQuestionSummary[]> {
     const where: Prisma.InterviewQuestionWhereInput = { parentId: null };
     if (category !== null) {
@@ -323,6 +360,8 @@ export class KnowledgeBaseRepository implements IKnowledgeRepository {
     const rows = await this.prisma.interviewQuestion.findMany({
       where,
       orderBy: [{ category: 'asc' }, { question: 'asc' }],
+      skip,
+      take,
       select: {
         id: true,
         slug: true,

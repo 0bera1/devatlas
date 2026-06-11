@@ -294,6 +294,7 @@ export const trMessages = {
   'knowledge.section.flows': 'Akışlar',
   'knowledge.readOnly': 'Salt okunur',
   'knowledge.backToBase': '← Bilgi tabanı',
+  'knowledge.loadingMore': 'Daha fazla yükleniyor…',
   'knowledge.interview.intro':
     'Kategorilere ayrılmış mülakat soruları ve her soru için bağlantılı follow-up soruları.',
   'knowledge.interview.categoryFilter': 'Mülakat kategorisi',

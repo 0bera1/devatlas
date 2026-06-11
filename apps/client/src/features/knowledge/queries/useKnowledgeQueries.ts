@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery, type UseQueryResult } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, type UseQueryResult } from '@tanstack/react-query';
 import { knowledgeApi } from '@/api/knowledge/knowledgeApi';
 import { knowledgeQueryKeys } from '@/api/query/knowledge-query-keys';
 import type {
@@ -15,16 +15,16 @@ import type {
   KnowledgeFlowRecord,
   KnowledgeFlowSummary,
 } from '@/domains/knowledge/knowledgeDomains';
+import { getKnowledgeNextPage } from '@/lib/knowledge/flatten-knowledge-pages';
 import { useTranslations } from '@/hooks/i18n/use-translations';
 
-export function useKnowledgeDocumentsQuery(): UseQueryResult<
-  KnowledgeDocumentSummary[],
-  Error
-> {
-  return useQuery({
+export function useKnowledgeDocumentsInfiniteQuery() {
+  return useInfiniteQuery({
     queryKey: knowledgeQueryKeys.documents(),
-    queryFn: (): Promise<KnowledgeDocumentSummary[]> =>
-      knowledgeApi.listDocuments(),
+    queryFn: ({ pageParam }: { pageParam: number }) =>
+      knowledgeApi.listDocuments(pageParam),
+    initialPageParam: 1,
+    getNextPageParam: getKnowledgeNextPage,
   });
 }
 
@@ -40,15 +40,14 @@ export function useKnowledgeDocumentQuery(
   });
 }
 
-export function useKnowledgeDiagramsQuery(): UseQueryResult<
-  KnowledgeDiagramSummary[],
-  Error
-> {
+export function useKnowledgeDiagramsInfiniteQuery() {
   const { locale } = useTranslations();
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: knowledgeQueryKeys.diagrams(locale),
-    queryFn: (): Promise<KnowledgeDiagramSummary[]> =>
-      knowledgeApi.listDiagrams(locale),
+    queryFn: ({ pageParam }: { pageParam: number }) =>
+      knowledgeApi.listDiagrams(locale, pageParam),
+    initialPageParam: 1,
+    getNextPageParam: getKnowledgeNextPage,
   });
 }
 
@@ -65,15 +64,14 @@ export function useKnowledgeDiagramQuery(
   });
 }
 
-export function useKnowledgeFlowsQuery(): UseQueryResult<
-  KnowledgeFlowSummary[],
-  Error
-> {
+export function useKnowledgeFlowsInfiniteQuery() {
   const { locale } = useTranslations();
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: knowledgeQueryKeys.flows(locale),
-    queryFn: (): Promise<KnowledgeFlowSummary[]> =>
-      knowledgeApi.listFlows(locale),
+    queryFn: ({ pageParam }: { pageParam: number }) =>
+      knowledgeApi.listFlows(locale, pageParam),
+    initialPageParam: 1,
+    getNextPageParam: getKnowledgeNextPage,
   });
 }
 
@@ -101,14 +99,16 @@ export function useInterviewPrepCategoriesQuery(): UseQueryResult<
   });
 }
 
-export function useInterviewPrepQuestionsQuery(
+export function useInterviewPrepQuestionsInfiniteQuery(
   category: InterviewPrepCategory | null,
-): UseQueryResult<InterviewPrepQuestionSummary[], Error> {
+) {
   const categoryKey: InterviewPrepCategory | 'all' = category ?? 'all';
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: knowledgeQueryKeys.interviewQuestions(categoryKey),
-    queryFn: (): Promise<InterviewPrepQuestionSummary[]> =>
-      knowledgeApi.listInterviewQuestions(category),
+    queryFn: ({ pageParam }: { pageParam: number }) =>
+      knowledgeApi.listInterviewQuestions(category, pageParam),
+    initialPageParam: 1,
+    getNextPageParam: getKnowledgeNextPage,
   });
 }
 
