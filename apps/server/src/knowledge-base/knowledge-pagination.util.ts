@@ -1,6 +1,12 @@
+import { parseKnowledgeSearch } from './knowledge-search.util';
+
 export interface KnowledgePaginationParams {
   readonly page: number;
   readonly pageSize: number;
+}
+
+export interface KnowledgeListParams extends KnowledgePaginationParams {
+  readonly search: string | null;
 }
 
 export const KNOWLEDGE_DEFAULT_PAGE_SIZE = 15;
@@ -24,6 +30,21 @@ export function parseKnowledgePagination(
       : KNOWLEDGE_DEFAULT_PAGE_SIZE;
 
   return { page, pageSize };
+}
+
+export function parseKnowledgeListParams(
+  pageRaw: string | undefined,
+  pageSizeRaw: string | undefined,
+  searchRaw: string | undefined,
+): KnowledgeListParams {
+  const pagination: KnowledgePaginationParams = parseKnowledgePagination(
+    pageRaw,
+    pageSizeRaw,
+  );
+  return {
+    ...pagination,
+    search: parseKnowledgeSearch(searchRaw),
+  };
 }
 
 export function buildPaginatedKnowledgeList<T>(

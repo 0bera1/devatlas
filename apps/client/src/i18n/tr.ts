@@ -287,6 +287,11 @@ export const trMessages = {
   'knowledge.intro':
     'Sistem tarafından hazırlanmış dokümanlar, diyagramlar ve bağlantılı akışlar (salt okunur).',
   'knowledge.empty': 'Gösterilecek sistem içeriği yok.',
+  'knowledge.search.label': 'Bu sekmede ara',
+  'knowledge.search.placeholder': 'Aktif sekmede ara…',
+  'knowledge.search.hint':
+    'Yalnızca seçili sekmeyi filtreler. Sonuçlar yazmayı bıraktıktan ~300 ms sonra güncellenir.',
+  'knowledge.search.noResults': 'Bu sekmede aramanızla eşleşen içerik yok.',
   'knowledge.section.label': 'Bilgi tabanı bölümü',
   'knowledge.section.interview': 'Mülakata hazırlan',
   'knowledge.section.documents': 'Dökümanlar',
@@ -298,7 +303,13 @@ export const trMessages = {
   'knowledge.interview.intro':
     'Kategorilere ayrılmış mülakat soruları ve her soru için bağlantılı follow-up soruları.',
   'knowledge.interview.categoryFilter': 'Mülakat kategorisi',
+  'knowledge.interview.difficultyFilter': 'Zorluk seviyesi',
   'knowledge.interview.allCategories': 'Tümü',
+  'knowledge.interview.allDifficulties': 'Tüm seviyeler',
+  'knowledge.interview.difficulty.easy': 'Kolay',
+  'knowledge.interview.difficulty.medium': 'Orta',
+  'knowledge.interview.difficulty.hard': 'Zor',
+  'knowledge.interview.difficulty.expert': 'Expert',
   'knowledge.interview.empty': 'Bu kategoride henüz soru yok.',
   'knowledge.interview.notFound': 'Soru bulunamadı.',
   'knowledge.interview.showAnswer': 'Cevabı göster',
@@ -306,7 +317,20 @@ export const trMessages = {
   'knowledge.interview.relatedQuestions': 'Bağlantılı sorular',
   'knowledge.interview.relatedQuestionsHint':
     'Ana soruya derinlemesine hazırlık için follow-up soruları.',
+  'knowledge.interview.relatedResources': 'İlgili kaynaklar',
+  'knowledge.interview.relatedResourcesHint':
+    'Bu soruyu destekleyen doküman, diyagram ve akışlara gidin.',
+  'knowledge.interview.modelAnswer': 'Örnek cevap',
+  'knowledge.interview.answerHiddenHint':
+    'Mülakat provası için cevabı kendiniz düşünün, ardından gösterin.',
+  'knowledge.interview.resourceCountLabel': 'kaynak',
+  'knowledge.interview.resourceKind.document': 'Doküman',
+  'knowledge.interview.resourceKind.diagram': 'Diyagram',
+  'knowledge.interview.resourceKind.flow': 'Akış',
   'knowledge.interview.followUpLabel': 'follow-up',
+  'knowledge.relatedInterviewQuestions': 'İlgili mülakat soruları',
+  'knowledge.relatedInterviewQuestionsHint':
+    'Bu içerikle ilişkilendirilmiş mülakat sorularına göz atın.',
   'knowledge.interview.category.frontend': 'Frontend',
   'knowledge.interview.category.backend': 'Backend',
   'knowledge.interview.category.devops': 'DevOps',
@@ -336,15 +360,19 @@ export const trMessages = {
 
   'search.title': 'Ara',
   'search.subtitle':
-    'Herkese açık dokümanlarda ve diyagramlarda başlık ile içerik önizlemesinde arar. Sorgu, yazmayı bıraktıktan yaklaşık 300 ms sonra gider.',
+    'Herkese açık dokümanlar, diyagramlar, bilgi tabanı içerikleri ve mülakat sorularında arar. Sorgu, yazmayı bıraktıktan yaklaşık 300 ms sonra gider.',
   'search.inputLabel': 'Arama sorgusu',
   'search.placeholder': 'ör. nestjs websocket',
   'search.debounceHint':
     'İstek, yazmayı bıraktıktan yaklaşık 0,3 sn sonra gönderilir.',
-  'search.emptyPrompt': 'Aramak için yukarıya bir ifade yazın.',
-  'search.noResults': 'Eşleşen herkese açık içerik yok (doküman veya diyagram).',
+  'search.emptyPrompt': 'Platform genelinde aramak için yukarıya bir ifade yazın.',
+  'search.noResults': 'Eşleşen içerik bulunamadı.',
   'search.kindDocument': 'Doküman',
   'search.kindDiagram': 'Diyagram',
+  'search.kindKnowledgeDocument': 'Bilgi tabanı dokümanı',
+  'search.kindKnowledgeDiagram': 'Bilgi tabanı diyagramı',
+  'search.kindKnowledgeFlow': 'Bilgi tabanı akışı',
+  'search.kindInterviewQuestion': 'Mülakat sorusu',
   'search.author': 'Yazar',
 
   'documents.editor.loading': 'Yükleniyor…',

@@ -1,4 +1,16 @@
-import type { KnowledgeSection } from '@/domains/knowledge/knowledgeDomains';
+import type {
+  InterviewPrepCategory,
+  InterviewPrepDifficulty,
+  KnowledgeSection,
+} from '@/domains/knowledge/knowledgeDomains';
+import {
+  INTERVIEW_CATEGORY_PARAM,
+  readStoredInterviewCategory,
+} from '@/lib/knowledge/interview-category-storage';
+import {
+  INTERVIEW_DIFFICULTY_PARAM,
+  readStoredInterviewDifficulty,
+} from '@/lib/knowledge/interview-difficulty-storage';
 
 export const KNOWLEDGE_SECTION_STORAGE_KEY = 'devatlas_knowledge_section';
 
@@ -53,6 +65,45 @@ export function resolveKnowledgeSectionFromPath(
   return readStoredKnowledgeSection();
 }
 
-export function buildKnowledgeBaseHref(section: KnowledgeSection): string {
-  return `/knowledge?section=${section}`;
+export interface BuildKnowledgeBaseHrefOptions {
+  readonly interviewCategory?: InterviewPrepCategory | null;
+  readonly useStoredInterviewCategory?: boolean;
+  readonly interviewDifficulty?: InterviewPrepDifficulty | null;
+  readonly useStoredInterviewDifficulty?: boolean;
+}
+
+export function buildKnowledgeBaseHref(
+  section: KnowledgeSection,
+  options?: BuildKnowledgeBaseHrefOptions,
+): string {
+  const params = new URLSearchParams();
+  params.set('section', section);
+
+  if (section === 'interview') {
+    let category: InterviewPrepCategory | null | undefined =
+      options?.interviewCategory;
+    if (
+      category === undefined &&
+      options?.useStoredInterviewCategory !== false
+    ) {
+      category = readStoredInterviewCategory();
+    }
+    if (category !== null && category !== undefined) {
+      params.set(INTERVIEW_CATEGORY_PARAM, category);
+    }
+
+    let difficulty: InterviewPrepDifficulty | null | undefined =
+      options?.interviewDifficulty;
+    if (
+      difficulty === undefined &&
+      options?.useStoredInterviewDifficulty !== false
+    ) {
+      difficulty = readStoredInterviewDifficulty();
+    }
+    if (difficulty !== null && difficulty !== undefined) {
+      params.set(INTERVIEW_DIFFICULTY_PARAM, difficulty);
+    }
+  }
+
+  return `/knowledge?${params.toString()}`;
 }

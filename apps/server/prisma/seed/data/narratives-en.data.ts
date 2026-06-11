@@ -104,6 +104,20 @@ export const diagramNarrativesEn: Readonly<Record<string, string>> = {
 6. **Design System** — Shared tokens keep Documents and Diagrams visually consistent.
 
 > **Follow the diagram:** Host on top; arrows to three remotes. Each remote also points at the shared design system.`,
+
+  'jvm-memory-model': `## Scenario: OutOfMemoryError under load
+
+**Burak** answers "How does JVM memory work?" in a backend interview using this diagram.
+
+1. **Thread** — Each HTTP request (or worker) runs on its own thread.
+2. **Stack Frames** — Locals and call frames live on the stack; frames pop when methods return.
+3. **Heap** — \`new User()\`, collections, and shared objects live on the heap.
+4. **Young Gen** — New allocations land here; short-lived objects are reclaimed by minor GC.
+5. **Old Gen** — Long-lived objects are promoted; a full heap increases major GC pressure or OOM risk.
+6. **Metaspace** — Class metadata (post–Java 8, replacing PermGen) is stored here.
+7. **Garbage Collector** — Reclaims unreachable objects; stop-the-world pauses are a common interview topic.
+
+> **Follow the diagram:** Thread → Stack (locals) and Thread → Heap (objects). GC arrows show the young/old cycle.`,
 };
 
 export const flowNarrativesEn: readonly SeedFlowNarrativeInput[] = [
@@ -266,6 +280,51 @@ As the product grows, the Diagrams team ships on its own cadence:
 4. **Design System** — Shared switch and list cards.
 
 Ship as a federated module without redeploying the host for every Diagrams change.`,
+      },
+    ],
+  },
+  {
+    slug: 'interview-prep-knowledge-path',
+    narrative: `## Scenario: Preparing for a full-stack interview
+
+**Deniz** walks through core concepts in order before jumping into interview questions. Each step maps to a common interview area:
+
+| Step | Diagram | Interview focus |
+|------|---------|-----------------|
+| 1 | JVM Memory Model | Java backend, memory, GC |
+| 2 | HTTP Request Lifecycle | REST, gateway, service path |
+| 3 | Authentication Flow | JWT, sessions, security |
+| 4 | React App Layer Architecture | Frontend layers and hooks |
+
+Use the scenario text under each step as a story you can retell in answers.`,
+    steps: [
+      {
+        diagramSlug: 'jvm-memory-model',
+        label: 'Step 1 — JVM and memory model',
+        narrative: `### Backend Java questions (this diagram)
+
+Explain stack vs heap, GC, and OOM scenarios on this diagram. Example: "Each request is a thread; objects on the heap; minor GC in young gen…"`,
+      },
+      {
+        diagramSlug: 'request-lifecycle',
+        label: 'Step 2 — HTTP request lifecycle',
+        narrative: `### API and architecture questions (this diagram)
+
+Walk browser → database: LB → gateway → microservice → PostgreSQL. Mention rate limits and cache layers.`,
+      },
+      {
+        diagramSlug: 'authentication-flow',
+        label: 'Step 3 — Identity and token flow',
+        narrative: `### Security questions (this diagram)
+
+Draw login → JWT issue → protected route → refresh loop. Stress access vs refresh and httpOnly cookies.`,
+      },
+      {
+        diagramSlug: 'react-app-layer-architecture',
+        label: 'Step 4 — Frontend layers',
+        narrative: `### Frontend questions (this diagram)
+
+Explain UI → custom hook → store/API boundaries. Where does server state live? Where does the API client sit?`,
       },
     ],
   },

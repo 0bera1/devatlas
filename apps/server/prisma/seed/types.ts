@@ -60,3 +60,10 @@ export interface SeedUserInput {
   password: string;
   birthDate: Date;
 }
+
+export interface SeedInterviewKnowledgeLinksInput {
+  readonly questionSlug: string;
+  readonly documents: readonly string[];
+  readonly diagrams: readonly string[];
+  readonly flows: readonly string[];
+}

@@ -1,6 +1,8 @@
 'use client';
 
+import { LandingScrollHint } from '@/components/home/landing-scroll-hint';
 import { SceneFooter } from '@/components/ui/SceneFooter';
+import { useLandingCinematicScroll } from '@/hooks/home/use-landing-cinematic-scroll';
 import { initScroll } from '@/lib/scroll';
 import { useSceneStore } from '@/store/useSceneStore';
 import { useEffect, useState, type ReactNode } from 'react';
@@ -17,6 +19,8 @@ interface SceneControllerProps {
 export function SceneController(props: SceneControllerProps): ReactNode {
   const { children } = props;
   const [reducedMotion, setReducedMotion] = useState<boolean>(false);
+
+  useLandingCinematicScroll();
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -55,6 +59,7 @@ export function SceneController(props: SceneControllerProps): ReactNode {
         aria-hidden
       />
       <div className="fixed inset-0 z-0 overflow-hidden">{children}</div>
+      <LandingScrollHint />
       <SceneFooter />
     </div>
   );

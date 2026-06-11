@@ -11,4 +11,5 @@ export type IDatabaseSeedPersistence = Pick<
   | 'systemFlow'
   | 'systemFlowStep'
   | 'interviewQuestion'
+  | 'interviewQuestionKnowledgeLink'
 >;

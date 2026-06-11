@@ -1,4 +1,5 @@
 import type { InterviewQuestionCategory } from '@prisma/client';
+import type { InterviewKnowledgeResources } from './knowledge-resource-ref.interface';
 
 export interface InterviewPrepCategorySummary {
   readonly category: InterviewQuestionCategory;
@@ -23,7 +24,8 @@ export interface InterviewPrepFollowUpSummary {
 }
 
 export interface InterviewPrepQuestionDetail
-  extends InterviewPrepQuestionSummary {
+  extends InterviewPrepQuestionSummary,
+    InterviewKnowledgeResources {
   readonly answer: string;
   readonly followUps: readonly InterviewPrepFollowUpSummary[];
 }

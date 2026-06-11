@@ -342,13 +342,21 @@ enum InterviewQuestionCategory {
   GENERAL
 }
 
+enum InterviewKnowledgeResourceType {
+  DOCUMENT
+  DIAGRAM
+  FLOW
+}
+
 /// AŞAMA 3 — Bilgi platformu: tag tabanlı önerilen mülakat soruları.
 /// `tags` Postgres String[] alanı; GIN indeks ile çakışma sorgusu hızlandırılır.
 model InterviewQuestion {
   id          String                      @id @default(cuid())
   slug        String                      @unique
   question    String
+  questionEn  String?                     @map("question_en")
   answer      String                      @db.Text
+  answerEn    String?                     @map("answer_en") @db.Text
   category    InterviewQuestionCategory
   tags        String[]
   difficulty  String?
@@ -356,6 +364,7 @@ model InterviewQuestion {
   parentId    String?                     @map("parent_id")
   parent      InterviewQuestion?          @relation("InterviewFollowUps", fields: [parentId], references: [id], onDelete: Cascade)
   followUps   InterviewQuestion[]         @relation("InterviewFollowUps")
+  knowledgeLinks InterviewQuestionKnowledgeLink[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -364,6 +373,21 @@ model InterviewQuestion {
   @@index([parentId])
   @@index([tags], type: Gin)
   @@index([difficulty])
+}
+
+/// Mülakat sorusu ↔ bilgi tabanı doküman/diyagram/akış bağlantıları.
+model InterviewQuestionKnowledgeLink {
+  id           String                       @id @default(cuid())
+  questionId   String                       @map("question_id")
+  resourceType InterviewKnowledgeResourceType @map("resource_type")
+  resourceSlug String                       @map("resource_slug")
+  sortOrder    Int                          @default(0) @map("sort_order")
+
+  question InterviewQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, resourceType, resourceSlug])
+  @@index([questionId])
+  @@index([resourceType, resourceSlug])
 }
 
 model RefreshToken {

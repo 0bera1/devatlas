@@ -46,6 +46,9 @@ export const FLOW_SCROLL_END = 0.64;
 export const INTERVIEW_SCROLL_START = 0.62;
 export const INTERVIEW_SCROLL_END = 0.83;
 
+/** Footer görünürlük rampı başlangıcı (scroll ipucu bu noktada kaybolur). */
+export const FOOTER_SCROLL_START = 0.55;
+
 /**
  * Verilen scroll bandında 0→1 normalleştirilmiş zaman çizelgesi.
  */

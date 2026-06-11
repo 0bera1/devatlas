@@ -11,6 +11,7 @@ import type {
   KnowledgeFlowSummary,
 } from './knowledge-flow-record.interface';
 import type { InterviewQuestionCategory } from '@prisma/client';
+import type { PublicSearchHit } from '../../documents/interfaces/public-search-hit.interface';
 import type { KnowledgeContentLocale } from '../knowledge-narrative-locale.util';
 import type {
   InterviewPrepCategorySummary,
@@ -18,18 +19,21 @@ import type {
   InterviewPrepQuestionSummary,
 } from './interview-prep-record.interface';
 import type { PaginatedKnowledgeList } from './paginated-knowledge-list.interface';
-import type { KnowledgePaginationParams } from '../knowledge-pagination.util';
+import type { KnowledgeListParams } from '../knowledge-pagination.util';
 
 export const KNOWLEDGE_SERVICE: unique symbol = Symbol('KNOWLEDGE_SERVICE');
 
 export interface IKnowledgeService {
   listDocuments(
-    pagination: KnowledgePaginationParams,
+    params: KnowledgeListParams,
   ): Promise<PaginatedKnowledgeList<KnowledgeDocumentSummary>>;
-  getDocumentBySlug(slug: string): Promise<KnowledgeDocumentRecord>;
+  getDocumentBySlug(
+    slug: string,
+    locale: KnowledgeContentLocale,
+  ): Promise<KnowledgeDocumentRecord>;
   listDiagrams(
     locale: KnowledgeContentLocale,
-    pagination: KnowledgePaginationParams,
+    params: KnowledgeListParams,
   ): Promise<PaginatedKnowledgeList<KnowledgeDiagramSummary>>;
   getDiagramBySlug(
     slug: string,
@@ -37,7 +41,7 @@ export interface IKnowledgeService {
   ): Promise<KnowledgeDiagramRecord>;
   listFlows(
     locale: KnowledgeContentLocale,
-    pagination: KnowledgePaginationParams,
+    params: KnowledgeListParams,
   ): Promise<PaginatedKnowledgeList<KnowledgeFlowSummary>>;
   getFlowBySlug(
     slug: string,
@@ -46,9 +50,16 @@ export interface IKnowledgeService {
   listInterviewPrepCategories(): Promise<InterviewPrepCategorySummary[]>;
   listInterviewPrepQuestions(
     category: InterviewQuestionCategory | null,
-    pagination: KnowledgePaginationParams,
+    difficulty: string | null,
+    params: KnowledgeListParams,
+    locale: KnowledgeContentLocale,
   ): Promise<PaginatedKnowledgeList<InterviewPrepQuestionSummary>>;
   getInterviewPrepQuestionBySlug(
     slug: string,
+    locale: KnowledgeContentLocale,
   ): Promise<InterviewPrepQuestionDetail>;
+  searchGlobally(
+    rawQuery: string,
+    locale: KnowledgeContentLocale,
+  ): Promise<PublicSearchHit[]>;
 }

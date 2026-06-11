@@ -3,6 +3,7 @@ import {
   KNOWLEDGE_LIST_PAGE_SIZE,
   type InterviewPrepCategory,
   type InterviewPrepCategorySummary,
+  type InterviewPrepDifficulty,
   type InterviewPrepQuestionDetail,
   type InterviewPrepQuestionSummary,
   type KnowledgeDiagramRecord,
@@ -28,6 +29,9 @@ function buildKnowledgeListPath(
   const params: URLSearchParams = new URLSearchParams();
   params.set('page', String(query.page));
   params.set('pageSize', String(query.pageSize));
+  if (query.search.length > 0) {
+    params.set('q', query.search);
+  }
   if (extraParams !== undefined) {
     for (const [key, value] of Object.entries(extraParams)) {
       params.set(key, value);
@@ -36,26 +40,40 @@ function buildKnowledgeListPath(
   return `${basePath}?${params.toString()}`;
 }
 
-function defaultKnowledgeListQuery(page: number): KnowledgeListQuery {
+function defaultKnowledgeListQuery(
+  page: number,
+  search: string,
+): KnowledgeListQuery {
   return {
     page,
     pageSize: KNOWLEDGE_LIST_PAGE_SIZE,
+    search,
   };
 }
 
 export const knowledgeApi = {
   async listDocuments(
     page: number = 1,
+    search: string = '',
   ): Promise<PaginatedKnowledgeList<KnowledgeDocumentSummary>> {
     const response = await apiClient.get<
       PaginatedKnowledgeList<KnowledgeDocumentSummary>
-    >(buildKnowledgeListPath('/knowledge/documents', defaultKnowledgeListQuery(page)));
+    >(
+      buildKnowledgeListPath(
+        '/knowledge/documents',
+        defaultKnowledgeListQuery(page, search),
+      ),
+    );
     return response.data;
   },
 
-  async getDocument(slug: string): Promise<KnowledgeDocumentRecord> {
+  async getDocument(
+    slug: string,
+    locale: Locale,
+  ): Promise<KnowledgeDocumentRecord> {
     const response = await apiClient.get<KnowledgeDocumentRecord>(
       `/knowledge/documents/${encodeURIComponent(slug)}`,
+      { headers: knowledgeLocaleHeaders(locale) },
     );
     return response.data;
   },
@@ -63,12 +81,17 @@ export const knowledgeApi = {
   async listDiagrams(
     locale: Locale,
     page: number = 1,
+    search: string = '',
   ): Promise<PaginatedKnowledgeList<KnowledgeDiagramSummary>> {
     const response = await apiClient.get<
       PaginatedKnowledgeList<KnowledgeDiagramSummary>
-    >(buildKnowledgeListPath('/knowledge/diagrams', defaultKnowledgeListQuery(page)), {
-      headers: knowledgeLocaleHeaders(locale),
-    });
+    >(
+      buildKnowledgeListPath(
+        '/knowledge/diagrams',
+        defaultKnowledgeListQuery(page, search),
+      ),
+      { headers: knowledgeLocaleHeaders(locale) },
+    );
     return response.data;
   },
 
@@ -83,12 +106,17 @@ export const knowledgeApi = {
   async listFlows(
     locale: Locale,
     page: number = 1,
+    search: string = '',
   ): Promise<PaginatedKnowledgeList<KnowledgeFlowSummary>> {
     const response = await apiClient.get<
       PaginatedKnowledgeList<KnowledgeFlowSummary>
-    >(buildKnowledgeListPath('/knowledge/flows', defaultKnowledgeListQuery(page)), {
-      headers: knowledgeLocaleHeaders(locale),
-    });
+    >(
+      buildKnowledgeListPath(
+        '/knowledge/flows',
+        defaultKnowledgeListQuery(page, search),
+      ),
+      { headers: knowledgeLocaleHeaders(locale) },
+    );
     return response.data;
   },
 
@@ -108,28 +136,41 @@ export const knowledgeApi = {
   },
 
   async listInterviewQuestions(
+    locale: Locale,
     category: InterviewPrepCategory | null,
+    difficulty: InterviewPrepDifficulty | null,
     page: number = 1,
+    search: string = '',
   ): Promise<PaginatedKnowledgeList<InterviewPrepQuestionSummary>> {
-    const extraParams: Readonly<Record<string, string>> | undefined =
-      category === null ? undefined : { category };
+    const extraParams: Record<string, string> = {};
+    if (category !== null) {
+      extraParams.category = category;
+    }
+    if (difficulty !== null) {
+      extraParams.difficulty = difficulty;
+    }
+    const resolvedExtraParams: Readonly<Record<string, string>> | undefined =
+      Object.keys(extraParams).length > 0 ? extraParams : undefined;
     const response = await apiClient.get<
       PaginatedKnowledgeList<InterviewPrepQuestionSummary>
     >(
       buildKnowledgeListPath(
         '/knowledge/interview/questions',
-        defaultKnowledgeListQuery(page),
-        extraParams,
+        defaultKnowledgeListQuery(page, search),
+        resolvedExtraParams,
       ),
+      { headers: knowledgeLocaleHeaders(locale) },
     );
     return response.data;
   },
 
   async getInterviewQuestion(
     slug: string,
+    locale: Locale,
   ): Promise<InterviewPrepQuestionDetail> {
     const response = await apiClient.get<InterviewPrepQuestionDetail>(
       `/knowledge/interview/questions/${encodeURIComponent(slug)}`,
+      { headers: knowledgeLocaleHeaders(locale) },
     );
     return response.data;
   },

@@ -34,4 +34,44 @@ export interface PublicSearchDiagramHit {
   updatedAt: Date;
 }
 
-export type PublicSearchHit = PublicSearchDocumentHit | PublicSearchDiagramHit;
+export interface PublicSearchKnowledgeDocumentHit {
+  kind: 'knowledge_document';
+  slug: string;
+  title: string;
+  preview: string;
+  updatedAt: Date;
+}
+
+export interface PublicSearchKnowledgeDiagramHit {
+  kind: 'knowledge_diagram';
+  slug: string;
+  title: string;
+  preview: string;
+  updatedAt: Date;
+}
+
+export interface PublicSearchKnowledgeFlowHit {
+  kind: 'knowledge_flow';
+  slug: string;
+  title: string;
+  preview: string;
+  updatedAt: Date;
+}
+
+export interface PublicSearchInterviewQuestionHit {
+  kind: 'interview_question';
+  slug: string;
+  title: string;
+  preview: string;
+  category: string;
+  isFollowUp: boolean;
+  updatedAt: Date;
+}
+
+export type PublicSearchHit =
+  | PublicSearchDocumentHit
+  | PublicSearchDiagramHit
+  | PublicSearchKnowledgeDocumentHit
+  | PublicSearchKnowledgeDiagramHit
+  | PublicSearchKnowledgeFlowHit
+  | PublicSearchInterviewQuestionHit;

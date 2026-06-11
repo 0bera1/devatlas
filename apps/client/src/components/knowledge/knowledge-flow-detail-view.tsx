@@ -5,6 +5,7 @@ import { KnowledgeDiagramReadonlyView } from '@/components/knowledge/knowledge-d
 import { KnowledgeNarrativeSection } from '@/components/knowledge/knowledge-narrative-section';
 import type { KnowledgeFlowStepRecord } from '@/domains/knowledge/knowledgeDomains';
 import { KnowledgeBackLink } from '@/components/knowledge/knowledge-back-link';
+import { RelatedInterviewQuestions } from '@/components/knowledge/related-interview-questions';
 import { useKnowledgeFlowQuery } from '@/features/knowledge/queries/useKnowledgeQueries';
 import { useTranslations } from '@/hooks/i18n/use-translations';
 import Link from 'next/link';
@@ -143,6 +144,8 @@ export function KnowledgeFlowDetailView(
           />
         </section>
       ) : null}
+
+      <RelatedInterviewQuestions questions={data.relatedInterviewQuestions} />
 
       <div className="flex flex-wrap gap-2 border-t border-zinc-200 pt-4 dark:border-zinc-800">
         <button

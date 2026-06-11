@@ -8,6 +8,7 @@ import {
   getDiagramNarrativeTrEn,
   resolveFlowSeedInputs,
 } from '../../prisma/seed/data/narratives.seed';
+import { seedInterviewKnowledgeLinks } from '../../prisma/seed/data/interview-knowledge-links.data';
 import { seedInterviewQuestions } from '../../prisma/seed/data/interview-questions.data';
 import { seedUsers } from '../../prisma/seed/data/users.data';
 import type { SeedFlowInput } from '../../prisma/seed/types';
@@ -36,7 +37,11 @@ export class DatabaseSeedRunner {
     await this.seedKnowledgeFlows(diagramIds);
 
     this.logger.log('Seeding interview prep questions…');
-    await this.seedInterviewQuestionsTable();
+    const questionSlugToId: Map<string, string> =
+      await this.seedInterviewQuestionsTable();
+
+    this.logger.log('Seeding interview knowledge links…');
+    await this.seedInterviewKnowledgeLinksTable(questionSlugToId);
 
     this.logger.log('Seed completed.');
   }
@@ -225,7 +230,8 @@ export class DatabaseSeedRunner {
     }
   }
 
-  private async seedInterviewQuestionsTable(): Promise<void> {
+  private async seedInterviewQuestionsTable(): Promise<Map<string, string>> {
+    await this.persistence.interviewQuestionKnowledgeLink.deleteMany({});
     await this.persistence.interviewQuestion.deleteMany({});
 
     const slugToId = new Map<string, string>();
@@ -241,7 +247,9 @@ export class DatabaseSeedRunner {
         data: {
           slug: item.slug,
           question: item.question,
+          questionEn: item.questionEn,
           answer: item.answer,
+          answerEn: item.answerEn,
           category: item.category,
           tags: [...item.tags],
           difficulty: item.difficulty,
@@ -265,7 +273,9 @@ export class DatabaseSeedRunner {
         data: {
           slug: item.slug,
           question: item.question,
+          questionEn: item.questionEn,
           answer: item.answer,
+          answerEn: item.answerEn,
           category: item.category,
           tags: [...item.tags],
           difficulty: item.difficulty,
@@ -273,6 +283,62 @@ export class DatabaseSeedRunner {
           parentId,
         },
       });
+    }
+
+    return slugToId;
+  }
+
+  private async seedInterviewKnowledgeLinksTable(
+    questionSlugToId: Map<string, string>,
+  ): Promise<void> {
+    for (const entry of seedInterviewKnowledgeLinks) {
+      const questionId: string | undefined = questionSlugToId.get(
+        entry.questionSlug,
+      );
+      if (questionId === undefined) {
+        throw new Error(
+          `Interview knowledge link references unknown question "${entry.questionSlug}"`,
+        );
+      }
+
+      let sortOrder = 0;
+      for (const resourceSlug of entry.documents) {
+        await this.persistence.interviewQuestionKnowledgeLink.create({
+          data: {
+            questionId,
+            resourceType: 'DOCUMENT',
+            resourceSlug,
+            sortOrder,
+          },
+        });
+        sortOrder += 1;
+      }
+
+      sortOrder = 0;
+      for (const resourceSlug of entry.diagrams) {
+        await this.persistence.interviewQuestionKnowledgeLink.create({
+          data: {
+            questionId,
+            resourceType: 'DIAGRAM',
+            resourceSlug,
+            sortOrder,
+          },
+        });
+        sortOrder += 1;
+      }
+
+      sortOrder = 0;
+      for (const resourceSlug of entry.flows) {
+        await this.persistence.interviewQuestionKnowledgeLink.create({
+          data: {
+            questionId,
+            resourceType: 'FLOW',
+            resourceSlug,
+            sortOrder,
+          },
+        });
+        sortOrder += 1;
+      }
     }
   }
 }

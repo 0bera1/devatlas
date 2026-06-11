@@ -12,7 +12,13 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { useCallback, useMemo } from 'react';
 
-export function KnowledgeDiagramsPanel(): ReactNode {
+interface KnowledgeDiagramsPanelProps {
+  readonly searchQuery: string;
+}
+
+export function KnowledgeDiagramsPanel({
+  searchQuery,
+}: KnowledgeDiagramsPanelProps): ReactNode {
   const { t } = useTranslations();
   const {
     data,
@@ -22,7 +28,7 @@ export function KnowledgeDiagramsPanel(): ReactNode {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useKnowledgeDiagramsInfiniteQuery();
+  } = useKnowledgeDiagramsInfiniteQuery(searchQuery);
 
   const errorMessage = useMemo((): string | null => {
     if (!isError || error === null) {
@@ -66,7 +72,9 @@ export function KnowledgeDiagramsPanel(): ReactNode {
   if (diagrams.length === 0) {
     return (
       <p className="rounded-2xl border border-dashed border-zinc-300 px-6 py-10 text-center text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
-        {t('knowledge.diagrams.empty')}
+        {searchQuery.length > 0
+          ? t('knowledge.search.noResults')
+          : t('knowledge.diagrams.empty')}
       </p>
     );
   }

@@ -1,3 +1,5 @@
+import type { InterviewQuestionRef } from './knowledge-resource-ref.interface';
+
 export interface KnowledgeFlowStepRecord {
   id: string;
   stepOrder: number;
@@ -22,4 +24,5 @@ export interface KnowledgeFlowSummary {
 
 export interface KnowledgeFlowRecord extends KnowledgeFlowSummary {
   steps: KnowledgeFlowStepRecord[];
+  relatedInterviewQuestions: readonly InterviewQuestionRef[];
 }

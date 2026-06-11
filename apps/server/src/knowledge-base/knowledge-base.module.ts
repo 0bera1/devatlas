@@ -18,5 +18,6 @@ const knowledgeServiceProvider: Provider = {
 @Module({
   controllers: [KnowledgeBaseController],
   providers: [knowledgeRepositoryProvider, knowledgeServiceProvider],
+  exports: [knowledgeServiceProvider],
 })
 export class KnowledgeBaseModule {}

@@ -19,7 +19,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:seed": "prisma db seed",
-    "seed:interview-questions": "node prisma/seed/scripts/build-interview-questions-data.mjs"
+    "seed:interview-questions": "node prisma/seed/scripts/build-interview-questions-data.mjs",
+    "seed:interview-topic-resources": "node prisma/seed/scripts/build-interview-topic-resources.mjs",
+    "seed:interview-knowledge-links": "node prisma/seed/scripts/build-interview-knowledge-links.mjs"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"

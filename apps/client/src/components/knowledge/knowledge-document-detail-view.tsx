@@ -3,6 +3,7 @@
 import { isHttpNetworkError, isNotFoundHttpError } from '@/api/http/execute-request';
 import { MarkdownSafePreview } from '@/components/diagrams/flow/markdown-safe-preview';
 import { KnowledgeBackLink } from '@/components/knowledge/knowledge-back-link';
+import { RelatedInterviewQuestions } from '@/components/knowledge/related-interview-questions';
 import { useKnowledgeDocumentQuery } from '@/features/knowledge/queries/useKnowledgeQueries';
 import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
@@ -66,6 +67,7 @@ export function KnowledgeDocumentDetailView(
           className="text-sm leading-relaxed text-zinc-800 dark:text-zinc-200"
         />
       </div>
+      <RelatedInterviewQuestions questions={data.relatedInterviewQuestions} />
     </article>
   );
 }

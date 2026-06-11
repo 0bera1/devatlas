@@ -18,6 +18,7 @@ import { DiagramCanvasHoverCard } from '@/components/diagrams/flow/diagram-canva
 import { DiagramCanvasToolbar } from '@/components/diagrams/flow/diagram-canvas-toolbar';
 import { DiagramEdgeLabelsOverlay } from '@/components/diagrams/flow/diagram-edge-labels-overlay';
 import { KnowledgeBackLink } from '@/components/knowledge/knowledge-back-link';
+import { RelatedInterviewQuestions } from '@/components/knowledge/related-interview-questions';
 import { KnowledgeNarrativeSection } from '@/components/knowledge/knowledge-narrative-section';
 import { mapKnowledgeDiagramToDiagramRecord } from '@/diagram-engine/core/knowledge-diagram.adapter';
 import {
@@ -207,6 +208,7 @@ export function KnowledgeDiagramReadonlyView(
         </span>
       </header>
       {body}
+      <RelatedInterviewQuestions questions={data.relatedInterviewQuestions} />
     </div>
   );
 }

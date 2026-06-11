@@ -1,5 +1,10 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import type { InterviewQuestionCategory } from '@prisma/client';
+import type { PublicSearchHit } from '../documents/interfaces/public-search-hit.interface';
+import {
+  buildSearchPreview,
+  SEARCH_PREVIEW_MAX_CHARS,
+} from '../documents/utils/search-preview';
 import type {
   InterviewPrepCategorySummary,
   InterviewPrepQuestionDetail,
@@ -17,6 +22,8 @@ import type {
   KnowledgeFlowRecord,
   KnowledgeFlowSummary,
 } from './interfaces/knowledge-flow-record.interface';
+import type { KnowledgeGlobalInterviewSearchRow } from './interfaces/knowledge-global-search-row.interface';
+import type { KnowledgeGlobalSearchRow } from './interfaces/knowledge-global-search-row.interface';
 import {
   KNOWLEDGE_REPOSITORY,
   type IKnowledgeRepository,
@@ -26,8 +33,9 @@ import type { KnowledgeContentLocale } from './knowledge-narrative-locale.util';
 import type { IKnowledgeService } from './interfaces/knowledge-service.interface';
 import {
   buildPaginatedKnowledgeList,
-  type KnowledgePaginationParams,
+  type KnowledgeListParams,
 } from './knowledge-pagination.util';
+import { KNOWLEDGE_GLOBAL_SEARCH_LIMIT } from './knowledge-search.util';
 
 @Injectable()
 export class KnowledgeBaseService implements IKnowledgeService {
@@ -37,24 +45,31 @@ export class KnowledgeBaseService implements IKnowledgeService {
   ) {}
 
   public async listDocuments(
-    pagination: KnowledgePaginationParams,
+    params: KnowledgeListParams,
   ): Promise<PaginatedKnowledgeList<KnowledgeDocumentSummary>> {
-    const skip: number = (pagination.page - 1) * pagination.pageSize;
+    const skip: number = (params.page - 1) * params.pageSize;
     const [total, items] = await Promise.all([
-      this.repository.countDocuments(),
-      this.repository.selectDocumentsPage(skip, pagination.pageSize),
+      this.repository.countDocuments(params.search),
+      this.repository.selectDocumentsPage(
+        params.search,
+        skip,
+        params.pageSize,
+      ),
     ]);
     return buildPaginatedKnowledgeList(
       items,
       total,
-      pagination.page,
-      pagination.pageSize,
+      params.page,
+      params.pageSize,
     );
   }
 
-  public async getDocumentBySlug(slug: string): Promise<KnowledgeDocumentRecord> {
+  public async getDocumentBySlug(
+    slug: string,
+    locale: KnowledgeContentLocale,
+  ): Promise<KnowledgeDocumentRecord> {
     const row: KnowledgeDocumentRecord | null =
-      await this.repository.selectDocumentBySlug(slug);
+      await this.repository.selectDocumentBySlug(slug, locale);
     if (row === null) {
       throw new NotFoundException(`Knowledge document "${slug}" not found`);
     }
@@ -63,18 +78,23 @@ export class KnowledgeBaseService implements IKnowledgeService {
 
   public async listDiagrams(
     locale: KnowledgeContentLocale,
-    pagination: KnowledgePaginationParams,
+    params: KnowledgeListParams,
   ): Promise<PaginatedKnowledgeList<KnowledgeDiagramSummary>> {
-    const skip: number = (pagination.page - 1) * pagination.pageSize;
+    const skip: number = (params.page - 1) * params.pageSize;
     const [total, items] = await Promise.all([
-      this.repository.countDiagrams(),
-      this.repository.selectDiagramsPage(locale, skip, pagination.pageSize),
+      this.repository.countDiagrams(params.search),
+      this.repository.selectDiagramsPage(
+        locale,
+        params.search,
+        skip,
+        params.pageSize,
+      ),
     ]);
     return buildPaginatedKnowledgeList(
       items,
       total,
-      pagination.page,
-      pagination.pageSize,
+      params.page,
+      params.pageSize,
     );
   }
 
@@ -92,18 +112,23 @@ export class KnowledgeBaseService implements IKnowledgeService {
 
   public async listFlows(
     locale: KnowledgeContentLocale,
-    pagination: KnowledgePaginationParams,
+    params: KnowledgeListParams,
   ): Promise<PaginatedKnowledgeList<KnowledgeFlowSummary>> {
-    const skip: number = (pagination.page - 1) * pagination.pageSize;
+    const skip: number = (params.page - 1) * params.pageSize;
     const [total, items] = await Promise.all([
-      this.repository.countFlows(),
-      this.repository.selectFlowsPage(locale, skip, pagination.pageSize),
+      this.repository.countFlows(params.search),
+      this.repository.selectFlowsPage(
+        locale,
+        params.search,
+        skip,
+        params.pageSize,
+      ),
     ]);
     return buildPaginatedKnowledgeList(
       items,
       total,
-      pagination.page,
-      pagination.pageSize,
+      params.page,
+      params.pageSize,
     );
   }
 
@@ -127,35 +152,124 @@ export class KnowledgeBaseService implements IKnowledgeService {
 
   public async listInterviewPrepQuestions(
     category: InterviewQuestionCategory | null,
-    pagination: KnowledgePaginationParams,
+    difficulty: string | null,
+    params: KnowledgeListParams,
+    locale: KnowledgeContentLocale,
   ): Promise<PaginatedKnowledgeList<InterviewPrepQuestionSummary>> {
-    const skip: number = (pagination.page - 1) * pagination.pageSize;
+    const skip: number = (params.page - 1) * params.pageSize;
     const [total, items] = await Promise.all([
-      this.repository.countInterviewPrepQuestionsByCategory(category),
+      this.repository.countInterviewPrepQuestionsByCategory(
+        category,
+        difficulty,
+        params.search,
+      ),
       this.repository.selectInterviewPrepQuestionsByCategoryPage(
         category,
+        difficulty,
+        params.search,
         skip,
-        pagination.pageSize,
+        params.pageSize,
+        locale,
       ),
     ]);
     return buildPaginatedKnowledgeList(
       items,
       total,
-      pagination.page,
-      pagination.pageSize,
+      params.page,
+      params.pageSize,
     );
   }
 
   public async getInterviewPrepQuestionBySlug(
     slug: string,
+    locale: KnowledgeContentLocale,
   ): Promise<InterviewPrepQuestionDetail> {
     const row: InterviewPrepQuestionDetail | null =
-      await this.repository.selectInterviewPrepQuestionBySlug(slug);
+      await this.repository.selectInterviewPrepQuestionBySlug(slug, locale);
     if (row === null) {
       throw new NotFoundException(
         `Interview question "${slug}" not found`,
       );
     }
     return row;
+  }
+
+  public async searchGlobally(
+    rawQuery: string,
+    locale: KnowledgeContentLocale,
+  ): Promise<PublicSearchHit[]> {
+    const trimmed: string = rawQuery.trim();
+    if (trimmed.length === 0) {
+      return [];
+    }
+
+    const [documents, diagrams, flows, interviews] = await Promise.all([
+      this.repository.selectDocumentsGlobalSearch(
+        trimmed,
+        KNOWLEDGE_GLOBAL_SEARCH_LIMIT,
+      ),
+      this.repository.selectDiagramsGlobalSearch(
+        trimmed,
+        KNOWLEDGE_GLOBAL_SEARCH_LIMIT,
+      ),
+      this.repository.selectFlowsGlobalSearch(
+        trimmed,
+        KNOWLEDGE_GLOBAL_SEARCH_LIMIT,
+      ),
+      this.repository.selectInterviewQuestionsGlobalSearch(
+        trimmed,
+        KNOWLEDGE_GLOBAL_SEARCH_LIMIT,
+        locale,
+      ),
+    ]);
+
+    const knowledgeDocumentHits: PublicSearchHit[] = documents.map(
+      (row: KnowledgeGlobalSearchRow): PublicSearchHit => ({
+        kind: 'knowledge_document',
+        slug: row.slug,
+        title: row.title,
+        preview: buildSearchPreview(row.previewSource, SEARCH_PREVIEW_MAX_CHARS),
+        updatedAt: row.updatedAt,
+      }),
+    );
+
+    const knowledgeDiagramHits: PublicSearchHit[] = diagrams.map(
+      (row: KnowledgeGlobalSearchRow): PublicSearchHit => ({
+        kind: 'knowledge_diagram',
+        slug: row.slug,
+        title: row.title,
+        preview: buildSearchPreview(row.previewSource, SEARCH_PREVIEW_MAX_CHARS),
+        updatedAt: row.updatedAt,
+      }),
+    );
+
+    const knowledgeFlowHits: PublicSearchHit[] = flows.map(
+      (row: KnowledgeGlobalSearchRow): PublicSearchHit => ({
+        kind: 'knowledge_flow',
+        slug: row.slug,
+        title: row.title,
+        preview: buildSearchPreview(row.previewSource, SEARCH_PREVIEW_MAX_CHARS),
+        updatedAt: row.updatedAt,
+      }),
+    );
+
+    const interviewHits: PublicSearchHit[] = interviews.map(
+      (row: KnowledgeGlobalInterviewSearchRow): PublicSearchHit => ({
+        kind: 'interview_question',
+        slug: row.slug,
+        title: row.question,
+        preview: buildSearchPreview(row.answer, SEARCH_PREVIEW_MAX_CHARS),
+        category: row.category,
+        isFollowUp: false,
+        updatedAt: row.updatedAt,
+      }),
+    );
+
+    return [
+      ...knowledgeDocumentHits,
+      ...knowledgeDiagramHits,
+      ...knowledgeFlowHits,
+      ...interviewHits,
+    ];
   }
 }

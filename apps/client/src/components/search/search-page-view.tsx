@@ -4,9 +4,8 @@ import { isHttpNetworkError } from '@/api/http/execute-request';
 import { useSearchPublicQuery } from '@/features/search/queries/useSearchPublicQuery';
 import { useDebouncedValue } from '@/hooks/ui/use-debounced-value';
 import { useTranslations } from '@/hooks/i18n/use-translations';
+import { SearchHitCard } from '@/components/search/search-hit-card';
 import type { PublicSearchHit } from '@/domains/search/searchDomains';
-import { formatUserDisplayName } from '@/lib/user/format-user-display-name';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
@@ -68,6 +67,23 @@ export function SearchPageView(): ReactNode {
 
   const loadingResults: boolean =
     trimmedDebounced.length > 0 && (isPending || isFetching);
+
+  const hitKey = (hit: PublicSearchHit): string => {
+    switch (hit.kind) {
+      case 'document':
+      case 'diagram':
+        return `${hit.kind}-${hit.id}`;
+      case 'knowledge_document':
+      case 'knowledge_diagram':
+      case 'knowledge_flow':
+      case 'interview_question':
+        return `${hit.kind}-${hit.slug}`;
+      default: {
+        const _exhaustive: never = hit;
+        return _exhaustive;
+      }
+    }
+  };
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-10 lg:py-14">
@@ -136,87 +152,11 @@ export function SearchPageView(): ReactNode {
         </p>
       ) : (
         <ul className="flex flex-col gap-3">
-          {hits.map((hit: PublicSearchHit) => {
-            const displayName: string = formatUserDisplayName(
-              hit.author.firstName,
-              hit.author.lastName,
-            );
-            const authorLabel: string =
-              displayName.length > 0 ? displayName : hit.author.email;
-
-            switch (hit.kind) {
-              case 'document': {
-                return (
-                  <li key={`doc-${hit.id}`}>
-                    <Link
-                      href={`/documents/${hit.id}`}
-                      className="block rounded-2xl border border-zinc-200 bg-white p-4 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950/40 dark:hover:border-zinc-600 dark:hover:bg-zinc-900/50"
-                    >
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:bg-zinc-700 dark:text-zinc-100">
-                          {t('search.kindDocument')}
-                        </span>
-                        <h2 className="font-semibold text-zinc-950 dark:text-zinc-50">
-                          {hit.title}
-                        </h2>
-                      </div>
-                      {hit.preview.length > 0 ? (
-                        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-                          {hit.preview}
-                        </p>
-                      ) : null}
-                      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-500 dark:text-zinc-400">
-                        <span>
-                          {t('search.author')}:{' '}
-                          <span className="font-medium text-zinc-700 dark:text-zinc-300">
-                            {authorLabel}
-                          </span>
-                        </span>
-                        <span>
-                          {t('documents.engagement.favorites')}:{' '}
-                          {hit.favoriteCount}
-                        </span>
-                      </div>
-                    </Link>
-                  </li>
-                );
-              }
-              case 'diagram': {
-                return (
-                  <li key={`dia-${hit.id}`}>
-                    <Link
-                      href={`/diagrams/${hit.id}`}
-                      className="block rounded-2xl border border-zinc-200 bg-white p-4 transition-colors hover:border-violet-200 hover:bg-violet-50/50 dark:border-zinc-800 dark:bg-zinc-950/40 dark:hover:border-violet-900 dark:hover:bg-violet-950/20"
-                    >
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-900 dark:bg-violet-950/60 dark:text-violet-200">
-                          {t('search.kindDiagram')}
-                        </span>
-                        <h2 className="font-semibold text-zinc-950 dark:text-zinc-50">
-                          {hit.title}
-                        </h2>
-                      </div>
-                      {hit.preview.length > 0 ? (
-                        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-                          {hit.preview}
-                        </p>
-                      ) : null}
-                      <div className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
-                        {t('search.author')}:{' '}
-                        <span className="font-medium text-zinc-700 dark:text-zinc-300">
-                          {authorLabel}
-                        </span>
-                      </div>
-                    </Link>
-                  </li>
-                );
-              }
-              default: {
-                const _exhaustive: never = hit;
-                return _exhaustive;
-              }
-            }
-          })}
+          {hits.map((hit: PublicSearchHit) => (
+            <li key={hitKey(hit)}>
+              <SearchHitCard hit={hit} />
+            </li>
+          ))}
         </ul>
       )}
     </main>

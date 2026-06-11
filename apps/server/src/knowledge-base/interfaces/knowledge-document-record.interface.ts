@@ -1,3 +1,5 @@
+import type { InterviewQuestionRef } from './knowledge-resource-ref.interface';
+
 export interface KnowledgeDocumentSummary {
   id: string;
   slug: string;
@@ -10,4 +12,5 @@ export interface KnowledgeDocumentSummary {
 
 export interface KnowledgeDocumentRecord extends KnowledgeDocumentSummary {
   content: string;
+  relatedInterviewQuestions: readonly InterviewQuestionRef[];
 }

@@ -289,6 +289,11 @@ export const enMessages: Record<MessageKey, string> = {
   'knowledge.intro':
     'System-curated documents, diagrams, and linked flows (read-only).',
   'knowledge.empty': 'No system content to show.',
+  'knowledge.search.label': 'Search in this section',
+  'knowledge.search.placeholder': 'Search in current tab…',
+  'knowledge.search.hint':
+    'Filters only the active tab. Results update after you pause typing (~300 ms).',
+  'knowledge.search.noResults': 'No items match your search in this section.',
   'knowledge.section.label': 'Knowledge base section',
   'knowledge.section.interview': 'Interview prep',
   'knowledge.section.documents': 'Documents',
@@ -300,7 +305,13 @@ export const enMessages: Record<MessageKey, string> = {
   'knowledge.interview.intro':
     'Interview questions by category, each with related follow-up questions.',
   'knowledge.interview.categoryFilter': 'Interview category',
+  'knowledge.interview.difficultyFilter': 'Difficulty level',
   'knowledge.interview.allCategories': 'All',
+  'knowledge.interview.allDifficulties': 'All levels',
+  'knowledge.interview.difficulty.easy': 'Easy',
+  'knowledge.interview.difficulty.medium': 'Medium',
+  'knowledge.interview.difficulty.hard': 'Hard',
+  'knowledge.interview.difficulty.expert': 'Expert',
   'knowledge.interview.empty': 'No questions in this category yet.',
   'knowledge.interview.notFound': 'Question not found.',
   'knowledge.interview.showAnswer': 'Show answer',
@@ -308,7 +319,20 @@ export const enMessages: Record<MessageKey, string> = {
   'knowledge.interview.relatedQuestions': 'Related questions',
   'knowledge.interview.relatedQuestionsHint':
     'Follow-up questions to go deeper on the main topic.',
+  'knowledge.interview.relatedResources': 'Related resources',
+  'knowledge.interview.relatedResourcesHint':
+    'Open documents, diagrams, and flows that support this question.',
+  'knowledge.interview.modelAnswer': 'Model answer',
+  'knowledge.interview.answerHiddenHint':
+    'Try answering on your own first, then reveal the model answer.',
+  'knowledge.interview.resourceCountLabel': 'resources',
+  'knowledge.interview.resourceKind.document': 'Document',
+  'knowledge.interview.resourceKind.diagram': 'Diagram',
+  'knowledge.interview.resourceKind.flow': 'Flow',
   'knowledge.interview.followUpLabel': 'follow-ups',
+  'knowledge.relatedInterviewQuestions': 'Related interview questions',
+  'knowledge.relatedInterviewQuestionsHint':
+    'Browse interview questions linked to this content.',
   'knowledge.interview.category.frontend': 'Frontend',
   'knowledge.interview.category.backend': 'Backend',
   'knowledge.interview.category.devops': 'DevOps',
@@ -338,15 +362,19 @@ export const enMessages: Record<MessageKey, string> = {
 
   'search.title': 'Search',
   'search.subtitle':
-    'Searches public documents and diagrams by title and preview text. Queries run after you pause typing (~300 ms), not on every key.',
+    'Searches public documents, diagrams, knowledge base content, and interview questions. Queries run after you pause typing (~300 ms).',
   'search.inputLabel': 'Search query',
   'search.placeholder': 'e.g. nestjs websocket',
   'search.debounceHint':
     'The request is sent about 300 ms after you stop changing the text.',
-  'search.emptyPrompt': 'Type a phrase above to search public content.',
-  'search.noResults': 'No matching public documents or diagrams.',
+  'search.emptyPrompt': 'Type a phrase above to search across the platform.',
+  'search.noResults': 'No matching content found.',
   'search.kindDocument': 'Document',
   'search.kindDiagram': 'Diagram',
+  'search.kindKnowledgeDocument': 'Knowledge document',
+  'search.kindKnowledgeDiagram': 'Knowledge diagram',
+  'search.kindKnowledgeFlow': 'Knowledge flow',
+  'search.kindInterviewQuestion': 'Interview question',
   'search.author': 'Author',
 
   'documents.editor.loading': 'Loading…',

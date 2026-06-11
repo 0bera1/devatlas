@@ -1,6 +1,7 @@
+import { seedInterviewTopicFlows } from './interview-topic-flows.data';
 import type { SeedFlowInput } from '../types';
 
-export const seedFlows: SeedFlowInput[] = [
+const coreSeedFlows: SeedFlowInput[] = [
   {
     slug: 'full-stack-request-journey',
     title: 'Full-Stack Request Journey',
@@ -36,4 +37,22 @@ export const seedFlows: SeedFlowInput[] = [
       { diagramSlug: 'micro-frontend-architecture', label: 'Adım 3 — Federated UI' },
     ],
   },
+  {
+    slug: 'interview-prep-knowledge-path',
+    title: 'Interview Prep Knowledge Path',
+    description:
+      '4 ayrı diyagram · sırayla: JVM bellek → HTTP istek yolu → kimlik → React katmanları',
+    sortOrder: 4,
+    steps: [
+      { diagramSlug: 'jvm-memory-model', label: 'Adım 1 — JVM ve bellek modeli' },
+      { diagramSlug: 'request-lifecycle', label: 'Adım 2 — HTTP istek yaşam döngüsü' },
+      { diagramSlug: 'authentication-flow', label: 'Adım 3 — Kimlik ve token akışı' },
+      { diagramSlug: 'react-app-layer-architecture', label: 'Adım 4 — Frontend katmanları' },
+    ],
+  },
+];
+
+export const seedFlows: SeedFlowInput[] = [
+  ...coreSeedFlows,
+  ...seedInterviewTopicFlows,
 ];

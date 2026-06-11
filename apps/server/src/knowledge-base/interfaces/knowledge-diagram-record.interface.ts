@@ -1,3 +1,5 @@
+import type { InterviewQuestionRef } from './knowledge-resource-ref.interface';
+
 export interface KnowledgeDiagramNodeRecord {
   id: string;
   diagramId: string;
@@ -36,4 +38,5 @@ export interface KnowledgeDiagramSummary {
 export interface KnowledgeDiagramRecord extends KnowledgeDiagramSummary {
   nodes: KnowledgeDiagramNodeRecord[];
   edges: KnowledgeDiagramEdgeRecord[];
+  relatedInterviewQuestions: readonly InterviewQuestionRef[];
 }

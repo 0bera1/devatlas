@@ -12,7 +12,13 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { useCallback, useMemo } from 'react';
 
-export function KnowledgeFlowsPanel(): ReactNode {
+interface KnowledgeFlowsPanelProps {
+  readonly searchQuery: string;
+}
+
+export function KnowledgeFlowsPanel({
+  searchQuery,
+}: KnowledgeFlowsPanelProps): ReactNode {
   const { t } = useTranslations();
   const {
     data,
@@ -22,7 +28,7 @@ export function KnowledgeFlowsPanel(): ReactNode {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useKnowledgeFlowsInfiniteQuery();
+  } = useKnowledgeFlowsInfiniteQuery(searchQuery);
 
   const errorMessage = useMemo((): string | null => {
     if (!isError || error === null) {
@@ -66,7 +72,9 @@ export function KnowledgeFlowsPanel(): ReactNode {
   if (flows.length === 0) {
     return (
       <p className="rounded-2xl border border-dashed border-zinc-300 px-6 py-10 text-center text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
-        {t('knowledge.flows.empty')}
+        {searchQuery.length > 0
+          ? t('knowledge.search.noResults')
+          : t('knowledge.flows.empty')}
       </p>
     );
   }

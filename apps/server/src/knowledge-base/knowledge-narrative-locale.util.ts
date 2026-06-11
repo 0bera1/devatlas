@@ -17,33 +17,43 @@ export function parseKnowledgeAcceptLanguage(
   return 'en';
 }
 
-export function pickKnowledgeNarrative(
-  narrativeTr: string | null,
-  narrativeEn: string | null,
+export function pickKnowledgeLocalizedText(
+  textTr: string | null | undefined,
+  textEn: string | null | undefined,
   locale: KnowledgeContentLocale,
-): string | null {
+): string {
+  const tr: string = textTr?.trim() ?? '';
+  const en: string = textEn?.trim() ?? '';
+
   switch (locale) {
     case 'tr': {
-      if (narrativeTr !== null && narrativeTr.length > 0) {
-        return narrativeTr;
+      if (tr.length > 0) {
+        return tr;
       }
-      if (narrativeEn !== null && narrativeEn.length > 0) {
-        return narrativeEn;
-      }
-      return null;
+      return en;
     }
     case 'en': {
-      if (narrativeEn !== null && narrativeEn.length > 0) {
-        return narrativeEn;
+      if (en.length > 0) {
+        return en;
       }
-      if (narrativeTr !== null && narrativeTr.length > 0) {
-        return narrativeTr;
-      }
-      return null;
+      return tr;
     }
     default: {
       const _exhaustive: never = locale;
       return _exhaustive;
     }
   }
+}
+
+export function pickKnowledgeNarrative(
+  narrativeTr: string | null,
+  narrativeEn: string | null,
+  locale: KnowledgeContentLocale,
+): string | null {
+  const picked: string = pickKnowledgeLocalizedText(
+    narrativeTr,
+    narrativeEn,
+    locale,
+  );
+  return picked.length > 0 ? picked : null;
 }

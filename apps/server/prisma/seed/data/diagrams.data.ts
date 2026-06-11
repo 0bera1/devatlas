@@ -1,3 +1,4 @@
+import { seedInterviewTopicDiagrams } from './interview-topic-diagrams.data';
 import type { SeedDiagramInput } from '../types';
 
 function row(
@@ -10,7 +11,7 @@ function row(
   return { id, label, type, x, y, width: 180, height: 56 };
 }
 
-export const seedDiagrams: SeedDiagramInput[] = [
+const coreSeedDiagrams: SeedDiagramInput[] = [
   {
     slug: 'react-app-layer-architecture',
     title: 'React App Layer Architecture',
@@ -155,6 +156,31 @@ export const seedDiagrams: SeedDiagramInput[] = [
     ],
   },
   {
+    slug: 'jvm-memory-model',
+    title: 'JVM Memory Model',
+    description:
+      'Thread stacks, heap generations, metaspace and garbage collector flow.',
+    sortOrder: 9,
+    nodes: [
+      row('thread', 'Thread', 'service', 80, 120),
+      row('stack', 'Stack Frames', 'text', 280, 60),
+      row('heap', 'Heap', 'database', 480, 120),
+      row('young', 'Young Gen', 'cache', 680, 60),
+      row('old', 'Old Gen', 'cache', 680, 180),
+      row('meta', 'Metaspace', 'external', 480, 260),
+      row('gc', 'Garbage Collector', 'service', 280, 260),
+    ],
+    edges: [
+      { from: 'thread', to: 'stack', label: 'locals', type: 'smoothstep' },
+      { from: 'thread', to: 'heap', label: 'new', type: 'smoothstep', animated: true },
+      { from: 'heap', to: 'young', type: 'smoothstep' },
+      { from: 'young', to: 'old', label: 'promote', type: 'smoothstep' },
+      { from: 'heap', to: 'meta', label: 'class metadata', type: 'smoothstep' },
+      { from: 'gc', to: 'young', label: 'minor GC', type: 'smoothstep', animated: true },
+      { from: 'gc', to: 'old', label: 'major GC', type: 'smoothstep' },
+    ],
+  },
+  {
     slug: 'micro-frontend-architecture',
     title: 'Micro Frontend Architecture',
     description: 'Host shell, federated remotes and shared design system.',
@@ -175,4 +201,9 @@ export const seedDiagrams: SeedDiagramInput[] = [
       { from: 'diagrams', to: 'ds', type: 'smoothstep', animated: true },
     ],
   },
+];
+
+export const seedDiagrams: SeedDiagramInput[] = [
+  ...coreSeedDiagrams,
+  ...seedInterviewTopicDiagrams,
 ];

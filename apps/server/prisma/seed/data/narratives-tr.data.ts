@@ -102,6 +102,20 @@ export const diagramNarrativesTr: Readonly<Record<string, string>> = {
 6. **Design System** — Tüm remote'lar aynı renk/spacing token'larını kullanır; Selin Dokümanlar ile Diyagramlar arasında görsel kopukluk hissetmez.
 
 > **Diyagramda takip edin:** Host ortada üstte; üç remote'a oklar. Her remote'un altında Design System'e inen oklar paylaşılan UI kütüphanesini gösterir.`,
+
+  'jvm-memory-model': `## Senaryo: Yoğun istek altında OutOfMemoryError
+
+**Burak** backend mülakatında "JVM belleği nasıl çalışır?" sorusuna bu diyagramla cevap veriyor.
+
+1. **Thread** — Her HTTP isteği (veya worker) kendi thread'inde çalışır.
+2. **Stack Frames** — Yerel değişkenler ve metot çağrıları stack'e yazılır; metot bitince frame pop edilir.
+3. **Heap** — \`new User()\`, koleksiyonlar ve paylaşılan nesneler heap'te yaşar.
+4. **Young Gen** — Yeni nesneler önce young generation'a düşer; kısa ömürlü nesneler burada minor GC ile temizlenir.
+5. **Old Gen** — Uzun süre yaşayan nesneler promote edilir; heap dolarsa major GC veya OOM riski artar.
+6. **Metaspace** — Sınıf metadata'sı (Java 8+ sonrası PermGen yerine) burada tutulur.
+7. **Garbage Collector** — Erişilemeyen nesneleri young/old'tan temizler; STW (stop-the-world) duraklamaları mülakatın sıcak konusudur.
+
+> **Diyagramda takip edin:** Thread → Stack (yereller) ve Thread → Heap (nesneler). GC okları young/old üzerinde döngüyü gösterir.`,
 };
 
 export interface SeedFlowStepNarrativeInput {
@@ -278,6 +292,51 @@ Kural: Sunucudan gelen liste Query'de; her şeyi Zustand'a koymayın.`,
 4. **Design System** — Switch ve liste kartı ortak bileşen; tutarlı görünüm.
 
 Özellik tek monolit repo yerine federated modül olarak canlıya çıkar; host yeniden deploy edilmeden Diagrams Remote güncellenebilir.`,
+      },
+    ],
+  },
+  {
+    slug: 'interview-prep-knowledge-path',
+    narrative: `## Senaryo: Full-stack mülakata hazırlanmak
+
+**Deniz** bilgi tabanından mülakat sorularına geçmeden önce bu akışla temel kavramları peş peşe gözden geçiriyor. Her adım farklı bir mülakat konusunu kapsar:
+
+| Adım | Diyagram | Mülakat odağı |
+|------|----------|---------------|
+| 1 | JVM Memory Model | Java backend, bellek, GC |
+| 2 | HTTP Request Lifecycle | REST, gateway, servis yolu |
+| 3 | Authentication Flow | JWT, oturum, güvenlik |
+| 4 | React App Layer Architecture | Frontend katmanları, hook'lar |
+
+Her adımın altındaki senaryo metni, ilgili mülakat sorularına cevap verirken kullanabileceğiniz hikâyeyi anlatır.`,
+    steps: [
+      {
+        diagramSlug: 'jvm-memory-model',
+        label: 'Adım 1 — JVM ve bellek modeli',
+        narrative: `### Backend Java soruları (şu an bu diyagram)
+
+Stack/heap, GC ve \`OutOfMemoryError\` senaryolarını bu diyagram üzerinden anlatın. Örnek: "Her istek bir thread; nesneler heap'te; young gen'de minor GC…"`,
+      },
+      {
+        diagramSlug: 'request-lifecycle',
+        label: 'Adım 2 — HTTP istek yaşam döngüsü',
+        narrative: `### API ve mimari soruları (şu an bu diyagram)
+
+Tarayıcıdan veritabanına istek yolunu sırayla anlatın: LB → gateway → microservice → PostgreSQL. Rate limit ve cache katmanlarını ekleyin.`,
+      },
+      {
+        diagramSlug: 'authentication-flow',
+        label: 'Adım 3 — Kimlik ve token akışı',
+        narrative: `### Güvenlik soruları (şu an bu diyagram)
+
+Login → JWT üretimi → korumalı route → refresh döngüsünü çizin. Access/refresh ayrımı ve httpOnly cookie tercihini vurgulayın.`,
+      },
+      {
+        diagramSlug: 'react-app-layer-architecture',
+        label: 'Adım 4 — Frontend katmanları',
+        narrative: `### Frontend soruları (şu an bu diyagram)
+
+UI → custom hook → store/API sınırlarını açıklayın. Sunucu state'i nerede tutulur, API client nerede konumlanır?`,
       },
     ],
   },

@@ -1,7 +1,8 @@
 import { bilingualSection } from '../bilingual';
+import { seedInterviewTopicDocuments } from './interview-topic-documents.data';
 import type { SeedDocumentInput } from '../types';
 
-export const seedDocuments: SeedDocumentInput[] = [
+const coreSeedDocuments: SeedDocumentInput[] = [
   {
     slug: 'rest-best-practices',
     title: 'REST API Best Practices',
@@ -245,6 +246,39 @@ Popular stacks: Kong, NGINX, Envoy, AWS API Gateway, Azure APIM.`,
     ),
   },
   {
+    slug: 'java-jvm-fundamentals',
+    title: 'Java & JVM Fundamentals',
+    summary:
+      'JVM vs JRE vs JDK, heap/stack, garbage collection, OOP pillars and common interview talking points.',
+    sortOrder: 11,
+    content: bilingualSection(
+      'Java & JVM Fundamentals',
+      `**JVM / JRE / JDK** — JVM executes bytecode; JRE = JVM + core libraries; JDK = JRE + compiler (\`javac\`) and tooling.
+
+**Stack vs heap** — stack holds frames and local primitives/references; heap holds objects. Stack is thread-local and LIFO; heap is shared and GC-managed.
+
+**Garbage collection** — unreachable objects are reclaimed; generational GC (young/old) assumes most objects die young. Tuning knobs: heap size, GC algorithm (G1, ZGC).
+
+**OOP pillars** — encapsulation (hide state), inheritance (reuse), polymorphism (same interface, many forms), abstraction (essential surface only).
+
+**equals / hashCode** — override together; equal objects must share hash codes. **String immutability** — safe sharing and interning; use \`StringBuilder\` for loops.
+
+**static vs final** — \`static\` belongs to the class; \`final\` prevents reassignment (variables) or overriding (methods).`,
+      'Java ve JVM Temelleri',
+      `**JVM / JRE / JDK** — JVM bytecode çalıştırır; JRE = JVM + temel kütüphaneler; JDK = JRE + derleyici (\`javac\`) ve araçlar.
+
+**Stack vs heap** — stack çerçeve ve yerel primitif/referans tutar; heap nesneleri tutar. Stack thread'e özel ve LIFO; heap paylaşımlı ve GC ile yönetilir.
+
+**Garbage collection** — erişilemeyen nesneler temizlenir; generational GC (young/old) çoğu nesnenin kısa ömürlü olduğunu varsayar.
+
+**OOP** — encapsulation, inheritance, polymorphism, abstraction.
+
+**equals / hashCode** — birlikte override edin. **String immutability** — güvenli paylaşım; döngülerde \`StringBuilder\`.
+
+**static vs final** — \`static\` sınıfa aittir; \`final\` yeniden atamayı veya override'ı engeller.`,
+    ),
+  },
+  {
     slug: 'lazy-loading',
     title: 'Lazy Loading in Web Apps',
     summary:
@@ -262,4 +296,9 @@ Popular stacks: Kong, NGINX, Envoy, AWS API Gateway, Azure APIM.`,
 
 **Measure** — Lighthouse, bundle analyzer; avoid lazy-loading above-the-fold critical UI.`,
   },
+];
+
+export const seedDocuments: SeedDocumentInput[] = [
+  ...coreSeedDocuments,
+  ...seedInterviewTopicDocuments,
 ];

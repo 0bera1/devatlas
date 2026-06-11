@@ -3,6 +3,7 @@ export const KNOWLEDGE_LIST_PAGE_SIZE = 15;
 export interface KnowledgeListQuery {
   readonly page: number;
   readonly pageSize: number;
+  readonly search: string;
 }
 
 export interface PaginatedKnowledgeList<T> {
@@ -12,6 +13,19 @@ export interface PaginatedKnowledgeList<T> {
   readonly pageSize: number;
   readonly totalPages: number;
 }
+
+export type InterviewPrepCategory =
+  | 'FRONTEND'
+  | 'BACKEND'
+  | 'DEVOPS'
+  | 'ARCHITECTURE'
+  | 'GENERAL';
+
+export type InterviewPrepDifficulty =
+  | 'EASY'
+  | 'MEDIUM'
+  | 'HARD'
+  | 'EXPERT';
 
 export interface KnowledgeDocumentSummary {
   id: string;
@@ -23,8 +37,20 @@ export interface KnowledgeDocumentSummary {
   updatedAt: string;
 }
 
+export interface KnowledgeResourceRef {
+  readonly slug: string;
+  readonly title: string;
+}
+
+export interface InterviewQuestionRef {
+  readonly slug: string;
+  readonly question: string;
+  readonly category: InterviewPrepCategory;
+}
+
 export interface KnowledgeDocumentRecord extends KnowledgeDocumentSummary {
   content: string;
+  relatedInterviewQuestions: readonly InterviewQuestionRef[];
 }
 
 export interface KnowledgeDiagramNodeRecord {
@@ -65,6 +91,7 @@ export interface KnowledgeDiagramSummary {
 export interface KnowledgeDiagramRecord extends KnowledgeDiagramSummary {
   nodes: KnowledgeDiagramNodeRecord[];
   edges: KnowledgeDiagramEdgeRecord[];
+  relatedInterviewQuestions: readonly InterviewQuestionRef[];
 }
 
 export interface KnowledgeFlowStepRecord {
@@ -91,6 +118,7 @@ export interface KnowledgeFlowSummary {
 
 export interface KnowledgeFlowRecord extends KnowledgeFlowSummary {
   steps: KnowledgeFlowStepRecord[];
+  relatedInterviewQuestions: readonly InterviewQuestionRef[];
 }
 
 export type KnowledgeSection =
@@ -98,13 +126,6 @@ export type KnowledgeSection =
   | 'documents'
   | 'diagrams'
   | 'flows';
-
-export type InterviewPrepCategory =
-  | 'FRONTEND'
-  | 'BACKEND'
-  | 'DEVOPS'
-  | 'ARCHITECTURE'
-  | 'GENERAL';
 
 export interface InterviewPrepCategorySummary {
   readonly category: InterviewPrepCategory;
@@ -128,8 +149,15 @@ export interface InterviewPrepFollowUpSummary {
   readonly answer: string;
 }
 
+export interface InterviewKnowledgeResources {
+  readonly documents: readonly KnowledgeResourceRef[];
+  readonly diagrams: readonly KnowledgeResourceRef[];
+  readonly flows: readonly KnowledgeResourceRef[];
+}
+
 export interface InterviewPrepQuestionDetail
-  extends InterviewPrepQuestionSummary {
+  extends InterviewPrepQuestionSummary,
+    InterviewKnowledgeResources {
   readonly answer: string;
   readonly followUps: readonly InterviewPrepFollowUpSummary[];
 }

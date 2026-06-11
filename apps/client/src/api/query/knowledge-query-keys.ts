@@ -1,23 +1,35 @@
-import type { InterviewPrepCategory } from '@/domains/knowledge/knowledgeDomains';
+import type {
+  InterviewPrepCategory,
+  InterviewPrepDifficulty,
+} from '@/domains/knowledge/knowledgeDomains';
 import type { Locale } from '@/i18n';
 
 export const knowledgeQueryKeys = {
   all: ['knowledge'] as const,
-  documents: (): readonly ['knowledge', 'documents'] =>
-    [...knowledgeQueryKeys.all, 'documents'] as const,
-  document: (slug: string): readonly ['knowledge', 'documents', string] =>
-    [...knowledgeQueryKeys.all, 'documents', slug] as const,
+  documents: (
+    search: string,
+  ): readonly ['knowledge', 'documents', string] =>
+    [...knowledgeQueryKeys.all, 'documents', search] as const,
+  document: (
+    slug: string,
+    locale: Locale,
+  ): readonly ['knowledge', 'documents', typeof locale, string] =>
+    [...knowledgeQueryKeys.all, 'documents', locale, slug] as const,
   diagrams: (
     locale: Locale,
-  ): readonly ['knowledge', 'diagrams', typeof locale] =>
-    [...knowledgeQueryKeys.all, 'diagrams', locale] as const,
+    search: string,
+  ): readonly ['knowledge', 'diagrams', typeof locale, string] =>
+    [...knowledgeQueryKeys.all, 'diagrams', locale, search] as const,
   diagram: (
     slug: string,
     locale: Locale,
   ): readonly ['knowledge', 'diagrams', typeof locale, string] =>
     [...knowledgeQueryKeys.all, 'diagrams', locale, slug] as const,
-  flows: (locale: Locale): readonly ['knowledge', 'flows', typeof locale] =>
-    [...knowledgeQueryKeys.all, 'flows', locale] as const,
+  flows: (
+    locale: Locale,
+    search: string,
+  ): readonly ['knowledge', 'flows', typeof locale, string] =>
+    [...knowledgeQueryKeys.all, 'flows', locale, search] as const,
   flow: (
     slug: string,
     locale: Locale,
@@ -26,11 +38,31 @@ export const knowledgeQueryKeys = {
   interviewCategories: (): readonly ['knowledge', 'interview', 'categories'] =>
     [...knowledgeQueryKeys.all, 'interview', 'categories'] as const,
   interviewQuestions: (
+    locale: Locale,
     category: InterviewPrepCategory | 'all',
-  ): readonly ['knowledge', 'interview', 'questions', typeof category] =>
-    [...knowledgeQueryKeys.all, 'interview', 'questions', category] as const,
+    difficulty: InterviewPrepDifficulty | 'all',
+    search: string,
+  ): readonly [
+    'knowledge',
+    'interview',
+    'questions',
+    typeof locale,
+    typeof category,
+    typeof difficulty,
+    string,
+  ] =>
+    [
+      ...knowledgeQueryKeys.all,
+      'interview',
+      'questions',
+      locale,
+      category,
+      difficulty,
+      search,
+    ] as const,
   interviewQuestion: (
     slug: string,
-  ): readonly ['knowledge', 'interview', 'question', string] =>
-    [...knowledgeQueryKeys.all, 'interview', 'question', slug] as const,
+    locale: Locale,
+  ): readonly ['knowledge', 'interview', 'question', typeof locale, string] =>
+    [...knowledgeQueryKeys.all, 'interview', 'question', locale, slug] as const,
 };

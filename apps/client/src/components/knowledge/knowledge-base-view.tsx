@@ -4,28 +4,36 @@ import { KnowledgeDiagramsPanel } from '@/components/knowledge/knowledge-diagram
 import { KnowledgeFlowsPanel } from '@/components/knowledge/knowledge-flows-panel';
 import { KnowledgeDocumentsPanel } from '@/components/knowledge/knowledge-documents-panel';
 import { KnowledgeInterviewPanel } from '@/components/knowledge/interview/knowledge-interview-panel';
+import { KnowledgeSectionSearch } from '@/components/knowledge/knowledge-section-search';
 import { KnowledgeSectionTabs } from '@/components/knowledge/knowledge-section-tabs';
 import type { KnowledgeSection } from '@/domains/knowledge/knowledgeDomains';
 import { useKnowledgeSection } from '@/hooks/knowledge/use-knowledge-section';
+import { useDebouncedValue } from '@/hooks/ui/use-debounced-value';
 import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ReactNode } from 'react';
+import { useState } from 'react';
 
-function renderSection(section: KnowledgeSection): ReactNode {
+function renderSection(
+  section: KnowledgeSection,
+  searchQuery: string,
+): ReactNode {
   switch (section) {
     case 'interview':
-      return <KnowledgeInterviewPanel />;
+      return <KnowledgeInterviewPanel searchQuery={searchQuery} />;
     case 'documents':
-      return <KnowledgeDocumentsPanel />;
+      return <KnowledgeDocumentsPanel searchQuery={searchQuery} />;
     case 'diagrams':
-      return <KnowledgeDiagramsPanel />;
+      return <KnowledgeDiagramsPanel searchQuery={searchQuery} />;
     case 'flows':
-      return <KnowledgeFlowsPanel />;
+      return <KnowledgeFlowsPanel searchQuery={searchQuery} />;
   }
 }
 
 export function KnowledgeBaseView(): ReactNode {
   const { t } = useTranslations();
   const { section, setSection } = useKnowledgeSection();
+  const [searchInput, setSearchInput] = useState<string>('');
+  const debouncedSearch: string = useDebouncedValue(searchInput, 300);
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-10 lg:py-14">
@@ -39,8 +47,12 @@ export function KnowledgeBaseView(): ReactNode {
           </p>
         </div>
         <KnowledgeSectionTabs value={section} onChange={setSection} />
+        <KnowledgeSectionSearch value={searchInput} onChange={setSearchInput} />
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          {t('knowledge.search.hint')}
+        </p>
       </header>
-      {renderSection(section)}
+      {renderSection(section, debouncedSearch.trim())}
     </main>
   );
 }

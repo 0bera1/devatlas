@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { GraphSimulationState } from '@/lib/sceneMath';
-import { deriveScenePhysics, map } from '@/lib/sceneMath';
+import { deriveScenePhysics, FOOTER_SCROLL_START, map } from '@/lib/sceneMath';
 import { useScrollProgress } from '@/components/scene/useScrollProgress';
 import { useSceneStore } from '@/store/useSceneStore';
 import type { ReactNode } from 'react';
@@ -13,7 +13,10 @@ export function SceneFooter(): ReactNode {
   const progress: number = useScrollProgress();
   const boost: number = useSceneStore((s) => s.interactionBoost);
   const physics: GraphSimulationState = deriveScenePhysics(progress, boost);
-  const opacity: number = 0.35 + map(progress, 0.55, 1) * 0.45 + physics.density * 0.12;
+  const opacity: number =
+    0.35 +
+    map(progress, FOOTER_SCROLL_START, 1) * 0.45 +
+    physics.density * 0.12;
 
   return (
     <footer

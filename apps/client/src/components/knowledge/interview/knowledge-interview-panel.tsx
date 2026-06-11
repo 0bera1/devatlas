@@ -1,6 +1,7 @@
 'use client';
 
 import { InterviewCategoryFilter } from '@/components/knowledge/interview/interview-category-filter';
+import { InterviewDifficultyFilter } from '@/components/knowledge/interview/interview-difficulty-filter';
 import { InterviewQuestionList } from '@/components/knowledge/interview/interview-question-list';
 import { KnowledgeInfiniteScrollFooter } from '@/components/knowledge/knowledge-infinite-scroll-footer';
 import type { InterviewPrepCategory } from '@/domains/knowledge/knowledgeDomains';
@@ -9,16 +10,26 @@ import {
   useInterviewPrepQuestionsInfiniteQuery,
 } from '@/features/knowledge/queries/useKnowledgeQueries';
 import { isHttpNetworkError } from '@/api/http/execute-request';
+import { useInterviewPrepCategory } from '@/hooks/knowledge/use-interview-prep-category';
+import { useInterviewPrepDifficulty } from '@/hooks/knowledge/use-interview-prep-difficulty';
 import { useKnowledgeInfiniteScroll } from '@/hooks/knowledge/use-knowledge-infinite-scroll';
 import { useTranslations } from '@/hooks/i18n/use-translations';
 import { flattenKnowledgeInfiniteData } from '@/lib/knowledge/flatten-knowledge-pages';
 import type { ReactNode } from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
-export function KnowledgeInterviewPanel(): ReactNode {
+interface KnowledgeInterviewPanelProps {
+  readonly searchQuery: string;
+}
+
+export function KnowledgeInterviewPanel({
+  searchQuery,
+}: KnowledgeInterviewPanelProps): ReactNode {
   const { t } = useTranslations();
-  const [selectedCategory, setSelectedCategory] =
-    useState<InterviewPrepCategory | null>(null);
+  const { category: selectedCategory, setCategory: setSelectedCategory } =
+    useInterviewPrepCategory();
+  const { difficulty: selectedDifficulty, setDifficulty: setSelectedDifficulty } =
+    useInterviewPrepDifficulty();
 
   const {
     data: categories,
@@ -35,7 +46,11 @@ export function KnowledgeInterviewPanel(): ReactNode {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInterviewPrepQuestionsInfiniteQuery(selectedCategory);
+  } = useInterviewPrepQuestionsInfiniteQuery(
+    selectedCategory,
+    selectedDifficulty,
+    searchQuery,
+  );
 
   const errorMessage = useMemo((): string | null => {
     const err: Error | null =
@@ -98,8 +113,17 @@ export function KnowledgeInterviewPanel(): ReactNode {
         selected={selectedCategory}
         onChange={setSelectedCategory}
       />
+      <InterviewDifficultyFilter
+        selected={selectedDifficulty}
+        onChange={setSelectedDifficulty}
+      />
       <InterviewQuestionList
         questions={questions}
+        emptyMessage={
+          searchQuery.length > 0
+            ? t('knowledge.search.noResults')
+            : t('knowledge.interview.empty')
+        }
         footer={
           <KnowledgeInfiniteScrollFooter
             sentinelRef={sentinelRef}

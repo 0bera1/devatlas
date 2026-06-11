@@ -362,3 +362,31 @@ button:disabled {
   fill: currentColor !important;
   stroke: currentColor;
 }
+
+/* Ana sayfa (cinematic landing): scrollbar gizli, scroll ipucu animasyonu */
+html.landing-cinematic-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html.landing-cinematic-scroll::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+@keyframes landing-scroll-hint-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+
+.landing-scroll-hint-chevron {
+  animation: landing-scroll-hint-bounce 1.8s ease-in-out infinite;
+}
