@@ -66,7 +66,7 @@ Yerel çalıştırma: `docker compose up -d` (proje kökünde). API: http://loca
 
 - [ ] Çalışma listeleri: API var, arayüz yok
 - [ ] Bildirimler: API var, zil ve liste arayüzü yok
-- [ ] Çevirisi olmayan diller: İngilizce gösteriliyor; çeviriler yapılacak
+- [x] Diller: Türkçe, İngilizce ve dokuz dilin tamamı çevrildi (zh, hi, es, ar, fr, bn, pt, ru, ur); her çeviri tablosu tip denetimi ve birim testiyle tüm anahtarları doğrular
 - [ ] İlerleme takibi: özet ve tekrar sayfasında gösterim var, ayrı bir ilerleme ekranı yok
 
 ## Yapılacaklar
