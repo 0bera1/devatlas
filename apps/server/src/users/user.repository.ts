@@ -18,6 +18,7 @@ const publicUserSelect = {
   lastName: true,
   createdAt: true,
   birthDate: true,
+  avatarUrl: true,
 } satisfies Prisma.UserSelect;
 
 @Injectable()
@@ -149,6 +150,7 @@ export class UserRepository implements IUserRepository {
       lastName: user.lastName,
       createdAt: user.createdAt,
       birthDate: user.birthDate,
+      avatarUrl: user.avatarUrl,
     };
   }
 }

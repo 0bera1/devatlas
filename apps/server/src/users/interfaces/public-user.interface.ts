@@ -5,4 +5,6 @@ export interface PublicUser {
   lastName: string;
   createdAt: Date;
   birthDate: Date;
+  /** Yüklenen profil fotoğrafının yolu (ör. `/uploads/avatars/...`). */
+  avatarUrl?: string | null;
 }
