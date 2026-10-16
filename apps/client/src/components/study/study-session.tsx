@@ -6,6 +6,7 @@ import { useToast } from '@/components/providers/toast-provider';
 import { useRequireAuth } from '@/hooks/auth/use-require-auth';
 import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { MessageKey } from '@/i18n';
+import Link from 'next/link';
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 
 const SESSION_LIMIT = 20;
@@ -87,6 +88,7 @@ function StudySessionContent(): ReactNode {
       <header>
         <h1 className="font-serif text-4xl font-medium tracking-tight">{t('study.title')}</h1>
         <p className="mt-2 text-sm text-[var(--muted)]">{t('study.subtitle')}</p>
+        <Link href="/study/lists" className="mt-3 inline-block text-sm underline">{t('study.lists.link')}</Link>
       </header>
 
       <dl className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">

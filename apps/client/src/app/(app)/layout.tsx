@@ -1,4 +1,4 @@
-import { HomeShell } from '@/components/home/home-shell';
+import { AppShell } from '@/components/shell/app-shell';
 import type { ReactNode } from 'react';
 
 export default function AppGroupLayout({
@@ -6,5 +6,5 @@ export default function AppGroupLayout({
 }: Readonly<{
   children: ReactNode;
 }>): ReactNode {
-  return <HomeShell>{children}</HomeShell>;
+  return <AppShell>{children}</AppShell>;
 }

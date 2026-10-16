@@ -194,6 +194,7 @@ function LanguageSection(): ReactNode {
         <label className="flex flex-col gap-2 text-sm font-medium">
           {t('settings.language.title')}
           <select
+            aria-label={t('settings.language.title')}
             value={locale}
             onChange={(event) => {
               const next = event.target.value;

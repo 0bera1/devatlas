@@ -71,3 +71,42 @@ export const studyApi = {
     return response.data;
   },
 };
+
+export interface StudyListItem {
+  questionId: string;
+  question: { id: string; slug: string; question: string; category: string; difficulty: string | null };
+}
+
+export interface QuestionSummary {
+  id: string;
+  slug: string;
+  question: string;
+  category: string;
+  difficulty: string | null;
+}
+
+export const studyListApi = {
+  async items(accessToken: string, listId: string): Promise<StudyListItem[]> {
+    const response = await apiClient.get<StudyListItem[]>(`/study/lists/${listId}/items`, { accessToken });
+    return response.data;
+  },
+
+  async addItem(accessToken: string, listId: string, questionId: string): Promise<void> {
+    await apiClient.post<void>(`/study/lists/${listId}/items`, { accessToken, body: { questionId } });
+  },
+
+  async removeItem(accessToken: string, listId: string, questionId: string): Promise<void> {
+    await apiClient.delete<void>(`/study/lists/${listId}/items/${questionId}`, { accessToken });
+  },
+
+  async deleteList(accessToken: string, listId: string): Promise<void> {
+    await apiClient.delete<void>(`/study/lists/${listId}`, { accessToken });
+  },
+
+  async searchQuestions(q: string): Promise<QuestionSummary[]> {
+    const params = new URLSearchParams({ pageSize: "15" });
+    if (q.trim().length > 0) params.set("q", q.trim());
+    const response = await apiClient.get<{ items: QuestionSummary[] }>(`/knowledge/interview/questions?${params.toString()}`);
+    return response.data.items;
+  },
+};
