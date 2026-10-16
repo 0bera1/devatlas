@@ -27,6 +27,7 @@ import { CollaborationLiveStrip } from '@/components/collaboration/collaboration
 import { DiagramCollaboratorsSection } from '@/components/diagrams/diagram-collaborators-section';
 import { DiagramDangerZone } from '@/components/diagrams/diagram-danger-zone';
 import { DiagramFavoriteButton } from '@/components/diagrams/diagram-favorite-button';
+import { ShareLinksButton } from '@/components/diagrams/share-links-dialog';
 import { DiagramRelatedSection } from '@/components/diagrams/diagram-related-section';
 import { useAuth } from '@/components/providers/auth-provider';
 import { useToast } from '@/components/providers/toast-provider';
@@ -424,6 +425,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
           ) : null}
         </div>
         <div className="flex flex-wrap gap-2">
+          {diagram.viewerAccess === 'owner' ? <ShareLinksButton diagramId={diagram.id} /> : null}
           <DiagramFavoriteButton
             diagramId={diagram.id}
             favoriteCount={diagram.favoriteCount}

@@ -4,6 +4,7 @@ import { Panel, useReactFlow } from '@xyflow/react';
 import { useDiagramEditorStore } from '@/diagram-engine/hooks/diagram-editor-store';
 import type { DiagramEditorCanvasMode } from '@/diagram-engine/state/diagram-editor.store.types';
 import { useTranslations } from '@/hooks/i18n/use-translations';
+import { DiagramExportControls } from '@/components/diagrams/flow/diagram-export-controls';
 import type { ReactNode } from 'react';
 import { useCallback } from 'react';
 
@@ -96,6 +97,7 @@ export function DiagramCanvasToolbar(
           ? t('diagrams.editor.canvasUnlock')
           : t('diagrams.editor.canvasLock')}
       </button>
+      <DiagramExportControls isReadOnlyCanvas={isReadOnlyCanvas} />
       {isReadOnlyCanvas ? (
         <span className="px-1 text-[10px] text-amber-700 dark:text-amber-300">
           {t('diagrams.editor.canvasReadOnlyBadge')}
