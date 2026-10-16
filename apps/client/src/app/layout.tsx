@@ -1,4 +1,5 @@
 import { AccessTokenRefreshScheduler } from '@/components/providers/access-token-refresh-scheduler';
+import { AppearanceProvider } from '@/components/providers/appearance-provider';
 import { AuthProvider } from '@/components/providers/auth-provider';
 import { LocaleProvider } from '@/components/providers/locale-provider';
 import { QueryProvider } from '@/components/providers/query-provider';
@@ -43,10 +44,12 @@ export default function RootLayout({
         <AuthProvider>
           <LocaleProvider>
             <ThemeProvider>
-              <QueryProvider>
-                <AccessTokenRefreshScheduler />
-                <ToastProvider>{children}</ToastProvider>
-              </QueryProvider>
+              <AppearanceProvider>
+                <QueryProvider>
+                  <AccessTokenRefreshScheduler />
+                  <ToastProvider>{children}</ToastProvider>
+                </QueryProvider>
+              </AppearanceProvider>
             </ThemeProvider>
           </LocaleProvider>
         </AuthProvider>

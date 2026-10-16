@@ -3,11 +3,13 @@
 import {
   defaultLocale,
   getMessages,
+  isLocale,
   LOCALE_STORAGE_KEY,
-  type Locale,
   locales,
+  rtlLocales,
+  type Locale,
+  type MessageKey,
 } from '@/i18n';
-import type { MessageKey } from '@/i18n';
 import {
   createContext,
   useCallback,
@@ -30,11 +32,12 @@ function readStoredLocale(): Locale {
   if (typeof window === 'undefined') {
     return defaultLocale;
   }
-  const raw: string | null = window.localStorage.getItem(LOCALE_STORAGE_KEY);
-  if (raw === 'en' || raw === 'tr') {
-    return raw;
+  try {
+    const raw: string | null = window.localStorage.getItem(LOCALE_STORAGE_KEY);
+    return isLocale(raw) ? raw : defaultLocale;
+  } catch {
+    return defaultLocale;
   }
-  return defaultLocale;
 }
 
 export function LocaleProvider({ children }: { children: ReactNode }): ReactNode {
@@ -50,8 +53,14 @@ export function LocaleProvider({ children }: { children: ReactNode }): ReactNode
     if (!isReady) {
       return;
     }
-    document.documentElement.lang = locale === 'tr' ? 'tr' : 'en';
-    window.localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+    const root: HTMLElement = document.documentElement;
+    root.lang = locale;
+    root.dir = rtlLocales.includes(locale) ? 'rtl' : 'ltr';
+    try {
+      window.localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+    } catch {
+      // Depolama kullanılamıyorsa dil yalnızca oturum boyunca geçerli olur.
+    }
   }, [locale, isReady]);
 
   const setLocale = useCallback((next: Locale) => {

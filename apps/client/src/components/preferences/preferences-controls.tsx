@@ -4,7 +4,7 @@ import { useTheme } from '@/components/providers/theme-provider';
 import type { ThemeMode } from '@/components/providers/theme-provider';
 import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { Locale } from '@/i18n';
-import { locales } from '@/i18n';
+import { locales, localeNames } from '@/i18n';
 import type { MessageKey } from '@/i18n';
 import type { ReactNode } from 'react';
 
@@ -13,7 +13,7 @@ interface PreferencesControlsProps {
   readonly variant?: 'default' | 'auth';
 }
 
-const LOCALE_LABEL_KEYS: Record<Locale, MessageKey> = {
+const LOCALE_LABEL_KEYS: Partial<Record<Locale, MessageKey>> = {
   tr: 'preferences.localeTr',
   en: 'preferences.localeEn',
 };
@@ -46,43 +46,25 @@ export function PreferencesControls(
     ? 'mx-0.5 hidden h-4 w-px shrink-0 bg-white/15 sm:block'
     : 'mx-0.5 hidden h-4 w-px shrink-0 bg-zinc-200/80 sm:block dark:bg-zinc-600/70';
 
-  const localeIndex: number = localeIndexFromCode(locale);
-
   return (
     <div className={shell}>
-      <div
-        role="radiogroup"
+      <select
         aria-label={t('preferences.language')}
-        className="min-w-0 shrink-0 rounded-2xl bg-zinc-950/[0.04] p-0.5 dark:bg-white/[0]"
+        value={locale}
+        onChange={(event) => {
+          const next = event.target.value;
+          if (isLocaleCode(next)) {
+            setLocale(next);
+          }
+        }}
+        className="min-w-0 rounded-full border-0 bg-transparent px-3 py-1.5 text-xs font-medium text-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/50 dark:text-zinc-200 sm:text-[13px]"
       >
-        <div className="relative flex min-w-0 overflow-hidden rounded-lg">
-          <SlidingGlider
-            segmentCount={locales.length}
-            activeIndex={localeIndex}
-            isAuth={isAuth}
-          />
-          {locales.map((code: Locale) => {
-            const selected: boolean = locale === code;
-            const label: string = isCompact
-              ? code.toUpperCase()
-              : t(LOCALE_LABEL_KEYS[code]);
-            return (
-              <button
-                key={code}
-                type="button"
-                role="radio"
-                aria-checked={selected}
-                className={localeButtonClass(isAuth, isCompact, selected)}
-                onClick={() => {
-                  setLocale(code);
-                }}
-              >
-                <span className="relative z-10">{label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+        {locales.map((code: Locale) => (
+          <option key={code} value={code}>
+            {isCompact ? code.toUpperCase() : localeDisplayName(code, t)}
+          </option>
+        ))}
+      </select>
 
       <span className={divider} aria-hidden />
 
@@ -136,9 +118,13 @@ export function PreferencesControls(
   );
 }
 
-function localeIndexFromCode(code: Locale): number {
-  const index: number = locales.indexOf(code);
-  return index < 0 ? 0 : index;
+function isLocaleCode(value: string): value is Locale {
+  return (locales as string[]).includes(value);
+}
+
+function localeDisplayName(code: Locale, t: (key: MessageKey) => string): string {
+  const key: MessageKey | undefined = LOCALE_LABEL_KEYS[code];
+  return key !== undefined ? t(key) : localeNames[code];
 }
 
 function themeModeIndex(mode: ThemeMode): number {
