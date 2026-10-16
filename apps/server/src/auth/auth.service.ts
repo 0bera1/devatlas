@@ -1,13 +1,15 @@
 import {
+  BadRequestException,
   ConflictException,
   Inject,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { createHash, randomBytes } from 'crypto';
+import { createHash, randomBytes, randomUUID } from 'crypto';
 import type { User } from '@prisma/client';
 import type { StringValue } from 'ms';
 import {
@@ -15,10 +17,20 @@ import {
   type IUserRepository,
 } from '../users/interfaces/user-repository.interface';
 import type { PublicUser } from '../users/interfaces/public-user.interface';
+import { MAIL_SERVICE, type IMailService } from '../mail/mail.interfaces';
+import {
+  buildPasswordResetMail,
+  buildVerificationMail,
+} from '../mail/mail-templates';
 import {
   REFRESH_TOKEN_REPOSITORY,
   type IRefreshTokenRepository,
 } from './interfaces/refresh-token-repository.interface';
+import {
+  AUTH_TOKEN_REPOSITORY,
+  type AuthTokenPurposeValue,
+  type IAuthTokenRepository,
+} from './interfaces/auth-token-repository.interface';
 import type {
   AuthResult,
   IAuthService,
@@ -26,14 +38,23 @@ import type {
 import type { JwtPayload } from './interfaces/jwt-payload.interface';
 
 const BCRYPT_SALT_ROUNDS = 10;
+const EMAIL_VERIFICATION_TTL_MS = 24 * 60 * 60 * 1000;
+const PASSWORD_RESET_TTL_MS = 60 * 60 * 1000;
+const DEFAULT_APP_URL = 'http://localhost:3000';
 
 @Injectable()
 export class AuthService implements IAuthService {
+  private readonly logger: Logger = new Logger(AuthService.name);
+
   public constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
     @Inject(REFRESH_TOKEN_REPOSITORY)
     private readonly refreshTokenRepository: IRefreshTokenRepository,
+    @Inject(AUTH_TOKEN_REPOSITORY)
+    private readonly authTokenRepository: IAuthTokenRepository,
+    @Inject(MAIL_SERVICE)
+    private readonly mailService: IMailService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
@@ -65,7 +86,9 @@ export class AuthService implements IAuthService {
       birthDate,
     });
 
-    return await this.issueSession(user);
+    await this.sendVerificationEmail(user);
+
+    return await this.issueSession(user, randomUUID());
   }
 
   public async login(email: string, password: string): Promise<AuthResult> {
@@ -91,15 +114,31 @@ export class AuthService implements IAuthService {
       birthDate: stored.birthDate,
     };
 
-    return await this.issueSession(user);
+    return await this.issueSession(user, randomUUID());
   }
 
+  /**
+   * Refresh token'ı döndürür. Kullanılmış (iptal edilmiş) bir token tekrar
+   * gelirse, token çalınmış olabilir: aynı oturum ailesinin tamamı kapatılır.
+   */
   public async refresh(plainRefreshToken: string): Promise<AuthResult> {
-    const tokenHash: string = this.hashRefreshToken(plainRefreshToken);
+    const tokenHash: string = this.hashToken(plainRefreshToken);
     const record = await this.refreshTokenRepository.findByTokenHash(tokenHash);
 
     if (record === null) {
       throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    if (record.revokedAt !== null) {
+      if (record.familyId !== null) {
+        const revoked: number = await this.refreshTokenRepository.deleteByFamilyId(
+          record.familyId,
+        );
+        this.logger.warn(
+          `Refresh token yeniden kullanıldı (kullanıcı ${record.userId}); oturum ailesi kapatıldı (${revoked} token).`,
+        );
+      }
+      throw new UnauthorizedException('Oturum geçersiz, lütfen yeniden giriş yapın');
     }
 
     if (record.expiresAt.getTime() <= Date.now()) {
@@ -116,12 +155,13 @@ export class AuthService implements IAuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    const newPlain: string = this.generateOpaqueRefreshToken();
-    const newHash: string = this.hashRefreshToken(newPlain);
+    const newPlain: string = this.generateOpaqueToken();
+    const newHash: string = this.hashToken(newPlain);
     const newExpires: Date = this.computeRefreshExpiry();
 
-    await this.refreshTokenRepository.replaceToken(record.id, {
+    await this.refreshTokenRepository.rotateToken(record.id, {
       userId: user.id,
+      familyId: record.familyId ?? randomUUID(),
       tokenHash: newHash,
       expiresAt: newExpires,
     });
@@ -131,6 +171,64 @@ export class AuthService implements IAuthService {
       refreshToken: newPlain,
       user,
     };
+  }
+
+  public async verifyEmail(token: string): Promise<void> {
+    const record = await this.findUsableAuthToken(token, 'EMAIL_VERIFICATION');
+    await this.authTokenRepository.markUsed(record.id, new Date());
+    await this.userRepository.markEmailVerified(record.userId, new Date());
+  }
+
+  public async resendVerification(email: string): Promise<void> {
+    const stored: User | null =
+      await this.userRepository.findByEmailWithPassword(email.trim());
+
+    if (stored === null || stored.emailVerifiedAt !== null) {
+      return;
+    }
+
+    await this.sendVerificationEmail({
+      id: stored.id,
+      email: stored.email,
+      firstName: stored.firstName,
+      lastName: stored.lastName,
+      createdAt: stored.createdAt,
+      birthDate: stored.birthDate,
+    });
+  }
+
+  public async forgotPassword(email: string): Promise<void> {
+    const stored: User | null =
+      await this.userRepository.findByEmailWithPassword(email.trim());
+
+    if (stored === null) {
+      return;
+    }
+
+    await this.authTokenRepository.deleteUnusedByUser(
+      stored.id,
+      'PASSWORD_RESET',
+    );
+
+    const plain: string = this.generateOpaqueToken();
+    await this.authTokenRepository.insertToken({
+      userId: stored.id,
+      purpose: 'PASSWORD_RESET',
+      tokenHash: this.hashToken(plain),
+      expiresAt: new Date(Date.now() + PASSWORD_RESET_TTL_MS),
+    });
+
+    const mail = buildPasswordResetMail(this.appBaseUrl(), plain);
+    await this.mailService.send({ to: stored.email, ...mail });
+  }
+
+  public async resetPassword(token: string, newPassword: string): Promise<void> {
+    const record = await this.findUsableAuthToken(token, 'PASSWORD_RESET');
+    const hashed: string = await bcrypt.hash(newPassword, BCRYPT_SALT_ROUNDS);
+
+    await this.userRepository.updatePasswordHashById(record.userId, hashed);
+    await this.authTokenRepository.markUsed(record.id, new Date());
+    await this.refreshTokenRepository.deleteByUserId(record.userId);
   }
 
   public async tryGetSubjectFromAccessToken(
@@ -155,13 +253,54 @@ export class AuthService implements IAuthService {
     }
   }
 
-  private async issueSession(user: PublicUser): Promise<AuthResult> {
-    const plainRefresh: string = this.generateOpaqueRefreshToken();
-    const tokenHash: string = this.hashRefreshToken(plainRefresh);
+  private async findUsableAuthToken(
+    plain: string,
+    purpose: AuthTokenPurposeValue,
+  ): Promise<{ id: string; userId: string }> {
+    const record = await this.authTokenRepository.findByTokenHash(
+      this.hashToken(plain),
+      purpose,
+    );
+
+    if (
+      record === null ||
+      record.usedAt !== null ||
+      record.expiresAt.getTime() <= Date.now()
+    ) {
+      throw new BadRequestException(
+        'Bağlantı geçersiz veya süresi dolmuş. Lütfen yeni bir bağlantı isteyin.',
+      );
+    }
+
+    return { id: record.id, userId: record.userId };
+  }
+
+  private async sendVerificationEmail(user: PublicUser): Promise<void> {
+    await this.authTokenRepository.deleteUnusedByUser(
+      user.id,
+      'EMAIL_VERIFICATION',
+    );
+
+    const plain: string = this.generateOpaqueToken();
+    await this.authTokenRepository.insertToken({
+      userId: user.id,
+      purpose: 'EMAIL_VERIFICATION',
+      tokenHash: this.hashToken(plain),
+      expiresAt: new Date(Date.now() + EMAIL_VERIFICATION_TTL_MS),
+    });
+
+    const mail = buildVerificationMail(this.appBaseUrl(), plain);
+    await this.mailService.send({ to: user.email, ...mail });
+  }
+
+  private async issueSession(user: PublicUser, familyId: string): Promise<AuthResult> {
+    const plainRefresh: string = this.generateOpaqueToken();
+    const tokenHash: string = this.hashToken(plainRefresh);
     const expiresAt: Date = this.computeRefreshExpiry();
 
     await this.refreshTokenRepository.insertToken({
       userId: user.id,
+      familyId,
       tokenHash,
       expiresAt,
     });
@@ -185,12 +324,18 @@ export class AuthService implements IAuthService {
     return this.jwtService.sign(payload, { expiresIn });
   }
 
-  private generateOpaqueRefreshToken(): string {
+  private generateOpaqueToken(): string {
     return randomBytes(48).toString('base64url');
   }
 
-  private hashRefreshToken(plain: string): string {
+  private hashToken(plain: string): string {
     return createHash('sha256').update(plain, 'utf8').digest('hex');
+  }
+
+  private appBaseUrl(): string {
+    const raw: string =
+      this.configService.get<string>('APP_URL') ?? DEFAULT_APP_URL;
+    return raw.trim().replace(/\/+$/, '');
   }
 
   private computeRefreshExpiry(): Date {

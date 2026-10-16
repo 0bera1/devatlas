@@ -22,6 +22,7 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
     const row = await this.prisma.refreshToken.create({
       data: {
         userId: params.userId,
+        familyId: params.familyId,
         tokenHash: params.tokenHash,
         expiresAt: params.expiresAt,
       },
@@ -35,7 +36,13 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
   ): Promise<RefreshTokenRecord | null> {
     return this.prisma.refreshToken.findUnique({
       where: { tokenHash },
-      select: { id: true, userId: true, expiresAt: true },
+      select: {
+        id: true,
+        userId: true,
+        familyId: true,
+        expiresAt: true,
+        revokedAt: true,
+      },
     });
   }
 
@@ -45,23 +52,38 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
     });
   }
 
-  public async replaceToken(
+  public async rotateToken(
     oldId: string,
     params: CreateRefreshTokenParams,
   ): Promise<{ id: string }> {
-    const created = await this.prisma.$transaction(async (tx) => {
-      await tx.refreshToken.delete({
+    return this.prisma.$transaction(async (tx) => {
+      await tx.refreshToken.update({
         where: { id: oldId },
+        data: { revokedAt: new Date() },
       });
       return tx.refreshToken.create({
         data: {
           userId: params.userId,
+          familyId: params.familyId,
           tokenHash: params.tokenHash,
           expiresAt: params.expiresAt,
         },
         select: { id: true },
       });
     });
-    return created;
+  }
+
+  public async deleteByFamilyId(familyId: string): Promise<number> {
+    const result = await this.prisma.refreshToken.deleteMany({
+      where: { familyId },
+    });
+    return result.count;
+  }
+
+  public async deleteByUserId(userId: string): Promise<number> {
+    const result = await this.prisma.refreshToken.deleteMany({
+      where: { userId },
+    });
+    return result.count;
   }
 }

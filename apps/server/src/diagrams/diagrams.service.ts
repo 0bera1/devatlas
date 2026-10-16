@@ -22,6 +22,10 @@ import {
   SEARCH_DIAGRAMS_LIMIT,
 } from './constants/search.constants';
 import type { DiagramCollaboratorEntry } from './interfaces/diagram-collaborator-entry.interface';
+import {
+  NOTIFICATIONS_SERVICE,
+  type INotificationsService,
+} from '../notifications/notifications.service';
 import type {
   DiagramRecord,
   DiagramViewerAccess,
@@ -48,6 +52,8 @@ export class DiagramsService implements IDiagramsService {
     private readonly userRepository: IUserRepository,
     @Inject(USER_ACTIVITY_SERVICE)
     private readonly userActivityService: IUserActivityService,
+    @Inject(NOTIFICATIONS_SERVICE)
+    private readonly notificationsService: INotificationsService,
   ) {}
 
   public async createDiagram(
@@ -325,6 +331,12 @@ export class DiagramsService implements IDiagramsService {
       }
       throw err;
     }
+
+    await this.notificationsService.notify(invitee.id, 'COLLABORATION_INVITE', {
+      diagramId,
+      diagramTitle: owned.title,
+      invitedById: ownerId,
+    });
 
     const list = await this.diagramRepository.selectDiagramCollaborators(diagramId);
     return [...list];

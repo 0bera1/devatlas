@@ -126,6 +126,13 @@ export class UserRepository implements IUserRepository {
     return result.count > 0;
   }
 
+  public async markEmailVerified(id: string, at: Date): Promise<void> {
+    await this.prisma.user.updateMany({
+      where: { id, emailVerifiedAt: null },
+      data: { emailVerifiedAt: at },
+    });
+  }
+
   public async selectPasswordHashById(id: string): Promise<string | null> {
     const row: { password: string } | null = await this.prisma.user.findUnique({
       where: { id },

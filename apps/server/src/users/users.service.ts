@@ -13,10 +13,6 @@ export class UsersService implements IUsersService {
     private readonly userRepository: IUserRepository,
   ) {}
 
-  public async getAllUsers(): Promise<PublicUser[]> {
-    return this.userRepository.findAll();
-  }
-
   public async getUserById(id: string): Promise<PublicUser | null> {
     const user: PublicUser | null = await this.userRepository.findById(id);
 

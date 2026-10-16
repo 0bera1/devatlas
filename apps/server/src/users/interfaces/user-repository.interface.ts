@@ -36,6 +36,8 @@ export interface IUserRepository {
    * Hash'i hesaplanmış password'ü yazar. Çağıran tarafında bcrypt yapılmalıdır.
    */
   updatePasswordHashById(id: string, newPasswordHash: string): Promise<boolean>;
+  /** E-posta doğrulandı olarak işaretler (zaten doğrulanmışsa değiştirmez). */
+  markEmailVerified(id: string, at: Date): Promise<void>;
   /**
    * Mevcut password ile karşılaştırma için (bcrypt) hash'i okur.
    */

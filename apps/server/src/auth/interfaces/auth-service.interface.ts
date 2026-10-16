@@ -21,6 +21,21 @@ export interface IAuthService {
 
   refresh(refreshToken: string): Promise<AuthResult>;
 
+  /** E-posta adresini doğrular. Geçersiz veya kullanılmış token'da hata verir. */
+  verifyEmail(token: string): Promise<void>;
+
+  /** Doğrulanmamış hesap için yeni doğrulama e-postası gönderir. */
+  resendVerification(email: string): Promise<void>;
+
+  /**
+   * Şifre sıfırlama bağlantısı gönderir. Kullanıcı yoksa sessizce döner
+   * (hesap varlığı ifşa edilmez).
+   */
+  forgotPassword(email: string): Promise<void>;
+
+  /** Token ile yeni şifre belirler ve kullanıcının tüm oturumlarını kapatır. */
+  resetPassword(token: string, newPassword: string): Promise<void>;
+
   /**
    * Opsiyonel Bearer access token doğrular; geçerliyse kullanıcı id, değilse null.
    * Görüntülenme dedup için public uçlarda kullanılır.

@@ -24,9 +24,21 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/devatlas?schema=public
       PORT: "3500"
+      # Yerel Compose geliştirme ortamıdır. Üretimde bu satır kaldırılır ve SMTP_HOST zorunlu olur.
+      NODE_ENV: development
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      UPLOAD_DIR: /app/uploads
       JWT_SECRET: ${JWT_SECRET:-dev-docker-change-me-use-long-secret-key-min-32-chars}
       JWT_ACCESS_EXPIRES_IN: ${JWT_ACCESS_EXPIRES_IN:-10m}
       REFRESH_TOKEN_EXPIRES_DAYS: ${REFRESH_TOKEN_EXPIRES_DAYS:-7}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      MAIL_FROM: ${MAIL_FROM:-DevAtlas <no-reply@devatlas.local>}
+    volumes:
+      - uploads:/app/uploads
 
   db:
     image: postgres:16
@@ -48,3 +60,4 @@ services:
 
 volumes:
   pgdata:
+  uploads:

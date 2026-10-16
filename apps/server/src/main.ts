@@ -1,24 +1,21 @@
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { resolveCorsOrigins } from './common/cors-origins';
 import { SocketIoAdapter } from './collaboration/socket-io.adapter';
 
 const DEFAULT_PORT = 3500;
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useWebSocketAdapter(new SocketIoAdapter(app));
   app.enableShutdownHooks();
 
-  const corsOrigins: string[] | undefined = process.env.CORS_ORIGIN?.split(',')
-    .map((origin: string) => origin.trim())
-    .filter((origin: string) => origin.length > 0);
-
   app.enableCors({
-    origin:
-      corsOrigins !== undefined && corsOrigins.length > 0
-        ? corsOrigins
-        : true,
+    origin: resolveCorsOrigins(),
     credentials: true,
     allowedHeaders: [
       'Content-Type',
@@ -34,7 +31,36 @@ async function bootstrap(): Promise<void> {
       transform: true,
     }),
   );
+
+  setupSwagger(app);
+
+  app.useStaticAssets(process.env.UPLOAD_DIR ?? join(process.cwd(), 'uploads'), {
+    prefix: '/uploads',
+  });
+
   await app.listen(process.env.PORT ?? DEFAULT_PORT);
+}
+
+/**
+ * OpenAPI dokümantasyonu. Üretimde yalnızca SWAGGER_ENABLED=true ile açılır.
+ */
+function setupSwagger(app: INestApplication): void {
+  const isProduction: boolean = process.env.NODE_ENV === 'production';
+  const enabled: boolean =
+    !isProduction || process.env.SWAGGER_ENABLED === 'true';
+
+  if (!enabled) {
+    return;
+  }
+
+  const config = new DocumentBuilder()
+    .setTitle('DevAtlas API')
+    .setDescription('DevAtlas sunucu API dokümantasyonu')
+    .setVersion('0.0.1')
+    .addBearerAuth()
+    .build();
+
+  SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, config));
 }
 
 void bootstrap();
