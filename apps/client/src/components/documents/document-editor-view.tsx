@@ -24,7 +24,7 @@ import { useRecordPublicDocumentView } from '@/hooks/documents/use-record-public
 import { useRequireAuth } from '@/hooks/auth/use-require-auth';
 import { useTranslations } from '@/hooks/i18n/use-translations';
 import Link from 'next/link';
-import type { FormEvent, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 interface DocumentEditorViewProps {
@@ -221,9 +221,9 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
 
   if (!canRender) {
     return (
-      <main className="flex flex-1 items-center justify-center px-6 py-16 text-zinc-500 dark:text-zinc-400">
+      <div className="flex flex-1 items-center justify-center px-6 py-16 text-[var(--muted)]">
         {t('common.loading')}
-      </main>
+      </div>
     );
   }
 
@@ -233,17 +233,17 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
 
   if (docIsError && docError !== null && isNotFoundHttpError(docError)) {
     return (
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-6 py-10">
-        <p className="text-zinc-800 dark:text-zinc-200">
+      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-10 sm:px-6">
+        <p className="text-[var(--foreground)]">
           {t('documents.editor.notFound')}
         </p>
         <Link
           href="/documents"
-          className="text-sm font-medium text-zinc-600 underline-offset-4 hover:underline dark:text-zinc-400"
+          className="text-sm font-medium text-[var(--muted)] underline-offset-4 hover:text-[var(--foreground)] hover:underline"
         >
           {t('documents.editor.backToList')}
         </Link>
-      </main>
+      </div>
     );
   }
 
@@ -252,15 +252,15 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
       ? t('errors.network')
       : docError.message;
     return (
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-6 py-10">
+      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-10 sm:px-6">
         <p className="text-sm text-red-600 dark:text-red-400">{loadMsg}</p>
         <Link
           href="/documents"
-          className="text-sm font-medium text-zinc-600 underline-offset-4 hover:underline dark:text-zinc-400"
+          className="text-sm font-medium text-[var(--muted)] underline-offset-4 hover:text-[var(--foreground)] hover:underline"
         >
           {t('documents.editor.backToList')}
         </Link>
-      </main>
+      </div>
     );
   }
 
@@ -282,92 +282,91 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
             ? autosave.errorMessage
             : null;
 
+  const fieldClass =
+    'mt-1.5 w-full rounded-md border border-[var(--border)] bg-transparent px-3 py-2 text-sm text-[var(--foreground)] outline-none transition-colors focus:border-[var(--accent)] read-only:cursor-default read-only:text-[var(--muted)] disabled:opacity-60';
+
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-6 py-10 lg:py-14">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-3">
-          <Link
-            href="/documents"
-            className="text-sm font-medium text-zinc-600 underline-offset-4 hover:underline dark:text-zinc-400"
-          >
-            {t('documents.editor.backDocuments')}
-          </Link>
-          <span className="text-xs text-zinc-500 dark:text-zinc-400">
-            {t('documents.editor.lastUpdated')}:{' '}
-            {formatUpdatedAt(document.updatedAt)}
+    <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-[var(--border)] pb-4 text-sm text-[var(--muted)]">
+        <Link
+          href="/documents"
+          className="font-medium text-[var(--foreground)] underline-offset-4 hover:underline"
+        >
+          {t('documents.editor.backDocuments')}
+        </Link>
+        <span className="text-xs">
+          {t('documents.editor.lastUpdated')}: {formatUpdatedAt(document.updatedAt)}
+        </span>
+        {readOnly && permissionReady ? (
+          <span className="rounded-full border border-[var(--border)] px-2.5 py-0.5 text-xs font-medium text-[var(--foreground)]">
+            {t('documents.editor.readOnly')}
           </span>
-          {readOnly && permissionReady ? (
-            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900 dark:bg-amber-950/40 dark:text-amber-200">
-              {t('documents.editor.readOnly')}
-            </span>
-          ) : null}
-          {!permissionReady ? (
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">
-              {t('documents.editor.permissionLoading')}
-            </span>
-          ) : null}
-          {autosaveLabel !== null ? (
-            <span
-              className={
-                autosave.status === 'error'
-                  ? 'text-xs font-medium text-red-600 dark:text-red-400'
-                  : autosave.status === 'saved'
-                    ? 'text-xs font-medium text-emerald-600 dark:text-emerald-400'
-                    : 'text-xs font-medium text-amber-600 dark:text-amber-400'
-              }
-              role="status"
-            >
-              {autosaveLabel}
-            </span>
-          ) : null}
-          {document.visibility === 'PUBLIC' ? (
-            <span className="text-xs text-zinc-500 dark:text-zinc-400">
-              {t('documents.engagement.views')}: {document.viewCount} ·{' '}
-              {t('documents.engagement.favorites')}: {document.favoriteCount}
-            </span>
-          ) : null}
-          {document.visibility === 'PUBLIC' && token !== null ? (
-            <button
-              type="button"
-              disabled={favoritePending}
-              onClick={() => {
-                void onFavoriteClick();
-              }}
-              className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-800 transition-colors hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
-            >
-              {favoritePending
-                ? t('documents.editor.favoriting')
-                : t('documents.editor.favorite')}
-            </button>
-          ) : null}
-        </div>
+        ) : null}
+        {!permissionReady ? (
+          <span className="text-xs">{t('documents.editor.permissionLoading')}</span>
+        ) : null}
+        {autosaveLabel !== null ? (
+          <span
+            className={
+              autosave.status === 'error'
+                ? 'text-xs font-medium text-red-600 dark:text-red-400'
+                : autosave.status === 'saved'
+                  ? 'text-xs font-medium text-emerald-700 dark:text-emerald-400'
+                  : 'text-xs font-medium text-[var(--accent)]'
+            }
+            role="status"
+          >
+            {autosaveLabel}
+          </span>
+        ) : null}
+        {document.visibility === 'PUBLIC' ? (
+          <span className="text-xs tabular-nums">
+            {t('documents.engagement.views')}: {document.viewCount} ·{' '}
+            {t('documents.engagement.favorites')}: {document.favoriteCount}
+          </span>
+        ) : null}
+        {document.visibility === 'PUBLIC' && token !== null ? (
+          <button
+            type="button"
+            disabled={favoritePending}
+            onClick={() => {
+              void onFavoriteClick();
+            }}
+            className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--surface)] disabled:opacity-50"
+          >
+            {favoritePending
+              ? t('documents.editor.favoriting')
+              : t('documents.editor.favorite')}
+          </button>
+        ) : null}
       </div>
 
-      <div className="grid gap-10 lg:grid-cols-[1fr_minmax(260px,320px)] lg:items-start">
-        <div className="flex flex-col gap-6">
-          <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <label className="block min-w-0 flex-1">
-                <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
-                  {t('documents.editor.titleLabel')}
-                </span>
-                <input
-                  type="text"
-                  value={titleDraft}
-                  readOnly={readOnly}
-                  onChange={(e) => {
-                    setTitleDraft(e.target.value);
-                  }}
-                  aria-invalid={autosave.titleBlocked}
-                  className={
-                    autosave.titleBlocked
-                      ? 'mt-2 w-full rounded-xl border border-red-400 bg-white px-3 py-2 text-lg font-semibold text-zinc-950 outline-none focus:ring-2 focus:ring-red-400 dark:border-red-600 dark:bg-zinc-950 dark:text-zinc-50'
-                      : 'mt-2 w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-lg font-semibold text-zinc-950 outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 read-only:bg-zinc-50 read-only:text-zinc-600 dark:read-only:bg-zinc-900 dark:read-only:text-zinc-300'
-                  }
-                />
-              </label>
-              <label className="block shrink-0 sm:w-44">
-                <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)] lg:items-start">
+        <div className="flex min-w-0 flex-col gap-8">
+          <section className="flex flex-col gap-5">
+            <label className="block">
+              <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
+                {t('documents.editor.titleLabel')}
+              </span>
+              <input
+                type="text"
+                value={titleDraft}
+                readOnly={readOnly}
+                onChange={(e) => {
+                  setTitleDraft(e.target.value);
+                }}
+                aria-invalid={autosave.titleBlocked}
+                className={`mt-1 w-full bg-transparent font-serif text-4xl font-medium leading-tight tracking-tight text-[var(--foreground)] outline-none read-only:cursor-default sm:text-5xl ${
+                  autosave.titleBlocked
+                    ? 'border-b border-red-500'
+                    : 'border-b border-transparent focus:border-[var(--border)]'
+                }`}
+              />
+            </label>
+
+            <div className="flex flex-wrap items-end gap-x-8 gap-y-5">
+              <label className="block w-44">
+                <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
                   {t('documents.editor.visibilityLabel')}
                 </span>
                 <select
@@ -377,7 +376,7 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
                     const v = e.target.value as DocumentVisibility;
                     void onVisibilityChange(v);
                   }}
-                  className="mt-2 w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-950 outline-none focus:ring-2 focus:ring-zinc-400 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+                  className={fieldClass}
                 >
                   <option value="PRIVATE">
                     {t('documents.visibilityPrivate')}
@@ -387,10 +386,8 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
                   </option>
                 </select>
               </label>
-            </div>
-            <div className="mt-4 max-w-md">
-              <label className="block">
-                <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
+              <label className="block min-w-[200px] flex-1">
+                <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
                   {t('documents.editor.categoryLabel')}
                 </span>
                 <input
@@ -404,42 +401,46 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
                     void onCategoryBlur();
                   }}
                   placeholder={t('documents.editor.categoryPlaceholder')}
-                  className="mt-2 w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-950 outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50 read-only:bg-zinc-50 read-only:text-zinc-600 dark:read-only:bg-zinc-900 dark:read-only:text-zinc-300"
+                  className={fieldClass}
                 />
               </label>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                {t('documents.editor.categoryHint')}
-              </p>
             </div>
-            <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="-mt-2 text-xs text-[var(--muted)]">
+              {t('documents.editor.categoryHint')}
+            </p>
+            <p className="text-xs text-[var(--muted)]">
               {readOnly
                 ? t('documents.editor.readOnlyHint')
                 : t('documents.editor.autosaveHintTitle')}
             </p>
           </section>
 
-          <section className="flex flex-1 flex-col rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
-            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-              {t('documents.editor.content')}
-            </h2>
-            <CollaborationLiveStrip
-              connection={connection}
-              peerCount={peerCount}
-              errorDetail={connectionError}
-              onRetry={
-                connection === 'error' || connection === 'disconnected'
-                  ? reconnect
-                  : undefined
-              }
-              showSoloHint
-            />
+          <section className="flex flex-col border-t border-[var(--border)] pt-6">
+            <div className="flex items-baseline justify-between gap-4">
+              <h2 className="font-serif text-xl font-medium">
+                {t('documents.editor.content')}
+              </h2>
+            </div>
+            <div className="mt-3">
+              <CollaborationLiveStrip
+                connection={connection}
+                peerCount={peerCount}
+                errorDetail={connectionError}
+                onRetry={
+                  connection === 'error' || connection === 'disconnected'
+                    ? reconnect
+                    : undefined
+                }
+                showSoloHint
+              />
+            </div>
             {remoteCaretLines.length > 0 ? (
-              <div className="mt-2 flex flex-wrap gap-1.5">
+              <div className="mt-3 flex flex-wrap gap-1.5">
                 {remoteCaretLines.map(
                   (row: { userId: string; line: number }): ReactNode => (
                     <span
                       key={row.userId}
-                      className="inline-flex max-w-full rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-[11px] font-medium text-violet-900 dark:border-violet-800 dark:bg-violet-950/50 dark:text-violet-200"
+                      className="inline-flex max-w-full rounded-full border border-[var(--border)] px-2.5 py-1 text-[11px] font-medium text-[var(--muted)]"
                     >
                       {t('collaboration.remoteCaretDetailed')
                         .replace('{{line}}', String(row.line))
@@ -470,9 +471,9 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
               }}
               rows={18}
               placeholder={t('documents.editor.contentPlaceholder')}
-              className="mt-3 min-h-[280px] w-full flex-1 resize-y rounded-xl border border-zinc-200 bg-zinc-50/80 px-3 py-2 font-mono text-sm leading-relaxed text-zinc-950 outline-none focus:ring-2 focus:ring-zinc-400 dark:border-zinc-700 dark:bg-zinc-950/60 dark:text-zinc-50 read-only:cursor-default read-only:opacity-90"
+              className="mt-4 min-h-[60vh] w-full resize-y bg-transparent font-serif text-[18px] leading-[1.8] text-[var(--foreground)] outline-none placeholder:text-[var(--muted)] read-only:cursor-default read-only:text-[var(--muted)]"
             />
-            <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="mt-4 border-t border-[var(--border)] pt-3 text-xs text-[var(--muted)]">
               {readOnly
                 ? t('documents.editor.readOnlyContentHint')
                 : t('documents.editor.contentHint')}
@@ -480,7 +481,7 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
           </section>
         </div>
 
-        <div className="flex flex-col gap-6">
+        <aside className="flex min-w-0 flex-col gap-8 border-t border-[var(--border)] pt-8 lg:border-t-0 lg:pt-0">
           <DocumentRelatedSection
             documentId={documentId}
             enabled={hydrated && data !== undefined && data.id === documentId}
@@ -496,8 +497,8 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
             />
           ) : null}
           <DocumentsRoadmap />
-        </div>
+        </aside>
       </div>
-    </main>
+    </div>
   );
 }

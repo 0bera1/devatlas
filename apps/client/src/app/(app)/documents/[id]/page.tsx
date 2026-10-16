@@ -13,11 +13,11 @@ export default function DocumentEditorPage(): ReactNode {
 
   if (documentId.length === 0) {
     return (
-      <main className="mx-auto max-w-5xl px-6 py-10">
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+        <p className="text-sm text-[var(--muted)]">
           {t('editor.invalidLink')}
         </p>
-      </main>
+      </div>
     );
   }
 
