@@ -64,7 +64,7 @@ export const BUILT_IN_PALETTES: Record<BuiltInThemeKey, { mode: ThemeMode; palet
       background: '#F4EFE6',
       surface: '#FBF8F2',
       text: '#2B2118',
-      muted: '#7A6D5E',
+      muted: '#6B5E50',
       accent: '#B5532A',
       border: '#E2D9C8',
     },

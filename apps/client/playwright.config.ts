@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import path from 'node:path';
 
 /**
  * Uçtan uca testler çalışan yığına karşı koşar (docker compose up -d).
@@ -16,5 +17,17 @@ export default defineConfig({
     trace: 'retain-on-failure',
     locale: 'tr-TR',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    // Önce paylaşılan hesaplar oluşturulur ve oturum kaydedilir (e2e/auth.setup.ts).
+    { name: 'setup', testMatch: /auth\.setup\.ts/ },
+    // Misafir sayfaları oturumsuz çalışır.
+    { name: 'guest', testMatch: /guest\.spec\.ts/, use: { ...devices['Desktop Chrome'] } },
+    // Kimlik doğrulamalı testler kurulumda kaydedilen oturumu kullanır.
+    {
+      name: 'chromium',
+      testMatch: /(authenticated|flows|mobile)\.spec\.ts/,
+      dependencies: ['setup'],
+      use: { ...devices['Desktop Chrome'], storageState: path.resolve(__dirname, 'e2e/.auth/owner.json') },
+    },
+  ],
 });

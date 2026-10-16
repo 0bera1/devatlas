@@ -45,3 +45,6 @@ next-env.d.ts
 test-results/
 playwright-report/
 coverage/
+
+# Playwright oturum durumu ve test hesapları (gizli)
+e2e/.auth/
