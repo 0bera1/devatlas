@@ -3,13 +3,13 @@ services:
     build:
       context: ./apps/client
       dockerfile: DockerFile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:3500
     container_name: devatlas-web
     ports:
       - "3000:3000"
     depends_on:
       - api
-    environment:
-      NEXT_PUBLIC_API_URL: http://localhost:3500
 
   api:
     build:
