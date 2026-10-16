@@ -13,9 +13,9 @@ export default function DiagramEditorPage(): ReactNode {
 
   if (diagramId.length === 0) {
     return (
-      <main className="flex flex-1 items-center justify-center p-6 text-zinc-500 dark:text-zinc-400">
+      <div className="flex flex-1 items-center justify-center p-6 text-zinc-500 dark:text-zinc-400">
         {t('diagrams.editor.invalidId')}
-      </main>
+      </div>
     );
   }
 

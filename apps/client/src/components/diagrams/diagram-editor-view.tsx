@@ -331,17 +331,17 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
 
   if (!canRender) {
     return (
-      <main className="flex flex-1 items-center justify-center px-6 py-16 text-zinc-500 dark:text-zinc-400">
+      <div className="flex flex-1 items-center justify-center px-6 py-16 text-zinc-500 dark:text-zinc-400">
         {t('common.loading')}
-      </main>
+      </div>
     );
   }
 
   if (isPending && data === undefined) {
     return (
-      <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
+      <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
         <p className="text-sm text-zinc-500 dark:text-zinc-400">{t('diagrams.editor.loading')}</p>
-      </main>
+      </div>
     );
   }
 
@@ -350,7 +350,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
       ? t('errors.network')
       : error.message;
     return (
-      <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
+      <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
         <p className="text-sm text-red-600 dark:text-red-400">{msg}</p>
         <Link
           href="/diagrams"
@@ -358,7 +358,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
         >
           {t('diagrams.editor.backToList')}
         </Link>
-      </main>
+      </div>
     );
   }
 
@@ -370,7 +370,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
 
   return (
     <>
-    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-6 py-10 lg:py-14">
+    <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-6 py-10 lg:py-14">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <Link
@@ -559,7 +559,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
           ) : null}
         </div>
       </div>
-    </main>
+    </div>
     {linkedModalDiagramId !== null ? (
       <LinkedDiagramModal
         diagramId={linkedModalDiagramId}

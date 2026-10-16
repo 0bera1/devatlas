@@ -23,7 +23,7 @@ export function ProfileView(): ReactNode {
   }
   if (token === null) {
     return (
-      <main className="mx-auto flex max-w-3xl flex-col gap-4 px-6 py-10">
+      <div className="mx-auto flex max-w-3xl flex-col gap-4 px-6 py-10">
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
           {t('nav.loading')}
         </p>
@@ -33,31 +33,31 @@ export function ProfileView(): ReactNode {
         >
           {t('nav.login')}
         </Link>
-      </main>
+      </div>
     );
   }
 
   if (isLoading) {
     return (
-      <main className="mx-auto max-w-5xl px-6 py-10">
+      <div className="mx-auto max-w-5xl px-6 py-10">
         <p className="text-sm text-zinc-500 dark:text-zinc-400">
           {t('common.loading')}
         </p>
-      </main>
+      </div>
     );
   }
   if (isError || data === undefined) {
     return (
-      <main className="mx-auto max-w-5xl px-6 py-10">
+      <div className="mx-auto max-w-5xl px-6 py-10">
         <p className="text-sm text-rose-600 dark:text-rose-400">
           {t('errors.network')}
         </p>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-6 py-10">
       <header className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
           {t('profile.page.title')}
@@ -106,6 +106,6 @@ export function ProfileView(): ReactNode {
       <section className={sectionShellClassName}>
         <ProfileFavoritesSection />
       </section>
-    </main>
+    </div>
   );
 }

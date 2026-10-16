@@ -86,7 +86,7 @@ export function SearchPageView(): ReactNode {
   };
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-10 lg:py-14">
+    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-10 lg:py-14">
       <header className="flex flex-col gap-2">
         <h1 className="font-sans text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
           {t('search.title')}
@@ -159,6 +159,6 @@ export function SearchPageView(): ReactNode {
           ))}
         </ul>
       )}
-    </main>
+    </div>
   );
 }

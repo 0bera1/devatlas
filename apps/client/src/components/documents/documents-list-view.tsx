@@ -160,9 +160,9 @@ export function DocumentsListView(): ReactNode {
 
   if (!canRender) {
     return (
-      <main className="flex flex-1 items-center justify-center px-6 py-16 text-zinc-500 dark:text-zinc-400">
+      <div className="flex flex-1 items-center justify-center px-6 py-16 text-zinc-500 dark:text-zinc-400">
         {t('common.loading')}
-      </main>
+      </div>
     );
   }
 
@@ -180,7 +180,7 @@ export function DocumentsListView(): ReactNode {
     !listLoading && items.length === 0 && appliedQ !== null && !listIsError;
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-6 py-10 lg:py-14">
+    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-6 py-10 lg:py-14">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="font-sans text-3xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
@@ -423,6 +423,6 @@ export function DocumentsListView(): ReactNode {
 
         <DocumentsRoadmap />
       </div>
-    </main>
+    </div>
   );
 }

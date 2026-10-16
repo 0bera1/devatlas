@@ -10,8 +10,8 @@ export default function KnowledgeDocumentPage(): ReactNode {
     typeof params.slug === 'string' ? params.slug : '';
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-10 lg:py-14">
+    <div className="mx-auto w-full max-w-3xl flex-1 px-6 py-10 lg:py-14">
       <KnowledgeDocumentDetailView slug={slug} />
-    </main>
+    </div>
   );
 }
