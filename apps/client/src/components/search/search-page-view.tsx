@@ -88,10 +88,10 @@ export function SearchPageView(): ReactNode {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-10 lg:py-14">
       <header className="flex flex-col gap-2">
-        <h1 className="font-sans text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
+        <h1 className="font-serif text-4xl font-medium leading-tight tracking-tight sm:text-5xl">
           {t('search.title')}
         </h1>
-        <p className="max-w-xl text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="max-w-xl text-sm text-[var(--muted)]">
           {t('search.subtitle')}
         </p>
         <label className="mt-2 block">
@@ -104,10 +104,10 @@ export function SearchPageView(): ReactNode {
             }}
             placeholder={t('search.placeholder')}
             autoComplete="off"
-            className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-950 outline-none ring-zinc-400 focus:ring-2 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] outline-none ring-[var(--border)] focus:ring-2"
           />
         </label>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-[var(--muted)]">
           {t('search.debounceHint')}
         </p>
       </header>
@@ -126,7 +126,7 @@ export function SearchPageView(): ReactNode {
               void refetch();
             }}
             disabled={isFetching}
-            className="rounded-lg border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
+            className="rounded-lg border border-[var(--border)] px-3 py-2 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--surface)] disabled:opacity-50"
           >
             {t('documents.list.refresh')}
           </button>
@@ -134,7 +134,7 @@ export function SearchPageView(): ReactNode {
       ) : null}
 
       {trimmedDebounced.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-zinc-300 px-6 py-10 text-center text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+        <p className="rounded-2xl border border-dashed border-[var(--border)] px-6 py-10 text-center text-sm text-[var(--muted)]">
           {t('search.emptyPrompt')}
         </p>
       ) : loadingResults ? (
@@ -142,12 +142,12 @@ export function SearchPageView(): ReactNode {
           {[0, 1, 2].map((i: number) => (
             <li
               key={i}
-              className="h-24 animate-pulse rounded-2xl bg-zinc-200 dark:bg-zinc-800"
+              className="h-24 animate-pulse rounded-2xl bg-[var(--border)]"
             />
           ))}
         </ul>
       ) : hits.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-zinc-300 px-6 py-10 text-center text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+        <p className="rounded-2xl border border-dashed border-[var(--border)] px-6 py-10 text-center text-sm text-[var(--muted)]">
           {t('search.noResults')}
         </p>
       ) : (

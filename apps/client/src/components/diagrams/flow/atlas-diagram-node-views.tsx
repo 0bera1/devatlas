@@ -26,7 +26,7 @@ function statusDotClass(status: DiagramNodeStatus): string {
     case 'error':
       return 'bg-red-500';
     case 'default':
-      return 'bg-zinc-400';
+      return 'bg-[var(--muted)]';
     default: {
       const _e: never = status;
       return _e;
@@ -54,8 +54,8 @@ function AtlasDiagramNodeViewInner(
 
   return (
     <div
-      className={`relative min-w-[148px] max-w-[220px] rounded-xl border-2 bg-white px-3 py-2 shadow-md transition-shadow dark:bg-zinc-900 ${style.border} ${
-        selected ? 'ring-2 ring-violet-500/80 ring-offset-2 ring-offset-zinc-50 dark:ring-offset-zinc-950' : ''
+      className={`relative min-w-[148px] max-w-[220px] rounded-xl border-2 bg-[var(--surface)] px-3 py-2 shadow-md transition-shadow ${style.border} ${
+        selected ? 'ring-2 ring-violet-500/80 ring-offset-2 ring-offset-[var(--background)]' : ''
       } ${
         linkedDiagramId !== undefined
           ? 'shadow-[0_0_0_1px_rgba(139,92,246,0.35)] ring-1 ring-violet-400/60 dark:ring-violet-500/50'
@@ -72,7 +72,7 @@ function AtlasDiagramNodeViewInner(
         type="target"
         position={Position.Left}
         isConnectable={isConnectable}
-        className={`!z-20 !h-3 !w-3 !border-2 !border-white dark:!border-zinc-900 ${style.accent}`}
+        className={`!z-20 !h-3 !w-3 !border-2 !border-white dark:!border-[var(--border)] ${style.accent}`}
       />
       {linkedDiagramId !== undefined ? (
         <span
@@ -87,7 +87,7 @@ function AtlasDiagramNodeViewInner(
         type="source"
         position={Position.Right}
         isConnectable={isConnectable}
-        className={`!z-20 !h-3 !w-3 !border-2 !border-white dark:!border-zinc-900 ${style.accent}`}
+        className={`!z-20 !h-3 !w-3 !border-2 !border-white dark:!border-[var(--border)] ${style.accent}`}
       />
       <div className="flex items-center gap-2">
         <div
@@ -103,11 +103,11 @@ function AtlasDiagramNodeViewInner(
           />
         ) : null}
       </div>
-      <div className="mt-1 line-clamp-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+      <div className="mt-1 line-clamp-2 text-sm font-semibold text-[var(--foreground)]">
         {data.title}
       </div>
       {subtitle !== undefined ? (
-        <div className="mt-1 line-clamp-2 text-[11px] leading-snug text-zinc-600 dark:text-zinc-400">
+        <div className="mt-1 line-clamp-2 text-[11px] leading-snug text-[var(--muted)]">
           {subtitle}
         </div>
       ) : null}

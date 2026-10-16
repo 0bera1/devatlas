@@ -92,7 +92,7 @@ export function AuthShell({ mode, children }: AuthShellProps): ReactNode {
               </Link>
               <Link
                 href={alternateHref}
-                className="rounded-lg border border-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-white/10"
+                className="rounded-lg border border-white/80 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-[var(--surface)]/10"
               >
                 {ctaText}
               </Link>
@@ -108,7 +108,7 @@ export function AuthShell({ mode, children }: AuthShellProps): ReactNode {
           >
             <div className="flex max-w-xs items-center gap-3 rounded-xl border border-white/15 bg-black/35 px-4 py-3 backdrop-blur-md">
               <div
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-600 text-sm font-bold text-zinc-900"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-600 text-sm font-bold text-[var(--foreground)]"
                 aria-hidden
               >
                 DA
@@ -150,7 +150,7 @@ export function AuthShell({ mode, children }: AuthShellProps): ReactNode {
               {title}
             </h1>
             {description.length > 0 ? (
-              <p className="mt-2 text-sm text-zinc-400">{description}</p>
+              <p className="mt-2 text-sm text-[var(--muted)]">{description}</p>
             ) : null}
           </div>
 
@@ -161,7 +161,7 @@ export function AuthShell({ mode, children }: AuthShellProps): ReactNode {
             {children}
           </div>
 
-          <p className="auth-split-animate auth-split-animate-delay-3 mt-8 text-center text-sm text-zinc-400 md:text-left">
+          <p className="auth-split-animate auth-split-animate-delay-3 mt-8 text-center text-sm text-[var(--muted)] md:text-left">
             {footerText}{' '}
             <Link
               href={footerHref}
@@ -174,7 +174,7 @@ export function AuthShell({ mode, children }: AuthShellProps): ReactNode {
           <p className="mt-6 text-center md:text-left">
             <Link
               href="/"
-              className="text-xs text-zinc-500 transition-colors hover:text-zinc-300"
+              className="text-xs text-[var(--muted)] transition-colors hover:text-[var(--foreground)]"
             >
               {t('auth.backHome')}
             </Link>

@@ -331,7 +331,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
 
   if (!canRender) {
     return (
-      <div className="flex flex-1 items-center justify-center px-6 py-16 text-zinc-500 dark:text-zinc-400">
+      <div className="flex flex-1 items-center justify-center px-6 py-16 text-[var(--muted)]">
         {t('common.loading')}
       </div>
     );
@@ -340,7 +340,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
   if (isPending && data === undefined) {
     return (
       <div className="mx-auto w-full max-w-6xl flex-1 px-6 py-10">
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">{t('diagrams.editor.loading')}</p>
+        <p className="text-sm text-[var(--muted)]">{t('diagrams.editor.loading')}</p>
       </div>
     );
   }
@@ -354,7 +354,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
         <p className="text-sm text-red-600 dark:text-red-400">{msg}</p>
         <Link
           href="/diagrams"
-          className="mt-4 inline-block text-sm font-medium text-zinc-600 underline-offset-4 hover:underline dark:text-zinc-400"
+          className="mt-4 inline-block text-sm font-medium text-[var(--muted)] underline-offset-4 hover:underline"
         >
           {t('diagrams.editor.backToList')}
         </Link>
@@ -375,14 +375,14 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
         <div>
           <Link
             href="/diagrams"
-            className="text-sm font-medium text-zinc-600 underline-offset-4 hover:underline dark:text-zinc-400"
+            className="text-sm font-medium text-[var(--muted)] underline-offset-4 hover:underline"
           >
             {t('diagrams.editor.backToList')}
           </Link>
-          <h1 className="mt-2 font-sans text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
+          <h1 className="mt-2 font-serif text-3xl font-medium leading-tight tracking-tight text-[var(--foreground)]">
             {diagram.title}
           </h1>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="mt-1 text-xs text-[var(--muted)]">
             {t('diagrams.editor.hint')}
           </p>
           <CollaborationLiveStrip
@@ -397,7 +397,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
             showSoloHint
           />
           {diagram.viewerAccess === 'owner' ? (
-            <label className="mt-3 block max-w-xs text-xs font-medium text-zinc-600 dark:text-zinc-400">
+            <label className="mt-3 block max-w-xs text-xs font-medium text-[var(--muted)]">
               <span className="mb-1 block">
                 {t('diagrams.editor.visibilityLabel')}
               </span>
@@ -408,7 +408,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
                   const v = e.target.value as DocumentVisibility;
                   void onVisibilityChange(v);
                 }}
-                className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-950 outline-none disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--foreground)] outline-none disabled:opacity-60"
               >
                 <option value="PRIVATE">
                   {t('documents.visibilityPrivate')}
@@ -433,7 +433,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
           <button
             type="button"
             onClick={addNode}
-            className="rounded-xl border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
+            className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--surface)]"
           >
             {t('diagrams.editor.addNode')}
           </button>
@@ -443,7 +443,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
             onClick={() => {
               void onSave();
             }}
-            className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 disabled:opacity-50 dark:bg-violet-500 dark:hover:bg-violet-400"
+            className="rounded-full bg-[var(--foreground)] px-5 py-2 text-sm font-semibold text-[var(--background)] hover:opacity-90 disabled:opacity-50"
           >
             {saving ? t('diagrams.editor.saving') : t('diagrams.editor.save')}
           </button>
@@ -451,10 +451,10 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_minmax(320px,420px)] lg:items-start">
-        <div className="relative h-[min(70vh,640px)] min-h-[420px] overflow-visible rounded-2xl border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/40">
+        <div className="relative h-[min(70vh,640px)] min-h-[420px] overflow-visible rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
           {connection === 'connected' && peerCount > 0 ? (
             <div
-              className="pointer-events-none absolute right-3 top-3 z-10 flex items-center gap-1.5 rounded-full border border-emerald-200/90 bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-800 shadow-sm dark:border-emerald-800/80 dark:bg-zinc-950/95 dark:text-emerald-300"
+              className="pointer-events-none absolute right-3 top-3 z-10 flex items-center gap-1.5 rounded-full border border-emerald-200/90 bg-[var(--surface)]/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-emerald-800 shadow-sm dark:border-emerald-800/80 dark:text-emerald-300"
               aria-live="polite"
             >
               <span
@@ -465,7 +465,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
             </div>
           ) : null}
           {!hydrated ? (
-            <div className="flex h-full min-h-[420px] w-full items-center justify-center rounded-2xl text-sm text-zinc-500 dark:text-zinc-400">
+            <div className="flex h-full min-h-[420px] w-full items-center justify-center rounded-2xl text-sm text-[var(--muted)]">
               {t('diagrams.editor.loading')}
             </div>
           ) : (
@@ -518,10 +518,26 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
               <MiniMap
                 zoomable
                 pannable
-                className="!bg-white/90 dark:!bg-zinc-950/90"
+                className="!bg-[var(--surface)]/90 dark:!bg-[var(--foreground)]/90"
               />
             </ReactFlow>
           )}
+          {hydrated ? (
+            <div
+              role="status"
+              aria-live="polite"
+              className="pointer-events-none absolute inset-x-3 bottom-3 z-10 flex flex-wrap items-center justify-between gap-2 text-[11px] text-[var(--muted)]"
+            >
+              <span className="rounded-full bg-[var(--surface)]/90 px-2.5 py-1 tabular-nums shadow-sm ring-1 ring-[var(--border)]">
+                {graph.nodes.length} {t('diagrams.list.nodes')} · {graph.edges.length} {t('diagrams.editor.edgeSettings')}
+              </span>
+              {saving || isReadOnlyCanvas ? (
+                <span className="rounded-full bg-[var(--surface)]/90 px-2.5 py-1 shadow-sm ring-1 ring-[var(--border)]">
+                  {saving ? t('diagrams.editor.saving') : t('diagrams.editor.canvasReadOnlyBadge')}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
         <div className="flex flex-col gap-6">
@@ -542,7 +558,7 @@ function DiagramEditorInner(props: DiagramEditorInnerProps): ReactNode {
               onDeleteEdge={deleteSelectedEdge}
             />
           ) : (
-            <p className="rounded-2xl border border-dashed border-zinc-300 px-4 py-6 text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+            <p className="rounded-2xl border border-dashed border-[var(--border)] px-4 py-6 text-sm text-[var(--muted)]">
               {t('diagrams.editor.selectElement')}
             </p>
           )}

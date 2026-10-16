@@ -55,8 +55,8 @@ export function KnowledgeDiagramsPanel({
   if (isPending) {
     return (
       <div className="animate-pulse space-y-3">
-        <div className="h-20 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-20 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
+        <div className="h-20 rounded-2xl bg-[var(--border)]" />
+        <div className="h-20 rounded-2xl bg-[var(--border)]" />
       </div>
     );
   }
@@ -71,7 +71,7 @@ export function KnowledgeDiagramsPanel({
 
   if (diagrams.length === 0) {
     return (
-      <p className="rounded-2xl border border-dashed border-zinc-300 px-6 py-10 text-center text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+      <p className="rounded-2xl border border-dashed border-[var(--border)] px-6 py-10 text-center text-sm text-[var(--muted)]">
         {searchQuery.length > 0
           ? t('knowledge.search.noResults')
           : t('knowledge.diagrams.empty')}
@@ -87,10 +87,10 @@ export function KnowledgeDiagramsPanel({
           <li key={row.id}>
             <Link
               href={`/knowledge/diagrams/${row.slug}`}
-              className="block rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950/50 dark:hover:border-zinc-700 dark:hover:bg-zinc-900/50"
+              className="block rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm transition-colors hover:border-[var(--border)] hover:bg-[var(--surface)]"
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
-                <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                <h3 className="text-base font-semibold text-[var(--foreground)]">
                   {row.title}
                 </h3>
                 {excerpt !== null ? (
@@ -100,16 +100,16 @@ export function KnowledgeDiagramsPanel({
                 ) : null}
               </div>
               {row.description !== null && row.description.length > 0 ? (
-                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                <p className="mt-2 text-sm text-[var(--muted)]">
                   {row.description}
                 </p>
               ) : null}
               {excerpt !== null ? (
-                <p className="mt-2 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                <p className="mt-2 text-sm leading-relaxed text-[var(--foreground)]">
                   {excerpt}
                 </p>
               ) : null}
-              <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="mt-2 text-xs text-[var(--muted)]">
                 {row.nodeCount} {t('knowledge.diagrams.nodesLabel')}
               </p>
             </Link>

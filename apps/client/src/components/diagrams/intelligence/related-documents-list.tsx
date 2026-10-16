@@ -19,7 +19,7 @@ export function RelatedDocumentsList(
   return (
     <ResourceGroup title={title} count={items.length}>
       {items.length === 0 ? (
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">{emptyLabel}</p>
+        <p className="text-xs text-[var(--muted)]">{emptyLabel}</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {items.map((item: ScoredDocumentRecommendation) => (

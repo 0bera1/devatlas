@@ -59,11 +59,11 @@ export function DiagramCollaboratorsSection(
   );
 
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
-      <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm">
+      <h2 className="text-sm font-semibold text-[var(--foreground)]">
         {t('diagrams.editor.collaboratorsTitle')}
       </h2>
-      <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="mt-1 text-xs text-[var(--muted)]">
         {t('diagrams.editor.collaboratorsHint')}
       </p>
 
@@ -73,7 +73,7 @@ export function DiagramCollaboratorsSection(
           void onSubmit(e);
         }}
       >
-        <label className="block min-w-0 flex-1 text-xs font-medium text-zinc-600 dark:text-zinc-400">
+        <label className="block min-w-0 flex-1 text-xs font-medium text-[var(--muted)]">
           {t('diagrams.editor.collaboratorEmail')}
           <input
             type="email"
@@ -83,7 +83,7 @@ export function DiagramCollaboratorsSection(
             }}
             autoComplete="off"
             placeholder={t('diagrams.editor.collaboratorEmailPlaceholder')}
-            className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+            className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
           />
         </label>
         <button
@@ -103,7 +103,7 @@ export function DiagramCollaboratorsSection(
           void refetch();
         }}
         disabled={isPending}
-        className="mt-2 text-xs font-medium text-zinc-600 underline-offset-2 hover:underline disabled:opacity-50 dark:text-zinc-400"
+        className="mt-2 text-xs font-medium text-[var(--muted)] underline-offset-2 hover:underline disabled:opacity-50"
       >
         {t('diagrams.editor.collaboratorsRefresh')}
       </button>
@@ -117,12 +117,12 @@ export function DiagramCollaboratorsSection(
           {[0, 1].map((i: number) => (
             <li
               key={i}
-              className="h-10 animate-pulse rounded-lg bg-zinc-200 dark:bg-zinc-800"
+              className="h-10 animate-pulse rounded-lg bg-[var(--border)]"
             />
           ))}
         </ul>
       ) : entries.length === 0 ? (
-        <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="mt-3 text-sm text-[var(--muted)]">
           {t('diagrams.editor.collaboratorsEmpty')}
         </p>
       ) : (
@@ -130,13 +130,13 @@ export function DiagramCollaboratorsSection(
           {entries.map((c: DiagramCollaboratorEntry) => (
             <li
               key={c.userId}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm dark:border-zinc-700"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--border)] px-3 py-2 text-sm"
             >
               <div className="min-w-0">
-                <div className="truncate font-medium text-zinc-900 dark:text-zinc-50">
+                <div className="truncate font-medium text-[var(--foreground)]">
                   {c.email}
                 </div>
-                <div className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                <div className="truncate text-xs text-[var(--muted)]">
                   {formatUserDisplayName(c.firstName, c.lastName)}
                 </div>
               </div>
@@ -149,7 +149,7 @@ export function DiagramCollaboratorsSection(
                     userId: c.userId,
                   });
                 }}
-                className="shrink-0 rounded border border-zinc-300 px-2 py-1 text-xs text-zinc-700 hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-900"
+                className="shrink-0 rounded border border-[var(--border)] px-2 py-1 text-xs text-[var(--foreground)] hover:bg-[var(--surface)] disabled:opacity-50"
               >
                 {t('diagrams.editor.collaboratorRemove')}
               </button>

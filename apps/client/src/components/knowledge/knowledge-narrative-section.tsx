@@ -26,7 +26,7 @@ export function KnowledgeNarrativeSection(
     <section className={sectionClass} aria-labelledby="knowledge-narrative-heading">
       <h2
         id="knowledge-narrative-heading"
-        className="text-sm font-semibold uppercase tracking-wide text-zinc-600 dark:text-zinc-400"
+        className="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]"
       >
         {t('knowledge.narrative.heading')}
       </h2>

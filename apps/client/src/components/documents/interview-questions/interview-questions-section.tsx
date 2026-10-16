@@ -21,7 +21,7 @@ export function InterviewQuestionsSection({
   const state = useDocumentInterviewQuestions(documentId, enabled);
 
   return (
-    <section className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
+    <section className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm">
       <InterviewQuestionsHeader />
       <InterviewQuestionsStatusView state={state} />
     </section>

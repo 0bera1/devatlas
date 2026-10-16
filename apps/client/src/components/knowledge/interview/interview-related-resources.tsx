@@ -63,14 +63,14 @@ function ResourceCard({ item }: ResourceCardProps): ReactNode {
     <li>
       <Link
         href={item.href}
-        className="group flex h-full flex-col gap-3 rounded-xl border border-zinc-200/80 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-950/80 dark:hover:border-indigo-800"
+        className="group flex h-full flex-col gap-3 rounded-xl border border-[var(--border)]/80 bg-[var(--surface)] p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md dark:hover:border-indigo-800"
       >
         <ResourceKindBadge kind={item.kind} label={item.typeLabel} />
-        <span className="flex-1 text-sm font-medium leading-snug text-zinc-900 group-hover:text-indigo-700 dark:text-zinc-100 dark:group-hover:text-indigo-300">
+        <span className="flex-1 text-sm font-medium leading-snug text-[var(--foreground)] group-hover:text-indigo-700 dark:group-hover:text-indigo-300">
           {item.title}
         </span>
         <span
-          className="self-end text-sm text-zinc-300 transition-colors group-hover:text-indigo-500 dark:text-zinc-600"
+          className="self-end text-sm text-[var(--muted)] transition-colors group-hover:text-indigo-500"
           aria-hidden
         >
           →
@@ -130,17 +130,17 @@ export function InterviewRelatedResources({
   }
 
   return (
-    <section className="flex flex-col gap-5 border-t border-zinc-200 pt-10 dark:border-zinc-800">
+    <section className="flex flex-col gap-5 border-t border-[var(--border)] pt-10">
       <header className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
+          <h2 className="text-lg font-semibold tracking-tight text-[var(--foreground)]">
             {t('knowledge.interview.relatedResources')}
           </h2>
-          <p className="max-w-2xl text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="max-w-2xl text-sm text-[var(--muted)]">
             {t('knowledge.interview.relatedResourcesHint')}
           </p>
         </div>
-        <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+        <span className="text-xs font-medium text-[var(--muted)]">
           {items.length} {t('knowledge.interview.resourceCountLabel')}
         </span>
       </header>

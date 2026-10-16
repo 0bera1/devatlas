@@ -223,7 +223,7 @@ function LinkedDiagramModalInner(
 
   return (
     <div
-      className="flex max-h-[min(88vh,860px)] min-h-[420px] w-full max-w-[min(96vw,1180px)] flex-col overflow-hidden rounded-2xl border border-violet-500/25 bg-gradient-to-br from-white via-zinc-50 to-violet-50/80 shadow-[0_24px_80px_-12px_rgba(0,0,0,0.45)] dark:border-violet-500/20 dark:from-zinc-950 dark:via-zinc-950 dark:to-violet-950/40"
+      className="flex max-h-[min(88vh,860px)] min-h-[420px] w-full max-w-[min(96vw,1180px)] flex-col overflow-hidden rounded-2xl border border-violet-500/25 bg-gradient-to-br from-[var(--surface)] via-[var(--background)] to-[var(--surface)] shadow-[0_24px_80px_-12px_rgba(0,0,0,0.45)] dark:border-violet-500/20 dark:to-violet-950/40"
       role="dialog"
       aria-modal="true"
       aria-labelledby="linked-diagram-modal-title"
@@ -231,14 +231,14 @@ function LinkedDiagramModalInner(
         e.stopPropagation();
       }}
     >
-      <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-violet-200/40 bg-white/60 px-4 py-3 backdrop-blur-md dark:border-violet-900/30 dark:bg-zinc-950/60">
+      <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-violet-200/40 bg-[var(--surface)]/60 px-4 py-3 backdrop-blur-md dark:border-violet-900/30">
         <div className="min-w-0 flex-1">
           <p className="text-[10px] font-bold uppercase tracking-widest text-violet-600 dark:text-violet-400">
             {t('diagrams.editor.linkedModalBadge')}
           </p>
           <h2
             id="linked-diagram-modal-title"
-            className="truncate text-lg font-semibold text-zinc-900 dark:text-zinc-50"
+            className="truncate text-lg font-semibold text-[var(--foreground)]"
           >
             {data?.title ?? t('diagrams.editor.linkedModalLoading')}
           </h2>
@@ -258,14 +258,14 @@ function LinkedDiagramModalInner(
             onClick={(): void => {
               void onSave();
             }}
-            className="rounded-xl bg-zinc-900 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
+            className="rounded-xl bg-[var(--foreground)] px-3 py-2 text-xs font-semibold text-[var(--background)] shadow-sm hover:bg-[var(--foreground)] disabled:opacity-50 dark:hover:bg-[var(--surface)]"
           >
             {saving ? t('diagrams.editor.saving') : t('diagrams.editor.save')}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-zinc-300 px-3 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            className="rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-semibold text-[var(--foreground)] hover:bg-[var(--surface)]"
           >
             {t('diagrams.editor.linkedModalClose')}
           </button>
@@ -273,9 +273,9 @@ function LinkedDiagramModalInner(
       </header>
 
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-auto p-4 lg:grid-cols-[1fr_minmax(280px,340px)]">
-        <div className="relative min-h-[320px] rounded-xl border border-zinc-200/80 bg-zinc-100/50 dark:border-zinc-800 dark:bg-zinc-900/50">
+        <div className="relative min-h-[320px] rounded-xl border border-[var(--border)]/80 bg-[var(--surface)]/50">
           {!canRender || isPending ? (
-            <div className="flex h-full min-h-[320px] items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
+            <div className="flex h-full min-h-[320px] items-center justify-center text-sm text-[var(--muted)]">
               {t('diagrams.editor.loading')}
             </div>
           ) : isError && error !== null ? (
@@ -283,7 +283,7 @@ function LinkedDiagramModalInner(
               {error.message}
             </div>
           ) : !hydrated ? (
-            <div className="flex h-full min-h-[320px] items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
+            <div className="flex h-full min-h-[320px] items-center justify-center text-sm text-[var(--muted)]">
               {t('diagrams.editor.loading')}
             </div>
           ) : (
@@ -333,7 +333,7 @@ function LinkedDiagramModalInner(
               <MiniMap
                 zoomable
                 pannable
-                className="!bg-white/90 dark:!bg-zinc-950/90"
+                className="!bg-[var(--surface)]/90 dark:!bg-[var(--foreground)]/90"
               />
             </ReactFlow>
           )}
@@ -357,7 +357,7 @@ function LinkedDiagramModalInner(
               onDeleteEdge={deleteSelectedEdge}
             />
           ) : (
-            <p className="rounded-2xl border border-dashed border-zinc-300 px-4 py-6 text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+            <p className="rounded-2xl border border-dashed border-[var(--border)] px-4 py-6 text-sm text-[var(--muted)]">
               {t('diagrams.editor.selectElement')}
             </p>
           )}

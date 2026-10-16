@@ -128,7 +128,7 @@ function TodayContent(): ReactNode {
         </Link>
       </section>
 
-      <section className="mt-10 grid gap-10 border-t border-[var(--border)] pt-8 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
+      <section className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-10 border-t border-[var(--border)] pt-8 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         <div>
           <div className="flex items-baseline justify-between">
             <h2 className="text-base font-semibold">{t('today.weekTitle')}</h2>
@@ -218,7 +218,7 @@ function TodayContent(): ReactNode {
         </div>
       </section>
 
-      <section className="mt-12 grid gap-10 border-t border-[var(--border)] pt-8 md:grid-cols-2">
+      <section className="mt-12 grid grid-cols-[minmax(0,1fr)] gap-10 border-t border-[var(--border)] pt-8 md:grid-cols-2">
         <RecentList title={t('today.resume')} hint={t('today.recentHint')} items={docs} href={(id) => `/documents/${id}`} empty={t('today.emptyDocs')} />
         <RecentList title={t('nav.diagrams')} hint={t('today.recentHint')} items={diagrams} href={(id) => `/diagrams/${id}`} empty={t('today.emptyDiagrams')} />
       </section>
@@ -245,7 +245,7 @@ function RecentList(props: {
         <ul className="mt-4 divide-y divide-[var(--border)]">
           {props.items.map((item) => (
             <li key={item.id} className="flex items-baseline justify-between gap-4 py-3">
-              <Link href={props.href(item.id)} className="truncate font-serif text-lg hover:underline">
+              <Link href={props.href(item.id)} className="min-w-0 truncate font-serif text-lg hover:underline">
                 {item.title}
               </Link>
               <span className="shrink-0 text-xs tabular-nums text-[var(--muted)]">

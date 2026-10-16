@@ -21,7 +21,7 @@ function renderLine(line: string): ReactNode {
     }
     if (i % 2 === 1) {
       parts.push(
-        <strong key={`b-${i}`} className="font-semibold text-zinc-900 dark:text-zinc-50">
+        <strong key={`b-${i}`} className="font-semibold text-[var(--foreground)]">
           {escapeHtml(seg)}
         </strong>,
       );
@@ -46,7 +46,7 @@ export function MarkdownSafePreview(
   const lines: string[] = content.split('\n');
   const rootClass: string =
     className ??
-    'max-h-48 overflow-y-auto rounded-lg border border-zinc-200 bg-zinc-50/80 p-3 text-xs leading-relaxed text-zinc-800 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-200';
+    'max-h-48 overflow-y-auto rounded-lg border border-[var(--border)] bg-[var(--surface)]/80 p-3 text-xs leading-relaxed text-[var(--foreground)]';
   return (
     <div className={rootClass}>
       {lines.map((line: string, index: number) => (

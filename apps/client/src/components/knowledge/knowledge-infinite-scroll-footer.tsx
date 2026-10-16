@@ -26,7 +26,7 @@ export function KnowledgeInfiniteScrollFooter(
       aria-live="polite"
     >
       {isFetchingNextPage ? (
-        <span className="text-sm text-zinc-500 dark:text-zinc-400">
+        <span className="text-sm text-[var(--muted)]">
           {t('knowledge.loadingMore')}
         </span>
       ) : (

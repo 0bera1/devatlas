@@ -5,10 +5,10 @@ import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { FormEvent, ReactNode } from 'react';
 
 const inputClassName: string =
-  'w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition-colors focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-zinc-200';
+  'w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--foreground)] outline-none transition-colors focus:border-[var(--border)] dark:focus:border-[var(--border)]';
 
 const labelClassName: string =
-  'text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400';
+  'text-xs font-medium uppercase tracking-wide text-[var(--muted)]';
 
 export function ProfilePasswordForm(): ReactNode {
   const { t } = useTranslations();
@@ -85,7 +85,7 @@ export function ProfilePasswordForm(): ReactNode {
         <button
           type="submit"
           disabled={!isFilled || form.isSubmitting}
-          className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900 transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+          className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--surface)] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {form.isSubmitting
             ? t('profile.password.submitting')

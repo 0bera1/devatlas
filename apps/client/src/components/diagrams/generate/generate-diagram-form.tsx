@@ -53,12 +53,12 @@ export function GenerateDiagramForm(): ReactNode {
   const disabled: boolean = isPending || prompt.trim().length === 0;
 
   return (
-    <section className="rounded-2xl border border-violet-300/60 bg-gradient-to-br from-violet-50 via-white to-white p-5 shadow-sm dark:border-violet-900/40 dark:from-violet-950/30 dark:via-zinc-950 dark:to-zinc-950">
+    <section className="rounded-2xl border border-violet-300/60 bg-gradient-to-br from-violet-50 via-[var(--surface)] to-[var(--surface)] p-5 shadow-sm dark:border-violet-900/40 dark:from-violet-950/30">
       <div className="flex flex-col gap-1">
         <h2 className="text-sm font-semibold text-violet-900 dark:text-violet-200">
           {t('diagrams.generate.title')}
         </h2>
-        <p className="max-w-xl text-xs text-zinc-600 dark:text-zinc-400">
+        <p className="max-w-xl text-xs text-[var(--muted)]">
           {t('diagrams.generate.intro')}
         </p>
       </div>
@@ -78,7 +78,7 @@ export function GenerateDiagramForm(): ReactNode {
               setPrompt(e.target.value);
             }}
             placeholder={t('diagrams.generate.promptPlaceholder')}
-            className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-950 outline-none focus:ring-2 focus:ring-violet-400 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-50"
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--foreground)] outline-none focus:ring-2 focus:ring-violet-400"
           />
         </label>
         <button

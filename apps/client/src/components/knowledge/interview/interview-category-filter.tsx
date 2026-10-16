@@ -32,8 +32,8 @@ export function InterviewCategoryFilter({
         onClick={(): void => onChange(null)}
         className={
           selected === null
-            ? 'rounded-full bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white dark:bg-zinc-100 dark:text-zinc-900'
-            : 'rounded-full border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900'
+            ? 'rounded-full bg-[var(--foreground)] px-3 py-1.5 text-xs font-medium text-[var(--background)]'
+            : 'rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--foreground)] hover:bg-[var(--surface)]'
         }
       >
         {t('knowledge.interview.allCategories')}
@@ -47,8 +47,8 @@ export function InterviewCategoryFilter({
           onClick={(): void => onChange(category)}
           className={
             selected === category
-              ? 'rounded-full bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white dark:bg-zinc-100 dark:text-zinc-900'
-              : 'rounded-full border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900'
+              ? 'rounded-full bg-[var(--foreground)] px-3 py-1.5 text-xs font-medium text-[var(--background)]'
+              : 'rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--foreground)] hover:bg-[var(--surface)]'
           }
         >
           {categoryLabel(category)}

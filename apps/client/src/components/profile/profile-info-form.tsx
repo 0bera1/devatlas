@@ -6,10 +6,10 @@ import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { FormEvent, ReactNode } from 'react';
 
 const inputClassName: string =
-  'w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition-colors focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-zinc-200';
+  'w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--foreground)] outline-none transition-colors focus:border-[var(--border)] dark:focus:border-[var(--border)]';
 
 const labelClassName: string =
-  'text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400';
+  'text-xs font-medium uppercase tracking-wide text-[var(--muted)]';
 
 export function ProfileInfoForm({
   profile,
@@ -29,7 +29,7 @@ export function ProfileInfoForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1">
           <span className={labelClassName}>{t('profile.info.email')}</span>
-          <span className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+          <span className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--foreground)]">
             {profile.email}
           </span>
         </div>
@@ -37,7 +37,7 @@ export function ProfileInfoForm({
           <span className={labelClassName}>
             {t('profile.info.memberSince')}
           </span>
-          <span className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+          <span className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--foreground)]">
             {new Date(profile.createdAt).toLocaleDateString()}
           </span>
         </div>
@@ -97,7 +97,7 @@ export function ProfileInfoForm({
         <button
           type="submit"
           disabled={!form.isDirty || form.isSubmitting}
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+          className="rounded-lg bg-[var(--foreground)] px-4 py-2 text-sm font-medium text-[var(--background)] transition-colors hover:bg-[var(--foreground)] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {form.isSubmitting ? t('profile.info.saving') : t('profile.info.save')}
         </button>

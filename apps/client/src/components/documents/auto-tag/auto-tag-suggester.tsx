@@ -64,7 +64,7 @@ export function AutoTagSuggester({
           type="button"
           onClick={onSuggestClick}
           disabled={disabledFetch}
-          className="rounded-lg border border-zinc-200 bg-white px-2.5 py-1 text-xs font-medium text-zinc-800 transition-colors hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900"
+          className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--surface)] disabled:opacity-40"
         >
           {isPending
             ? t('documents.autoTag.loading')
@@ -75,7 +75,7 @@ export function AutoTagSuggester({
             type="button"
             onClick={onApplyAll}
             disabled={isPending}
-            className="rounded-lg bg-zinc-900 px-2.5 py-1 text-xs font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-40 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="rounded-lg bg-[var(--foreground)] px-2.5 py-1 text-xs font-medium text-[var(--background)] transition-colors hover:bg-[var(--foreground)] disabled:opacity-40"
           >
             {t('documents.autoTag.applyAll')}
           </button>
@@ -93,7 +93,7 @@ export function AutoTagSuggester({
       />
 
       {!hasSuggestions && errorMessage === null && !isPending ? (
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-[var(--muted)]">
           {t('documents.autoTag.hint')}
         </p>
       ) : null}

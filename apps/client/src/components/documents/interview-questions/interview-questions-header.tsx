@@ -7,10 +7,10 @@ export function InterviewQuestionsHeader(): ReactNode {
   const { t } = useTranslations();
   return (
     <header className="flex flex-col gap-1">
-      <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+      <h3 className="text-sm font-semibold text-[var(--foreground)]">
         {t('documents.interviewQuestions.title')}
       </h3>
-      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="text-xs text-[var(--muted)]">
         {t('documents.interviewQuestions.subtitle')}
       </p>
     </header>

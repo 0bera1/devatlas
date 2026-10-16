@@ -18,7 +18,7 @@ export function SemanticTagList(props: SemanticTagListProps): ReactNode {
 
   return (
     <div>
-      <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
         {t('diagrams.related.tagsTitle')}
       </h3>
       <div className="mt-2 flex flex-wrap gap-1.5">

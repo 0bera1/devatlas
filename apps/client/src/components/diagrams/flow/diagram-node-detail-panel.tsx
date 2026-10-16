@@ -58,10 +58,10 @@ export function DiagramNodeDetailPanel(
   return (
     <section
       id={ATLAS_NODE_DETAIL_PANEL_DOM_ID}
-      className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50"
+      className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm"
     >
       <div className="flex items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">
           {t('diagrams.editor.nodeDetailTitle')}
         </h2>
         <button
@@ -73,7 +73,7 @@ export function DiagramNodeDetailPanel(
         </button>
       </div>
 
-      <label className="mt-3 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+      <label className="mt-3 block text-xs font-medium text-[var(--muted)]">
         {t('diagrams.editor.nodeLabel')}
         <input
           type="text"
@@ -81,11 +81,11 @@ export function DiagramNodeDetailPanel(
           onChange={(e): void => {
             engine.updateNodeData(selectedNodeId, { title: e.target.value });
           }}
-          className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+          className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
         />
       </label>
 
-      <label className="mt-3 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+      <label className="mt-3 block text-xs font-medium text-[var(--muted)]">
         {t('diagrams.editor.nodeDescription')}
         <textarea
           rows={3}
@@ -100,11 +100,11 @@ export function DiagramNodeDetailPanel(
               description: v.trim().length === 0 ? undefined : v,
             });
           }}
-          className="mt-1 w-full resize-y rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+          className="mt-1 w-full resize-y rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
         />
       </label>
 
-      <label className="mt-3 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+      <label className="mt-3 block text-xs font-medium text-[var(--muted)]">
         {t('diagrams.editor.nodeMarkdown')}
         <textarea
           rows={5}
@@ -115,19 +115,19 @@ export function DiagramNodeDetailPanel(
               markdown: v.trim().length === 0 ? undefined : v,
             });
           }}
-          className="mt-1 w-full resize-y rounded-lg border border-zinc-200 bg-white px-3 py-2 font-mono text-xs dark:border-zinc-700 dark:bg-zinc-950"
+          className="mt-1 w-full resize-y rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 font-mono text-xs"
         />
       </label>
       {md.trim().length > 0 ? (
         <div className="mt-2">
-          <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+          <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-[var(--muted)]">
             {t('diagrams.editor.nodeMarkdownPreview')}
           </p>
           <MarkdownSafePreview content={md} />
         </div>
       ) : null}
 
-      <label className="mt-3 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+      <label className="mt-3 block text-xs font-medium text-[var(--muted)]">
         {t('diagrams.editor.nodeTags')}
         <input
           type="text"
@@ -138,11 +138,11 @@ export function DiagramNodeDetailPanel(
             });
           }}
           placeholder={t('diagrams.editor.nodeTagsPlaceholder')}
-          className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+          className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
         />
       </label>
 
-      <label className="mt-3 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+      <label className="mt-3 block text-xs font-medium text-[var(--muted)]">
         {t('diagrams.editor.nodeStatus')}
         <select
           value={selectedNode.data.status ?? 'default'}
@@ -152,7 +152,7 @@ export function DiagramNodeDetailPanel(
               status: v === 'default' ? undefined : v,
             });
           }}
-          className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+          className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
         >
           <option value="default">{t('diagrams.editor.nodeStatusDefault')}</option>
           <option value="active">{t('diagrams.editor.nodeStatusActive')}</option>
@@ -161,7 +161,7 @@ export function DiagramNodeDetailPanel(
         </select>
       </label>
 
-      <label className="mt-3 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+      <label className="mt-3 block text-xs font-medium text-[var(--muted)]">
         {t('diagrams.editor.relatedDiagramId')}
         <input
           type="text"
@@ -173,7 +173,7 @@ export function DiagramNodeDetailPanel(
             });
           }}
           placeholder={t('diagrams.editor.relatedDiagramPlaceholder')}
-          className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+          className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
         />
       </label>
       {relatedTrim.length > 0 ? (
@@ -185,7 +185,7 @@ export function DiagramNodeDetailPanel(
         </Link>
       ) : null}
 
-      <label className="mt-3 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+      <label className="mt-3 block text-xs font-medium text-[var(--muted)]">
         {t('diagrams.editor.nodeKind')}
         <select
           value={selectedNode.data.type}
@@ -193,7 +193,7 @@ export function DiagramNodeDetailPanel(
             const v = e.target.value as DiagramNodeKind;
             engine.updateNodeData(selectedNodeId, { type: v });
           }}
-          className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+          className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
         >
           <option value="text">text</option>
           <option value="database">database</option>

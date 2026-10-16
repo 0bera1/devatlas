@@ -88,9 +88,9 @@ export function KnowledgeInterviewPanel({
   if (isPending) {
     return (
       <div className="animate-pulse space-y-3">
-        <div className="h-8 w-full max-w-md rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-20 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-20 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
+        <div className="h-8 w-full max-w-md rounded-lg bg-[var(--border)]" />
+        <div className="h-20 rounded-2xl bg-[var(--border)]" />
+        <div className="h-20 rounded-2xl bg-[var(--border)]" />
       </div>
     );
   }
@@ -105,7 +105,7 @@ export function KnowledgeInterviewPanel({
 
   return (
     <div className="flex flex-col gap-6">
-      <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+      <p className="text-sm leading-relaxed text-[var(--muted)]">
         {t('knowledge.interview.intro')}
       </p>
       <InterviewCategoryFilter

@@ -19,7 +19,7 @@ interface DiagramExportControlsProps {
 }
 
 const buttonClass =
-  'rounded-lg px-2 py-1 text-[11px] font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-40 dark:text-zinc-200 dark:hover:bg-zinc-800';
+  'rounded-lg px-2 py-1 text-[11px] font-medium text-[var(--foreground)] hover:bg-[var(--surface)] disabled:opacity-40';
 
 /** Diyagram tuvalinde otomatik yerleşim ve dışa aktarma (PNG, SVG, PDF, Mermaid). */
 export function DiagramExportControls(props: DiagramExportControlsProps): ReactNode {
@@ -109,7 +109,7 @@ export function DiagramExportControls(props: DiagramExportControlsProps): ReactN
 
   return (
     <>
-      <span className="mx-0.5 h-4 w-px bg-zinc-200 dark:bg-zinc-700" aria-hidden />
+      <span className="mx-0.5 h-4 w-px bg-[var(--border)]" aria-hidden />
       <button
         type="button"
         disabled={isReadOnlyCanvas || graph.nodes.length === 0}
@@ -131,7 +131,7 @@ export function DiagramExportControls(props: DiagramExportControlsProps): ReactN
         {menuOpen ? (
           <div
             role="menu"
-            className="absolute left-0 top-full z-50 mt-1 w-44 rounded-xl border border-zinc-200 bg-white p-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-900"
+            className="absolute left-0 top-full z-50 mt-1 w-44 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-1 shadow-lg"
           >
             <MenuItem label={t('export.png')} onClick={() => void runExport('png')} />
             <MenuItem label={t('export.svg')} onClick={() => void runExport('svg')} />
@@ -151,7 +151,7 @@ function MenuItem(props: { label: string; onClick: () => void }): ReactNode {
       type="button"
       role="menuitem"
       onClick={props.onClick}
-      className="block w-full rounded-lg px-3 py-2 text-left text-xs text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+      className="block w-full rounded-lg px-3 py-2 text-left text-xs text-[var(--foreground)] hover:bg-[var(--surface)]"
     >
       {props.label}
     </button>

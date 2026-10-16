@@ -21,9 +21,9 @@ export function DiagramEdgeDetailPanel(
   const { t } = useTranslations();
 
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
+    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm">
       <div className="flex items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">
           {t('diagrams.editor.edgeSettings')}
         </h2>
         <button
@@ -34,7 +34,7 @@ export function DiagramEdgeDetailPanel(
           {t('diagrams.editor.deleteEdge')}
         </button>
       </div>
-      <label className="mt-3 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+      <label className="mt-3 block text-xs font-medium text-[var(--muted)]">
         {t('diagrams.editor.edgeLabel')}
         <input
           type="text"
@@ -50,10 +50,10 @@ export function DiagramEdgeDetailPanel(
             });
           }}
           placeholder={t('diagrams.editor.edgeLabelPlaceholder')}
-          className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+          className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
         />
       </label>
-      <label className="mt-3 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+      <label className="mt-3 block text-xs font-medium text-[var(--muted)]">
         {t('diagrams.editor.edgeKind')}
         <select
           value={selectedEdge.routing}
@@ -61,7 +61,7 @@ export function DiagramEdgeDetailPanel(
             const value = e.target.value as DiagramEdgeKind;
             engine.updateEdge(selectedEdgeId, { routing: value });
           }}
-          className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+          className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
         >
           <option value="smoothstep">smoothstep</option>
           <option value="straight">straight</option>
@@ -69,7 +69,7 @@ export function DiagramEdgeDetailPanel(
           <option value="default">default</option>
         </select>
       </label>
-      <label className="mt-3 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+      <label className="mt-3 block text-xs font-medium text-[var(--muted)]">
         {t('diagrams.editor.edgeSemantic')}
         <select
           value={selectedEdge.semanticType ?? ''}
@@ -85,7 +85,7 @@ export function DiagramEdgeDetailPanel(
               semanticType: raw as DiagramEdgeSemanticType,
             });
           }}
-          className="mt-1 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+          className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
         >
           <option value="">{t('diagrams.editor.edgeSemanticNone')}</option>
           <option value="default">default</option>
@@ -95,7 +95,7 @@ export function DiagramEdgeDetailPanel(
           <option value="async">async</option>
         </select>
       </label>
-      <label className="mt-3 flex items-center gap-2 text-xs font-medium text-zinc-600 dark:text-zinc-400">
+      <label className="mt-3 flex items-center gap-2 text-xs font-medium text-[var(--muted)]">
         <input
           type="checkbox"
           checked={selectedEdge.appearance === 'animated'}
@@ -105,11 +105,11 @@ export function DiagramEdgeDetailPanel(
               appearance: checked ? 'animated' : 'default',
             });
           }}
-          className="h-4 w-4 rounded border-zinc-300 text-violet-600"
+          className="h-4 w-4 rounded border-[var(--border)] text-violet-600"
         />
         {t('diagrams.editor.edgeAnimated')}
       </label>
-      <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="mt-3 text-xs text-[var(--muted)]">
         {t('diagrams.editor.edgeDirectionHint')}
       </p>
     </section>

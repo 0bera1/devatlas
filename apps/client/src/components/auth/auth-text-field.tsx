@@ -51,20 +51,20 @@ export function AuthTextField({
     type === 'password' && passwordVisible ? 'text' : type;
 
   const immersiveInputClass: string = showToggle
-    ? 'block w-full rounded-xl border border-zinc-600 bg-zinc-900/90 py-3.5 pl-4 pr-12 text-sm text-white shadow-inner transition-colors placeholder:text-zinc-500 focus:border-amber-500/80 focus:outline-none focus:ring-2 focus:ring-amber-500/25 disabled:cursor-not-allowed disabled:opacity-50'
-    : 'block w-full rounded-xl border border-zinc-600 bg-zinc-900/90 px-4 py-3.5 text-sm text-white shadow-inner transition-colors placeholder:text-zinc-500 focus:border-amber-500/80 focus:outline-none focus:ring-2 focus:ring-amber-500/25 disabled:cursor-not-allowed disabled:opacity-50';
+    ? 'block w-full rounded-xl border border-[var(--border)] bg-[var(--foreground)]/90 py-3.5 pl-4 pr-12 text-sm text-[var(--background)] shadow-inner transition-colors placeholder:text-[var(--muted)] focus:border-amber-500/80 focus:outline-none focus:ring-2 focus:ring-amber-500/25 disabled:cursor-not-allowed disabled:opacity-50'
+    : 'block w-full rounded-xl border border-[var(--border)] bg-[var(--foreground)]/90 px-4 py-3.5 text-sm text-[var(--background)] shadow-inner transition-colors placeholder:text-[var(--muted)] focus:border-amber-500/80 focus:outline-none focus:ring-2 focus:ring-amber-500/25 disabled:cursor-not-allowed disabled:opacity-50';
 
   const defaultInputClass: string = showToggle
-    ? 'block w-full rounded-lg border border-zinc-300 bg-white py-2 pl-3 pr-11 text-zinc-950 shadow-sm transition-colors placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-100 dark:focus:ring-zinc-100/20'
-    : 'block w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-950 shadow-sm transition-colors placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-900/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-100 dark:focus:ring-zinc-100/20';
+    ? 'block w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] py-2 pl-3 pr-11 text-[var(--foreground)] shadow-sm transition-colors placeholder:text-[var(--muted)] focus:border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--border)]/20 disabled:cursor-not-allowed disabled:opacity-60 dark:focus:border-[var(--border)] dark:focus:ring-[var(--border)]/20'
+    : 'block w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-[var(--foreground)] shadow-sm transition-colors placeholder:text-[var(--muted)] focus:border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--border)]/20 disabled:cursor-not-allowed disabled:opacity-60 dark:focus:border-[var(--border)] dark:focus:ring-[var(--border)]/20';
 
   const inputClassName: string = isImmersive
     ? immersiveInputClass
     : defaultInputClass;
 
   const toggleButtonClass: string = isImmersive
-    ? 'absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-white/5 hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 disabled:pointer-events-none disabled:opacity-40'
-    : 'absolute right-1.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 dark:focus-visible:ring-zinc-500 disabled:pointer-events-none disabled:opacity-40';
+    ? 'absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-[var(--muted)] transition-colors hover:bg-[var(--surface)]/5 hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 disabled:pointer-events-none disabled:opacity-40'
+    : 'absolute right-1.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-[var(--muted)] transition-colors hover:bg-[var(--surface)] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border)] dark:focus-visible:ring-[var(--border)] disabled:pointer-events-none disabled:opacity-40';
 
   const inputEl = (
     <input
@@ -89,7 +89,7 @@ export function AuthTextField({
         className={
           isImmersive
             ? 'sr-only'
-            : 'block text-sm font-medium text-zinc-700 dark:text-zinc-300'
+            : 'block text-sm font-medium text-[var(--foreground)]'
         }
       >
         {label}

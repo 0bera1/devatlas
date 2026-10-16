@@ -58,19 +58,19 @@ export function DiagramCanvasToolbar(
   return (
     <Panel
       position="top-left"
-      className="m-2 flex flex-wrap items-center gap-1.5 rounded-xl border border-zinc-200/90 bg-white/90 p-1.5 shadow-sm backdrop-blur-sm dark:border-zinc-700/90 dark:bg-zinc-950/90"
+      className="m-2 flex flex-wrap items-center gap-1.5 rounded-xl border border-[var(--border)]/90 bg-[var(--surface)]/90 p-1.5 shadow-sm backdrop-blur-sm"
     >
       <button
         type="button"
         onClick={onFitView}
-        className="rounded-lg px-2 py-1 text-[11px] font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        className="rounded-lg px-2 py-1 text-[11px] font-medium text-[var(--foreground)] hover:bg-[var(--surface)]"
       >
         {t('diagrams.editor.canvasFitView')}
       </button>
       <button
         type="button"
         onClick={onZoomReset}
-        className="rounded-lg px-2 py-1 text-[11px] font-medium text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        className="rounded-lg px-2 py-1 text-[11px] font-medium text-[var(--foreground)] hover:bg-[var(--surface)]"
       >
         {t('diagrams.editor.canvasZoom100')}
       </button>
@@ -78,18 +78,18 @@ export function DiagramCanvasToolbar(
         type="button"
         disabled={selectedNodeId === null}
         onClick={onFocusSelected}
-        className="rounded-lg px-2 py-1 text-[11px] font-medium text-zinc-700 hover:bg-zinc-100 disabled:opacity-40 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        className="rounded-lg px-2 py-1 text-[11px] font-medium text-[var(--foreground)] hover:bg-[var(--surface)] disabled:opacity-40"
       >
         {t('diagrams.editor.canvasFocusNode')}
       </button>
-      <span className="mx-0.5 h-4 w-px bg-zinc-200 dark:bg-zinc-700" aria-hidden />
+      <span className="mx-0.5 h-4 w-px bg-[var(--border)]" aria-hidden />
       <button
         type="button"
         onClick={onToggleLock}
         className={`rounded-lg px-2 py-1 text-[11px] font-medium ${
           editorCanvasMode === 'view'
-            ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/50 dark:text-amber-200'
-            : 'text-zinc-700 hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800'
+            ? 'bg-[var(--foreground)] text-[var(--background)]'
+            : 'text-[var(--foreground)] hover:bg-[var(--surface)]'
         }`}
         title={t('diagrams.editor.canvasLockHint')}
       >
@@ -99,7 +99,7 @@ export function DiagramCanvasToolbar(
       </button>
       <DiagramExportControls isReadOnlyCanvas={isReadOnlyCanvas} />
       {isReadOnlyCanvas ? (
-        <span className="px-1 text-[10px] text-amber-700 dark:text-amber-300">
+        <span className="px-1 text-[10px] text-[var(--muted)]">
           {t('diagrams.editor.canvasReadOnlyBadge')}
         </span>
       ) : null}

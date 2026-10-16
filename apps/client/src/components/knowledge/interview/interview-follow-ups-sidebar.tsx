@@ -27,10 +27,10 @@ function FollowUpCard({
   const { t } = useTranslations();
 
   return (
-    <li className="rounded-xl border border-zinc-200/80 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/80">
+    <li className="rounded-xl border border-[var(--border)]/80 bg-[var(--surface)] p-4 shadow-sm">
       <div className="flex gap-3">
         <span
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--surface)] text-xs font-semibold text-[var(--muted)]"
           aria-hidden
         >
           {index + 1}
@@ -38,21 +38,21 @@ function FollowUpCard({
         <div className="min-w-0 flex-1">
           <Link
             href={`/knowledge/interview/${item.slug}`}
-            className="block text-sm font-medium leading-snug text-zinc-900 transition-colors hover:text-indigo-700 dark:text-zinc-100 dark:hover:text-indigo-300"
+            className="block text-sm font-medium leading-snug text-[var(--foreground)] transition-colors hover:text-indigo-700 dark:hover:text-indigo-300"
           >
             {item.question}
           </Link>
           <button
             type="button"
             onClick={onToggle}
-            className="mt-2.5 rounded-lg border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-900"
+            className="mt-2.5 rounded-lg border border-[var(--border)] px-2.5 py-1 text-xs font-medium text-[var(--muted)] transition-colors hover:border-[var(--border)] hover:bg-[var(--surface)]"
           >
             {isExpanded
               ? t('knowledge.interview.hideAnswer')
               : t('knowledge.interview.showAnswer')}
           </button>
           <SmoothCollapse open={isExpanded}>
-            <p className="mt-3 rounded-lg bg-zinc-50 px-3 py-2.5 text-sm leading-relaxed text-zinc-700 dark:bg-zinc-900/60 dark:text-zinc-300">
+            <p className="mt-3 rounded-lg bg-[var(--surface)] px-3 py-2.5 text-sm leading-relaxed text-[var(--foreground)]">
               {item.answer}
             </p>
           </SmoothCollapse>
@@ -71,10 +71,10 @@ export function InterviewFollowUpsSidebar({
   return (
     <aside className="flex flex-col gap-4 lg:sticky lg:top-8 lg:max-h-[calc(100vh-4rem)] lg:self-start">
       <header className="flex flex-col gap-1 px-1">
-        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">
           {t('knowledge.interview.relatedQuestions')}
         </h2>
-        <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs leading-relaxed text-[var(--muted)]">
           {t('knowledge.interview.relatedQuestionsHint')}
         </p>
       </header>

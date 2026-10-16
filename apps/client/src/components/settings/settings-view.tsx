@@ -306,7 +306,7 @@ function ThemeSection(): ReactNode {
                 className="rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2"
               />
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {PALETTE_FIELDS.map((field) => (
                 <label key={field} className="flex items-center justify-between gap-3 text-sm">
                   {t(PALETTE_LABEL[field])}

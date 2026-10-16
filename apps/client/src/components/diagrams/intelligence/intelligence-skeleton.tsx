@@ -10,7 +10,7 @@ export function IntelligenceSkeleton(): ReactNode {
       {SKELETON_ROW_IDS.map((id: string) => (
         <li
           key={id}
-          className="h-12 animate-pulse rounded-xl bg-zinc-200 dark:bg-zinc-800"
+          className="h-12 animate-pulse rounded-xl bg-[var(--border)]"
         />
       ))}
     </ul>

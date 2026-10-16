@@ -78,7 +78,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={busy}
-        className="flex w-full justify-center rounded-xl bg-amber-500 px-4 py-3.5 text-sm font-semibold text-zinc-900 shadow-lg shadow-amber-500/15 transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-55"
+        className="flex w-full justify-center rounded-xl bg-amber-500 px-4 py-3.5 text-sm font-semibold text-[var(--foreground)] shadow-lg shadow-amber-500/15 transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-55"
       >
         {busy ? t('auth.login.submitting') : t('auth.login.submit')}
       </button>

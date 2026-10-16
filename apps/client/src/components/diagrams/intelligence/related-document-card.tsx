@@ -20,15 +20,15 @@ export function RelatedDocumentCard(
   return (
     <Link
       href={`/documents/${item.id}`}
-      className="block rounded-xl border border-zinc-200 px-3 py-2 text-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:border-zinc-600 dark:hover:bg-zinc-900/50"
+      className="block rounded-xl border border-[var(--border)] px-3 py-2 text-sm transition-colors hover:border-[var(--border)] hover:bg-[var(--surface)]"
     >
       <div className="flex items-start justify-between gap-2">
-        <span className="font-medium text-zinc-950 dark:text-zinc-50">
+        <span className="font-medium text-[var(--foreground)]">
           {item.title}
         </span>
         <ScoreBadge label={t('diagrams.related.score')} score={item.score} />
       </div>
-      <span className="mt-1 block text-xs text-zinc-500 dark:text-zinc-400">
+      <span className="mt-1 block text-xs text-[var(--muted)]">
         {t('documents.engagement.favorites')}: {item.favoriteCount} ·{' '}
         {t('documents.engagement.views')}: {item.viewCount}
       </span>

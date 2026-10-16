@@ -8,7 +8,7 @@ export function InterviewQuestionsSkeleton(): ReactNode {
       {[0, 1, 2].map((index: number) => (
         <div
           key={index}
-          className="h-16 animate-pulse rounded-2xl bg-zinc-100 dark:bg-zinc-900/60"
+          className="h-16 animate-pulse rounded-2xl bg-[var(--surface)]"
         />
       ))}
     </div>

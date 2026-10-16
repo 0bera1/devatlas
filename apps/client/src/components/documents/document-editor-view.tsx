@@ -23,9 +23,11 @@ import { useFormatDocumentDate } from '@/hooks/documents/use-format-document-dat
 import { useRecordPublicDocumentView } from '@/hooks/documents/use-record-public-document-view';
 import { useRequireAuth } from '@/hooks/auth/use-require-auth';
 import { useTranslations } from '@/hooks/i18n/use-translations';
+import type { MessageKey } from '@/i18n';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { applyMarkdownFormat, type MarkdownFormat } from '@/lib/documents/markdown-format';
 
 interface DocumentEditorViewProps {
   documentId: string;
@@ -37,6 +39,22 @@ function formatCollabUserLabel(userId: string): string {
   }
   return `${userId.slice(0, 10)}…`;
 }
+
+interface FormatButton {
+  readonly format: MarkdownFormat;
+  readonly text: string;
+  readonly label: MessageKey;
+  readonly className: string;
+}
+
+const FORMAT_BUTTONS: readonly FormatButton[] = [
+  { format: 'bold', text: 'B', label: 'documents.editor.format.bold', className: 'font-bold' },
+  { format: 'italic', text: 'I', label: 'documents.editor.format.italic', className: 'italic' },
+  { format: 'heading', text: 'H', label: 'documents.editor.format.heading', className: 'font-serif font-semibold' },
+  { format: 'code', text: '</>', label: 'documents.editor.format.code', className: 'font-mono' },
+  { format: 'list', text: '•', label: 'documents.editor.format.list', className: '' },
+  { format: 'quote', text: '❝', label: 'documents.editor.format.quote', className: '' },
+];
 
 export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
   const { documentId } = props;
@@ -69,19 +87,39 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
   const [visibilityDraft, setVisibilityDraft] =
     useState<DocumentVisibility>('PRIVATE');
   const [categoryDraft, setCategoryDraft] = useState<string>('');
-  const [hydrated, setHydrated] = useState<boolean>(false);
+  const [focusMode, setFocusMode] = useState<boolean>(false);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
-    if (data === undefined || data.id !== documentId) {
-      setHydrated(false);
-      return;
+  const applyFormat = useCallback(
+    (format: MarkdownFormat): void => {
+      const el = contentRef.current;
+      if (el === null) {
+        return;
+      }
+      const result = applyMarkdownFormat(contentDraft, el.selectionStart, el.selectionEnd, format);
+      setContentDraft(result.text);
+      requestAnimationFrame(() => {
+        el.focus();
+        el.setSelectionRange(result.selectionStart, result.selectionEnd);
+      });
+    },
+    [contentDraft],
+  );
+
+  // Sunucu kaydı ilk kez geldiğinde (ya da belge değiştiğinde) taslakları eşitler. Yeniden getirmeler
+  // yazılmakta olan metni ezmez. Eşitleme render sırasında yapılır; effect içinde setState lint hatası verir.
+  const hydrationKey: string | null = data !== undefined && data.id === documentId ? data.id : null;
+  const [appliedKey, setAppliedKey] = useState<string | null>(null);
+  if (hydrationKey !== appliedKey) {
+    setAppliedKey(hydrationKey);
+    if (data !== undefined && hydrationKey !== null) {
+      setTitleDraft(data.title);
+      setContentDraft(data.content);
+      setVisibilityDraft(data.visibility);
+      setCategoryDraft(data.category?.name ?? '');
     }
-    setTitleDraft(data.title);
-    setContentDraft(data.content);
-    setVisibilityDraft(data.visibility);
-    setCategoryDraft(data.category?.name ?? '');
-    setHydrated(true);
-  }, [data, documentId]);
+  }
+  const hydrated: boolean = hydrationKey !== null && appliedKey === hydrationKey;
 
   const collaborationEnabled: boolean =
     canRender &&
@@ -286,7 +324,7 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
     'mt-1.5 w-full rounded-md border border-[var(--border)] bg-transparent px-3 py-2 text-sm text-[var(--foreground)] outline-none transition-colors focus:border-[var(--accent)] read-only:cursor-default read-only:text-[var(--muted)] disabled:opacity-60';
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
+    <div className={`mx-auto flex w-full flex-1 flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10 ${focusMode ? 'max-w-3xl' : 'max-w-6xl'}`}>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-[var(--border)] pb-4 text-sm text-[var(--muted)]">
         <Link
           href="/documents"
@@ -305,6 +343,16 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
         {!permissionReady ? (
           <span className="text-xs">{t('documents.editor.permissionLoading')}</span>
         ) : null}
+        <button
+          type="button"
+          aria-pressed={focusMode}
+          onClick={() => {
+            setFocusMode((value) => !value);
+          }}
+          className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--surface)]"
+        >
+          {focusMode ? t('documents.editor.focusOff') : t('documents.editor.focusOn')}
+        </button>
         {autosaveLabel !== null ? (
           <span
             className={
@@ -341,7 +389,9 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
         ) : null}
       </div>
 
-      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)] lg:items-start">
+      <div
+        className={`grid gap-12 lg:items-start ${focusMode ? '' : 'lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)]'}`}
+      >
         <div className="flex min-w-0 flex-col gap-8">
           <section className="flex flex-col gap-5">
             <label className="block">
@@ -450,7 +500,29 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
                 )}
               </div>
             ) : null}
+            <div
+              role="toolbar"
+              aria-label={t('documents.editor.format.toolbar')}
+              className="mt-4 flex flex-wrap gap-1"
+            >
+              {FORMAT_BUTTONS.map((item) => (
+                <button
+                  key={item.format}
+                  type="button"
+                  disabled={readOnly}
+                  onClick={() => {
+                    applyFormat(item.format);
+                  }}
+                  aria-label={t(item.label)}
+                  title={t(item.label)}
+                  className={`min-w-8 rounded-md border border-[var(--border)] px-2 py-1 text-xs text-[var(--foreground)] transition-colors hover:bg-[var(--surface)] disabled:opacity-40 ${item.className}`}
+                >
+                  {item.text}
+                </button>
+              ))}
+            </div>
             <textarea
+              ref={contentRef}
               value={contentDraft}
               readOnly={readOnly}
               onChange={(e) => {
@@ -481,7 +553,7 @@ export function DocumentEditorView(props: DocumentEditorViewProps): ReactNode {
           </section>
         </div>
 
-        <aside className="flex min-w-0 flex-col gap-8 border-t border-[var(--border)] pt-8 lg:border-t-0 lg:pt-0">
+        <aside className={`flex min-w-0 flex-col gap-8 border-t border-[var(--border)] pt-8 lg:border-t-0 lg:pt-0 ${focusMode ? 'hidden' : ''}`}>
           <DocumentRelatedSection
             documentId={documentId}
             enabled={hydrated && data !== undefined && data.id === documentId}

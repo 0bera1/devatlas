@@ -33,13 +33,13 @@ export function DiagramsListRow(props: DiagramsListRowProps): ReactNode {
   const canDelete: boolean = diagram.accessRole === 'owner';
 
   return (
-    <div className="group flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white px-4 py-3 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950/40 dark:hover:border-violet-800 dark:hover:bg-zinc-900/50 sm:flex-row sm:items-center sm:justify-between">
+    <div className="group flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 transition-colors hover:border-[var(--border)] hover:bg-[var(--surface)] dark:hover:border-violet-800 sm:flex-row sm:items-center sm:justify-between">
       <Link
         href={`/diagrams/${diagram.id}`}
         className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-medium text-zinc-950 dark:text-zinc-50">
+          <span className="font-medium text-[var(--foreground)]">
             {diagram.title}
           </span>
           {diagram.accessRole === 'collaborator' ? (
@@ -52,11 +52,11 @@ export function DiagramsListRow(props: DiagramsListRowProps): ReactNode {
               {t('documents.visibilityPublic')}
             </span>
           ) : null}
-          <span className="ml-0 text-xs text-zinc-500 dark:text-zinc-400 sm:ml-2">
+          <span className="ml-0 text-xs text-[var(--muted)] sm:ml-2">
             {diagram.nodeCount} {t('diagrams.list.nodes')}
           </span>
         </div>
-        <span className="text-xs text-zinc-500 dark:text-zinc-400 sm:ml-2">
+        <span className="text-xs text-[var(--muted)] sm:ml-2">
           {t('documents.list.updated')}: {formatUpdatedAt(diagram.updatedAt)}
         </span>
       </Link>

@@ -7,10 +7,10 @@ export function IntelligencePanelHeader(): ReactNode {
   const { t } = useTranslations();
   return (
     <header>
-      <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+      <h2 className="text-sm font-semibold text-[var(--foreground)]">
         {t('diagrams.related.title')}
       </h2>
-      <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="mt-1 text-xs text-[var(--muted)]">
         {t('diagrams.related.subtitle')}
       </p>
     </header>

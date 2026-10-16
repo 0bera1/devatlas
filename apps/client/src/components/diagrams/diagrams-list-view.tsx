@@ -76,7 +76,7 @@ export function DiagramsListView(): ReactNode {
 
   if (!canRender) {
     return (
-      <div className="flex flex-1 items-center justify-center px-6 py-16 text-zinc-500 dark:text-zinc-400">
+      <div className="flex flex-1 items-center justify-center px-6 py-16 text-[var(--muted)]">
         {t('common.loading')}
       </div>
     );
@@ -87,16 +87,16 @@ export function DiagramsListView(): ReactNode {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-10 px-6 py-10 lg:py-14">
       <div className="flex flex-col gap-2">
-        <h1 className="font-sans text-3xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
+        <h1 className="font-serif text-4xl font-medium leading-tight tracking-tight sm:text-5xl">
           {t('diagrams.list.title')}
         </h1>
-        <p className="max-w-xl text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="max-w-xl text-sm text-[var(--muted)]">
           {t('diagrams.list.intro')}
         </p>
       </div>
 
-      <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
-        <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm">
+        <h2 className="text-sm font-semibold text-[var(--foreground)]">
           {t('diagrams.list.newDiagram')}
         </h2>
         <form
@@ -114,11 +114,11 @@ export function DiagramsListView(): ReactNode {
                 setNewTitle(e.target.value);
               }}
               placeholder={t('diagrams.list.titlePlaceholder')}
-              className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
             />
           </label>
           <label className="block shrink-0 sm:w-40">
-            <span className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+            <span className="mb-1 block text-xs font-medium text-[var(--muted)]">
               {t('diagrams.list.visibilityLabel')}
             </span>
             <select
@@ -126,7 +126,7 @@ export function DiagramsListView(): ReactNode {
               onChange={(e) => {
                 setNewVisibility(e.target.value as DocumentVisibility);
               }}
-              className="w-full rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-950"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
             >
               <option value="PRIVATE">{t('documents.visibilityPrivate')}</option>
               <option value="PUBLIC">{t('documents.visibilityPublic')}</option>
@@ -154,7 +154,7 @@ export function DiagramsListView(): ReactNode {
             void refetch();
           }}
           disabled={isPending}
-          className="rounded-lg border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
+          className="rounded-lg border border-[var(--border)] px-3 py-2 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--surface)] disabled:opacity-50"
         >
           {t('documents.list.refresh')}
         </button>
@@ -165,9 +165,9 @@ export function DiagramsListView(): ReactNode {
       ) : null}
 
       {isPending && data === undefined ? (
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">{t('diagrams.list.loading')}</p>
+        <p className="text-sm text-[var(--muted)]">{t('diagrams.list.loading')}</p>
       ) : items.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-zinc-300 px-6 py-12 text-center text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+        <p className="rounded-2xl border border-dashed border-[var(--border)] px-6 py-12 text-center text-sm text-[var(--muted)]">
           {t('diagrams.list.empty')}
         </p>
       ) : (

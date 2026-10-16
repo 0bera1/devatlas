@@ -34,19 +34,19 @@ export function DiagramCanvasHoverCard(
 
   return (
     <div
-      className="pointer-events-none absolute bottom-12 left-3 z-20 max-w-[min(100%,280px)] rounded-xl border border-zinc-200 bg-white/95 p-3 text-left shadow-lg backdrop-blur-sm dark:border-zinc-700 dark:bg-zinc-950/95"
+      className="pointer-events-none absolute bottom-12 left-3 z-20 max-w-[min(100%,280px)] rounded-xl border border-[var(--border)] bg-[var(--surface)]/95 p-3 text-left shadow-lg backdrop-blur-sm"
       role="status"
       aria-live="polite"
     >
       <p className="text-[10px] font-bold uppercase tracking-wide text-violet-600 dark:text-violet-400">
         {t('diagrams.editor.hoverPreview')}
       </p>
-      <h3 className="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+      <h3 className="mt-1 text-sm font-semibold text-[var(--foreground)]">
         {node.data.title}
       </h3>
       {node.data.description !== undefined &&
       node.data.description.trim().length > 0 ? (
-        <p className="mt-1 line-clamp-3 text-xs text-zinc-600 dark:text-zinc-400">
+        <p className="mt-1 line-clamp-3 text-xs text-[var(--muted)]">
           {node.data.description.trim()}
         </p>
       ) : null}
@@ -55,7 +55,7 @@ export function DiagramCanvasHoverCard(
           {tags.map((tag: string) => (
             <span
               key={tag}
-              className="rounded-md bg-zinc-100 px-1.5 py-0.5 text-[10px] font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200"
+              className="rounded-md bg-[var(--surface)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--foreground)]"
             >
               {tag}
             </span>

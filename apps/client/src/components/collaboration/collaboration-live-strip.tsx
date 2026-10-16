@@ -30,7 +30,7 @@ export function CollaborationLiveStrip(
       case 'connected':
         return 'bg-emerald-500';
       case 'disconnected':
-        return 'bg-zinc-400';
+        return 'bg-[var(--muted)]';
       case 'error':
         return 'bg-red-500';
       default: {
@@ -67,13 +67,13 @@ export function CollaborationLiveStrip(
   })();
 
   return (
-    <div className="mt-3 flex flex-col gap-2 rounded-xl border border-zinc-200/90 bg-gradient-to-r from-violet-50/90 to-white px-3 py-2.5 dark:border-zinc-700 dark:from-violet-950/40 dark:to-zinc-950/40">
+    <div className="mt-3 flex flex-col gap-2 rounded-xl border border-[var(--border)]/90 bg-gradient-to-r from-violet-50/90 to-[var(--surface)] px-3 py-2.5 dark:from-violet-950/40">
       <div className="flex flex-wrap items-center gap-2">
         <span
           className={`inline-flex h-2.5 w-2.5 shrink-0 rounded-full ${dotClasses}`}
           aria-hidden
         />
-        <span className="text-xs font-medium leading-snug text-zinc-800 dark:text-zinc-200">
+        <span className="text-xs font-medium leading-snug text-[var(--foreground)]">
           {message}
         </span>
         {(connection === 'error' || connection === 'disconnected') &&
@@ -83,7 +83,7 @@ export function CollaborationLiveStrip(
             onClick={() => {
               onRetry();
             }}
-            className="ml-auto rounded-lg border border-zinc-300 bg-white px-2.5 py-1 text-xs font-medium text-zinc-800 hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
+            className="ml-auto rounded-lg border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-xs font-medium text-[var(--foreground)] hover:bg-[var(--surface)]"
           >
             {t('collaboration.retry')}
           </button>

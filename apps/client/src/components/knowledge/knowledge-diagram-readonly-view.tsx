@@ -82,7 +82,7 @@ function KnowledgeDiagramCanvas(props: KnowledgeDiagramCanvasProps): ReactNode {
   );
 
   return (
-    <div className="relative h-[min(70vh,560px)] overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800">
+    <div className="relative h-[min(70vh,560px)] overflow-hidden rounded-2xl border border-[var(--border)]">
       {hydrated ? (
         <ReactFlow
           nodes={presentedNodes as AtlasFlowNode[]}
@@ -110,7 +110,7 @@ function KnowledgeDiagramCanvas(props: KnowledgeDiagramCanvasProps): ReactNode {
           <DiagramEdgeLabelsOverlay edges={presentedEdges} />
         </ReactFlow>
       ) : (
-        <div className="flex h-full items-center justify-center text-sm text-zinc-500 dark:text-zinc-400">
+        <div className="flex h-full items-center justify-center text-sm text-[var(--muted)]">
           {t('diagrams.editor.loading')}
         </div>
       )}
@@ -146,7 +146,7 @@ export function KnowledgeDiagramReadonlyView(
 
   if (isPending) {
     return (
-      <div className="h-[420px] animate-pulse rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
+      <div className="h-[420px] animate-pulse rounded-2xl bg-[var(--border)]" />
     );
   }
 
@@ -194,16 +194,16 @@ export function KnowledgeDiagramReadonlyView(
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
-        <KnowledgeBackLink className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400" />
-        <h1 className="text-2xl font-semibold text-zinc-950 dark:text-zinc-50">
+        <KnowledgeBackLink className="text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)]" />
+        <h1 className="font-serif text-3xl font-medium leading-tight tracking-tight sm:text-4xl">
           {record.title}
         </h1>
         {data.description !== null && data.description.length > 0 ? (
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="text-sm text-[var(--muted)]">
             {data.description}
           </p>
         ) : null}
-        <span className="inline-flex w-fit rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-700 dark:bg-zinc-800">
+        <span className="inline-flex w-fit rounded-full bg-[var(--surface)] px-2.5 py-0.5 text-xs font-medium text-[var(--foreground)]">
           {t('knowledge.readOnly')}
         </span>
       </header>

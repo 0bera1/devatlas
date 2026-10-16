@@ -35,16 +35,16 @@ export function PreferencesControls(
   const isCompact: boolean = compact === true;
 
   const shell: string = isAuth
-    ? `inline-flex max-w-full flex-wrap items-center rounded-full border border-white/15 bg-white/[0] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md ${
+    ? `inline-flex max-w-full flex-wrap items-center rounded-full border border-white/15 bg-[var(--surface)]/[0] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md ${
         isCompact ? 'gap-0.5 px-1 py-0.5' : 'gap-1 px-1.5 py-1'
       }`
-    : `inline-flex max-w-full flex-wrap items-center rounded-full border border-zinc-200/90 bg-white/55 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] backdrop-blur-sm dark:border-zinc-600/80 dark:bg-zinc-900/50 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${
+    : `inline-flex max-w-full flex-wrap items-center rounded-full border border-[var(--border)]/90 bg-[var(--surface)]/55 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] backdrop-blur-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${
         isCompact ? 'gap-0.5 px-0.5 py-0.5 sm:px-1' : 'gap-1 px-1 py-1'
       }`;
 
   const divider: string = isAuth
-    ? 'mx-0.5 hidden h-4 w-px shrink-0 bg-white/15 sm:block'
-    : 'mx-0.5 hidden h-4 w-px shrink-0 bg-zinc-200/80 sm:block dark:bg-zinc-600/70';
+    ? 'mx-0.5 hidden h-4 w-px shrink-0 bg-[var(--surface)]/15 sm:block'
+    : 'mx-0.5 hidden h-4 w-px shrink-0 bg-[var(--border)]/80 sm:block';
 
   return (
     <div className={shell}>
@@ -57,7 +57,7 @@ export function PreferencesControls(
             setLocale(next);
           }
         }}
-        className="min-w-0 rounded-full border-0 bg-transparent px-3 py-1.5 text-xs font-medium text-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/50 dark:text-zinc-200 sm:text-[13px]"
+        className="min-w-0 rounded-full border-0 bg-transparent px-3 py-1.5 text-xs font-medium text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/50 sm:text-[13px]"
       >
         {locales.map((code: Locale) => (
           <option key={code} value={code}>
@@ -71,7 +71,7 @@ export function PreferencesControls(
       <div
         role="radiogroup"
         aria-label={t('preferences.theme')}
-        className="min-w-0 shrink-0 rounded-2xl bg-zinc-950/[0.04] p-0.5 dark:bg-black/[0]"
+        className="min-w-0 shrink-0 rounded-2xl bg-[var(--foreground)]/[0.04] p-0.5 dark:bg-black/[0]"
       >
         <div className="relative flex min-w-0 overflow-hidden rounded-lg">
           <SlidingGlider
@@ -157,7 +157,7 @@ function SlidingGlider(props: SlidingGliderProps): ReactNode {
 
   const surface: string = isAuth
     ? `pointer-events-none absolute inset-y-0 left-0 rounded-lg bg-amber-400/22 shadow-[0_0_0_1px_rgba(251,191,36,0.28)] ${gliderEase}`
-    : `pointer-events-none absolute inset-y-0 left-0 rounded-lg bg-white/95 shadow-sm dark:bg-zinc-600/95 dark:shadow-md ${gliderEase}`;
+    : `pointer-events-none absolute inset-y-0 left-0 rounded-lg bg-[var(--surface)]/95 shadow-sm dark:shadow-md ${gliderEase}`;
 
   return (
     <span
@@ -184,12 +184,12 @@ function localeButtonClass(
   if (isAuth) {
     return selected
       ? `${base} text-amber-50 focus-visible:ring-amber-400/60`
-      : `${base} text-zinc-400 hover:text-zinc-200 focus-visible:ring-amber-400/45`;
+      : `${base} text-[var(--muted)] hover:text-[var(--foreground)] focus-visible:ring-amber-400/45`;
   }
 
   return selected
     ? `${base} text-violet-800 focus-visible:ring-violet-400/55 dark:text-violet-100`
-    : `${base} text-zinc-600 hover:text-zinc-900 focus-visible:ring-violet-400/50 dark:text-zinc-400 dark:hover:text-zinc-100`;
+    : `${base} text-[var(--muted)] hover:text-[var(--foreground)] focus-visible:ring-violet-400/50`;
 }
 
 interface ThemeModeButtonProps {
@@ -216,11 +216,11 @@ function ThemeModeButton(props: ThemeModeButtonProps): ReactNode {
     if (isAuth) {
       return selected
         ? `${base} text-amber-50 focus-visible:ring-amber-400/55`
-        : `${base} text-zinc-400 hover:text-zinc-200 focus-visible:ring-amber-400/45`;
+        : `${base} text-[var(--muted)] hover:text-[var(--foreground)] focus-visible:ring-amber-400/45`;
     }
     return selected
       ? `${base} text-violet-800 focus-visible:ring-violet-400/55 dark:text-violet-100`
-      : `${base} text-zinc-500 hover:text-zinc-800 focus-visible:ring-violet-400/50 dark:text-zinc-400 dark:hover:text-zinc-100`;
+      : `${base} text-[var(--muted)] hover:text-[var(--foreground)] focus-visible:ring-violet-400/50`;
   })();
 
   return (

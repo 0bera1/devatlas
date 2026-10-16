@@ -19,10 +19,10 @@ export function ProfileFavoritesSection(): ReactNode {
   return (
     <section className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+        <h2 className="text-lg font-semibold text-[var(--foreground)]">
           {t('profile.favorites.title')}
         </h2>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm text-[var(--muted)]">
           {t('profile.favorites.description')}
         </p>
       </div>
@@ -68,8 +68,8 @@ function TabButton({
       onClick={onClick}
       className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors ${
         isActive
-          ? 'border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900'
-          : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-900'
+          ? 'border-[var(--border)] bg-[var(--foreground)] text-[var(--background)]'
+          : 'border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--surface)]'
       }`}
     >
       {label}
@@ -83,7 +83,7 @@ function FavoriteDocumentsList(): ReactNode {
 
   if (isLoading) {
     return (
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="text-sm text-[var(--muted)]">
         {t('common.loading')}
       </p>
     );
@@ -97,7 +97,7 @@ function FavoriteDocumentsList(): ReactNode {
   }
   if (data === undefined || data.length === 0) {
     return (
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="text-sm text-[var(--muted)]">
         {t('profile.favorites.empty.documents')}
       </p>
     );
@@ -118,7 +118,7 @@ function FavoriteDiagramsList(): ReactNode {
 
   if (isLoading) {
     return (
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="text-sm text-[var(--muted)]">
         {t('common.loading')}
       </p>
     );
@@ -132,7 +132,7 @@ function FavoriteDiagramsList(): ReactNode {
   }
   if (data === undefined || data.length === 0) {
     return (
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="text-sm text-[var(--muted)]">
         {t('profile.favorites.empty.diagrams')}
       </p>
     );

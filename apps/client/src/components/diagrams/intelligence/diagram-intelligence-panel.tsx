@@ -23,7 +23,7 @@ export function DiagramIntelligencePanel(
   );
 
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
+    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm">
       <IntelligencePanelHeader />
       <IntelligenceStatusView state={state} />
     </section>

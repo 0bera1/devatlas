@@ -22,7 +22,7 @@ export function SimilarTechnologiesList(
       count={items.length}
     >
       {items.length === 0 ? (
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+        <p className="text-xs text-[var(--muted)]">
           {t('diagrams.related.technologiesEmpty')}
         </p>
       ) : (

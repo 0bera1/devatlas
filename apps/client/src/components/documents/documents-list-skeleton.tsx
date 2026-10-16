@@ -16,7 +16,7 @@ export function DocumentsListSkeleton(): ReactNode {
       {Array.from({ length: 6 }).map((_, index: number) => (
         <div
           key={index}
-          className="h-[4.5rem] w-full animate-pulse rounded-2xl bg-zinc-200/90 dark:bg-zinc-800/80"
+          className="h-[4.5rem] w-full animate-pulse rounded-2xl bg-[var(--border)]/90"
         />
       ))}
     </div>

@@ -37,7 +37,7 @@ const MONTH_KEYS: readonly MessageKey[] = [
 function levelToClassName(level: HeatmapLevel): string {
   switch (level) {
     case 0:
-      return 'bg-zinc-200 dark:bg-zinc-800';
+      return 'bg-[var(--border)]';
     case 1:
       return 'bg-emerald-200 dark:bg-emerald-900';
     case 2:
@@ -88,7 +88,7 @@ export function ProfileActivityHeatmap({
 
   if (isLoading) {
     return (
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="text-sm text-[var(--muted)]">
         {t('common.loading')}
       </p>
     );
@@ -129,7 +129,7 @@ function MonthLabelRow({
     markers.map((m): readonly [number, MessageKey] => [m.weekIndex, m.monthKey]),
   );
   return (
-    <div className="ml-9 flex gap-[0.125rem] text-[10px] uppercase tracking-wide text-zinc-500 dark:text-zinc-500">
+    <div className="ml-9 flex gap-[0.125rem] text-[10px] uppercase tracking-wide text-[var(--muted)]">
       {Array.from({ length: weekCount }).map((_, weekIndex) => {
         const key: MessageKey | undefined = markerByWeek.get(weekIndex);
         return (
@@ -148,7 +148,7 @@ function MonthLabelRow({
 function WeekdayLabelColumn(): ReactNode {
   const { t } = useTranslations();
   return (
-    <div className="grid h-[7.875rem] grid-rows-7 gap-[0.125rem] text-[10px] text-zinc-500 dark:text-zinc-500">
+    <div className="grid h-[7.875rem] grid-rows-7 gap-[0.125rem] text-[10px] text-[var(--muted)]">
       {Array.from({ length: 7 }).map((_, row) => {
         const label = WEEKDAY_KEYS.find(w => w.row === row);
         return (
@@ -198,7 +198,7 @@ function HeatmapLegend(): ReactNode {
   const { t } = useTranslations();
   const levels: HeatmapLevel[] = [0, 1, 2, 3, 4];
   return (
-    <div className="ml-9 flex items-center gap-2 text-[11px] text-zinc-500 dark:text-zinc-400">
+    <div className="ml-9 flex items-center gap-2 text-[11px] text-[var(--muted)]">
       <span>{t('profile.activity.legendLess')}</span>
       <div className="flex gap-[0.125rem]">
         {levels.map(level => (

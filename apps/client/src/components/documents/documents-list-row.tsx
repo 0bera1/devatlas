@@ -31,20 +31,20 @@ export function DocumentsListRow(props: DocumentsListRowProps): ReactNode {
   });
 
   return (
-    <div className="group flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white px-4 py-3 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950/40 dark:hover:border-zinc-600 dark:hover:bg-zinc-900/50 sm:flex-row sm:items-center sm:justify-between">
+    <div className="group flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 transition-colors hover:border-[var(--border)] hover:bg-[var(--surface)] sm:flex-row sm:items-center sm:justify-between">
       <Link
         href={`/documents/${document.id}`}
         className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <span className="font-medium text-zinc-950 dark:text-zinc-50">
+          <span className="font-medium text-[var(--foreground)]">
             {document.title}
           </span>
           <span
             className={
               document.visibility === 'PUBLIC'
                 ? 'shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-200'
-                : 'shrink-0 rounded-full bg-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-800 dark:bg-zinc-700 dark:text-zinc-100'
+                : 'shrink-0 rounded-full bg-[var(--border)] px-2 py-0.5 text-xs font-medium text-[var(--foreground)]'
             }
           >
             {document.visibility === 'PUBLIC'
@@ -57,7 +57,7 @@ export function DocumentsListRow(props: DocumentsListRowProps): ReactNode {
             </span>
           ) : null}
         </div>
-        <span className="text-xs text-zinc-500 dark:text-zinc-400 sm:text-right">
+        <span className="text-xs text-[var(--muted)] sm:text-right">
           {t('documents.list.updated')}: {formatUpdatedAt(document.updatedAt)}
         </span>
       </Link>

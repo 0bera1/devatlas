@@ -34,11 +34,11 @@ export function DocumentRelatedSection(
   }, [error, isError, t]);
 
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
-      <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm">
+      <h2 className="text-sm font-semibold text-[var(--foreground)]">
         {t('documents.related.title')}
       </h2>
-      <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+      <p className="mt-1 text-xs text-[var(--muted)]">
         {t('documents.related.subtitle')}
       </p>
       {errorMessage !== null ? (
@@ -51,13 +51,13 @@ export function DocumentRelatedSection(
           {[0, 1, 2].map((i: number) => (
             <li
               key={i}
-              className="h-12 animate-pulse rounded-xl bg-zinc-200 dark:bg-zinc-800"
+              className="h-12 animate-pulse rounded-xl bg-[var(--border)]"
             />
           ))}
         </ul>
       ) : null}
       {!isPending && items.length === 0 && errorMessage === null ? (
-        <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="mt-4 text-sm text-[var(--muted)]">
           {t('documents.related.empty')}
         </p>
       ) : null}
@@ -67,12 +67,12 @@ export function DocumentRelatedSection(
             <li key={doc.id}>
               <Link
                 href={`/documents/${doc.id}`}
-                className="block rounded-xl border border-zinc-200 px-3 py-2 text-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:hover:border-zinc-600 dark:hover:bg-zinc-900/50"
+                className="block rounded-xl border border-[var(--border)] px-3 py-2 text-sm transition-colors hover:border-[var(--border)] hover:bg-[var(--surface)]"
               >
-                <span className="font-medium text-zinc-950 dark:text-zinc-50">
+                <span className="font-medium text-[var(--foreground)]">
                   {doc.title}
                 </span>
-                <span className="mt-1 block text-xs text-zinc-500 dark:text-zinc-400">
+                <span className="mt-1 block text-xs text-[var(--muted)]">
                   {t('documents.engagement.favorites')}: {doc.favoriteCount}
                 </span>
               </Link>

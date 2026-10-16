@@ -37,9 +37,9 @@ export function KnowledgeFlowDetailView(
   if (isPending) {
     return (
       <div className="animate-pulse space-y-4">
-        <div className="h-8 w-1/2 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-32 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-[420px] rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
+        <div className="h-8 w-1/2 rounded-lg bg-[var(--border)]" />
+        <div className="h-32 rounded-2xl bg-[var(--border)]" />
+        <div className="h-[420px] rounded-2xl bg-[var(--border)]" />
       </div>
     );
   }
@@ -63,9 +63,9 @@ export function KnowledgeFlowDetailView(
   return (
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-3">
-        <KnowledgeBackLink className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400" />
+        <KnowledgeBackLink className="text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)]" />
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-2xl font-semibold text-zinc-950 dark:text-zinc-50">
+          <h1 className="font-serif text-3xl font-medium leading-tight tracking-tight sm:text-4xl">
             {data.title}
           </h1>
           <span className="rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800 dark:bg-indigo-950 dark:text-indigo-200">
@@ -73,11 +73,11 @@ export function KnowledgeFlowDetailView(
           </span>
         </div>
         {data.description !== null && data.description.length > 0 ? (
-          <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+          <p className="text-sm font-medium text-[var(--foreground)]">
             {data.description}
           </p>
         ) : null}
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="text-sm text-[var(--muted)]">
           {t('knowledge.flow.howToRead')}
         </p>
       </header>
@@ -85,7 +85,7 @@ export function KnowledgeFlowDetailView(
       <KnowledgeNarrativeSection narrative={data.narrative} variant="flow" />
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--muted)]">
           {t('knowledge.flow.stepsHeading')}
         </h2>
         <ol className="flex flex-col gap-2">
@@ -103,14 +103,14 @@ export function KnowledgeFlowDetailView(
                     isActive
                       ? 'border-indigo-500 bg-indigo-50 dark:border-indigo-600 dark:bg-indigo-950/70'
                       : isDone
-                        ? 'border-zinc-200 bg-zinc-50 opacity-90 dark:border-zinc-700 dark:bg-zinc-900/60'
-                        : 'border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-950 dark:hover:border-indigo-700 dark:hover:bg-indigo-950/50'
+                        ? 'border-[var(--border)] bg-[var(--surface)] opacity-90'
+                        : 'border-[var(--border)] bg-[var(--surface)] hover:border-[var(--border)] hover:bg-[var(--surface)] dark:hover:border-indigo-700 dark:hover:bg-indigo-950/50'
                   }`}
                 >
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-100">
+                  <span className="font-semibold text-[var(--foreground)]">
                     {step.label}
                   </span>
-                  <span className="mt-1 block text-xs text-zinc-600 dark:text-zinc-400">
+                  <span className="mt-1 block text-xs text-[var(--muted)]">
                     {t('knowledge.flow.diagramRef')}: {step.diagramTitle}
                   </span>
                 </button>
@@ -123,7 +123,7 @@ export function KnowledgeFlowDetailView(
       {activeSlug.length > 0 ? (
         <section className="flex flex-col gap-6">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">
+            <h2 className="text-sm font-semibold text-[var(--foreground)]">
               {activeStep?.diagramTitle}
             </h2>
             <Link
@@ -147,18 +147,18 @@ export function KnowledgeFlowDetailView(
 
       <RelatedInterviewQuestions questions={data.relatedInterviewQuestions} />
 
-      <div className="flex flex-wrap gap-2 border-t border-zinc-200 pt-4 dark:border-zinc-800">
+      <div className="flex flex-wrap gap-2 border-t border-[var(--border)] pt-4">
         <button
           type="button"
           disabled={activeStepIndex <= 0}
           onClick={() => {
             setActiveStepIndex((i: number) => Math.max(0, i - 1));
           }}
-          className="rounded-lg border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
+          className="rounded-lg border border-[var(--border)] px-3 py-2 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--surface)] disabled:opacity-40"
         >
           {t('knowledge.flow.prev')}
         </button>
-        <span className="flex items-center px-2 text-sm text-zinc-500 dark:text-zinc-400">
+        <span className="flex items-center px-2 text-sm text-[var(--muted)]">
           {activeStepIndex + 1} / {steps.length}
         </span>
         <button
@@ -169,7 +169,7 @@ export function KnowledgeFlowDetailView(
               Math.min(steps.length - 1, i + 1),
             );
           }}
-          className="rounded-lg border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-50 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
+          className="rounded-lg border border-[var(--border)] px-3 py-2 text-sm font-medium text-[var(--foreground)] transition-colors hover:bg-[var(--surface)] disabled:opacity-40"
         >
           {t('knowledge.flow.next')}
         </button>

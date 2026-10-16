@@ -15,17 +15,17 @@ export function ProfileFavoriteDiagramRow({
   return (
     <Link
       href={`/diagrams/${entry.id}`}
-      className="flex flex-col gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-left transition-colors hover:border-zinc-400 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-600 dark:hover:bg-zinc-900/50"
+      className="flex flex-col gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-left transition-colors hover:border-[var(--border)] hover:bg-[var(--surface)]"
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+        <span className="truncate text-sm font-semibold text-[var(--foreground)]">
           {entry.title}
         </span>
-        <span className="shrink-0 text-[11px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        <span className="shrink-0 text-[11px] uppercase tracking-wide text-[var(--muted)]">
           {entry.visibility}
         </span>
       </div>
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-500 dark:text-zinc-400">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--muted)]">
         <span>
           {entry.nodeCount} {t('profile.favorites.itemNodes')}
         </span>

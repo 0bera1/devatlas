@@ -24,7 +24,7 @@ export function InterviewQuestionCard({
   }, []);
 
   return (
-    <article className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/40">
+    <article className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <InterviewQuestionDifficultyBadge difficulty={question.difficulty} />
@@ -36,12 +36,12 @@ export function InterviewQuestionCard({
             />
           ))}
         </div>
-        <span className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">
+        <span className="text-[11px] font-medium text-[var(--muted)]">
           {t('documents.interviewQuestions.scoreLabel')}: {question.score}
         </span>
       </div>
 
-      <p className="mt-2 text-sm font-medium text-zinc-950 dark:text-zinc-50">
+      <p className="mt-2 text-sm font-medium text-[var(--foreground)]">
         {question.question}
       </p>
 
@@ -57,7 +57,7 @@ export function InterviewQuestionCard({
       </button>
 
       {revealed ? (
-        <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-zinc-50/80 px-3 py-2 font-mono text-xs leading-relaxed text-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-200">
+        <pre className="mt-2 whitespace-pre-wrap rounded-lg bg-[var(--surface)]/80 px-3 py-2 font-mono text-xs leading-relaxed text-[var(--foreground)]">
           {question.answer}
         </pre>
       ) : null}

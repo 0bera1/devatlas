@@ -25,7 +25,7 @@ function renderInline(text: string, keyPrefix: string): ReactNode {
       parts.push(
         <strong
           key={`${keyPrefix}-b-${partIndex}`}
-          className="font-semibold text-zinc-900 dark:text-zinc-50"
+          className="font-semibold text-[var(--foreground)]"
         >
           {token.slice(2, -2)}
         </strong>,
@@ -34,7 +34,7 @@ function renderInline(text: string, keyPrefix: string): ReactNode {
       parts.push(
         <code
           key={`${keyPrefix}-c-${partIndex}`}
-          className="rounded bg-zinc-200/80 px-1 py-0.5 font-mono text-[0.85em] text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
+          className="rounded bg-[var(--border)]/80 px-1 py-0.5 font-mono text-[0.85em] text-[var(--foreground)]"
         >
           {token.slice(1, -1)}
         </code>,
@@ -43,7 +43,7 @@ function renderInline(text: string, keyPrefix: string): ReactNode {
       parts.push(
         <em
           key={`${keyPrefix}-i-${partIndex}`}
-          className="italic text-zinc-800 dark:text-zinc-200"
+          className="italic text-[var(--foreground)]"
         >
           {token.slice(1, -1)}
         </em>,
@@ -168,7 +168,7 @@ export function KnowledgeMarkdownContent(
   const blocks: readonly MarkdownBlock[] = parseMarkdownBlocks(content);
   const rootClass: string =
     className ??
-    'flex flex-col gap-3 text-sm leading-relaxed text-zinc-800 dark:text-zinc-200';
+    'flex flex-col gap-3 text-sm leading-relaxed text-[var(--foreground)]';
 
   return (
     <div className={rootClass}>
@@ -179,7 +179,7 @@ export function KnowledgeMarkdownContent(
             return (
               <h2
                 key={key}
-                className="text-lg font-semibold tracking-tight text-zinc-950 dark:text-zinc-50"
+                className="text-lg font-semibold tracking-tight text-[var(--foreground)]"
               >
                 {renderInline(block.text, key)}
               </h2>
@@ -188,7 +188,7 @@ export function KnowledgeMarkdownContent(
             return (
               <h3
                 key={key}
-                className="text-base font-semibold text-zinc-900 dark:text-zinc-100"
+                className="text-base font-semibold text-[var(--foreground)]"
               >
                 {renderInline(block.text, key)}
               </h3>
@@ -203,7 +203,7 @@ export function KnowledgeMarkdownContent(
             return (
               <blockquote
                 key={key}
-                className="border-l-4 border-indigo-300/80 py-0.5 pl-4 text-zinc-700 dark:border-indigo-600 dark:text-zinc-300"
+                className="border-l-4 border-indigo-300/80 py-0.5 pl-4 text-[var(--foreground)] dark:border-indigo-600"
               >
                 {renderInline(block.text, key)}
               </blockquote>
@@ -232,7 +232,7 @@ export function KnowledgeMarkdownContent(
             return (
               <div
                 key={key}
-                className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700"
+                className="overflow-x-auto rounded-lg border border-[var(--border)]"
               >
                 <table className="w-full min-w-[280px] text-left text-xs">
                   <tbody>
@@ -241,8 +241,8 @@ export function KnowledgeMarkdownContent(
                         key={`${key}-row-${rowIndex}`}
                         className={
                           rowIndex === 0
-                            ? 'bg-zinc-100/80 font-semibold dark:bg-zinc-800/80'
-                            : 'border-t border-zinc-200 dark:border-zinc-700'
+                            ? 'bg-[var(--surface)]/80 font-semibold'
+                            : 'border-t border-[var(--border)]'
                         }
                       >
                         {row.map((cell: string, cellIndex: number) => (

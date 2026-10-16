@@ -14,10 +14,10 @@ export function ResourceGroup(props: ResourceGroupProps): ReactNode {
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">
           {title}
         </h3>
-        <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-semibold tabular-nums text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+        <span className="rounded-full bg-[var(--surface)] px-2 py-0.5 text-[10px] font-semibold tabular-nums text-[var(--muted)]">
           {count}
         </span>
       </div>

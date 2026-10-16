@@ -19,7 +19,7 @@ export function KnowledgeBackLink(props: KnowledgeBackLinkProps): ReactNode {
       href={href}
       className={
         className ??
-        'text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
+        'text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)]'
       }
     >
       {t('knowledge.backToBase')}

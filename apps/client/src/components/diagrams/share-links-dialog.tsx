@@ -29,7 +29,7 @@ export function ShareLinksButton(props: { diagramId: string }): ReactNode {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded-xl border border-zinc-200 px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-900"
+        className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--foreground)] hover:bg-[var(--surface)]"
       >
         {t('share.title')}
       </button>
@@ -111,10 +111,10 @@ function ShareLinksDialog(props: { diagramId: string; onClose: () => void }): Re
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true">
-      <div className="w-full max-w-lg rounded-2xl border border-zinc-200 bg-white p-6 text-zinc-900 shadow-xl dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100">
+      <div className="w-full max-w-lg rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 text-[var(--foreground)] shadow-xl">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">{t('share.title')}</h2>
-          <button type="button" onClick={props.onClose} className="rounded-lg px-2 py-1 text-sm text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800">
+          <button type="button" onClick={props.onClose} className="rounded-lg px-2 py-1 text-sm text-[var(--muted)] hover:bg-[var(--surface)]">
             ×
           </button>
         </div>
@@ -125,7 +125,7 @@ function ShareLinksDialog(props: { diagramId: string; onClose: () => void }): Re
             <select
               value={days}
               onChange={(event) => setDays(Number(event.target.value))}
-              className="rounded-lg border border-zinc-300 bg-transparent px-2 py-2 dark:border-zinc-600"
+              className="rounded-lg border border-[var(--border)] bg-transparent px-2 py-2"
             >
               {EXPIRY_OPTIONS.map((value) => (
                 <option key={value} value={value}>
@@ -143,7 +143,7 @@ function ShareLinksDialog(props: { diagramId: string; onClose: () => void }): Re
               minLength={4}
               maxLength={64}
               autoComplete="new-password"
-              className="rounded-lg border border-zinc-300 bg-transparent px-3 py-2 dark:border-zinc-600"
+              className="rounded-lg border border-[var(--border)] bg-transparent px-3 py-2"
             />
           </label>
         </div>
@@ -152,7 +152,7 @@ function ShareLinksDialog(props: { diagramId: string; onClose: () => void }): Re
           type="button"
           disabled={busy}
           onClick={() => void handleCreate()}
-          className="mt-4 w-full rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900"
+          className="mt-4 w-full rounded-xl bg-[var(--foreground)] px-4 py-2.5 text-sm font-semibold text-[var(--background)] disabled:opacity-60"
         >
           {t('share.create')}
         </button>
@@ -166,8 +166,8 @@ function ShareLinksDialog(props: { diagramId: string; onClose: () => void }): Re
           </div>
         ) : null}
 
-        <ul className="mt-5 divide-y divide-zinc-200 text-sm dark:divide-zinc-700">
-          {links.length === 0 ? <li className="py-3 text-zinc-500">{t('share.none')}</li> : null}
+        <ul className="mt-5 divide-y divide-[var(--border)] text-sm">
+          {links.length === 0 ? <li className="py-3 text-[var(--muted)]">{t('share.none')}</li> : null}
           {links.map((link) => {
             const expired: boolean = new Date(link.expiresAt).getTime() <= Date.now();
             const status: MessageKey =
@@ -176,7 +176,7 @@ function ShareLinksDialog(props: { diagramId: string; onClose: () => void }): Re
               <li key={link.id} className="flex items-center justify-between gap-3 py-3">
                 <div className="min-w-0">
                   <p>{t(status)}</p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-[var(--muted)]">
                     {new Date(link.expiresAt).toLocaleDateString()}
                     {link.hasPassword ? ` · ${t('share.passwordProtected')}` : ''}
                   </p>

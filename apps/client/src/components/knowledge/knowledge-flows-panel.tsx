@@ -55,8 +55,8 @@ export function KnowledgeFlowsPanel({
   if (isPending) {
     return (
       <div className="animate-pulse space-y-3">
-        <div className="h-20 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-20 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
+        <div className="h-20 rounded-2xl bg-[var(--border)]" />
+        <div className="h-20 rounded-2xl bg-[var(--border)]" />
       </div>
     );
   }
@@ -71,7 +71,7 @@ export function KnowledgeFlowsPanel({
 
   if (flows.length === 0) {
     return (
-      <p className="rounded-2xl border border-dashed border-zinc-300 px-6 py-10 text-center text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+      <p className="rounded-2xl border border-dashed border-[var(--border)] px-6 py-10 text-center text-sm text-[var(--muted)]">
         {searchQuery.length > 0
           ? t('knowledge.search.noResults')
           : t('knowledge.flows.empty')}
@@ -90,7 +90,7 @@ export function KnowledgeFlowsPanel({
               className="block rounded-2xl border border-indigo-200 bg-indigo-50/50 p-5 shadow-sm transition-colors hover:border-indigo-300 hover:bg-indigo-50 dark:border-indigo-900/50 dark:bg-indigo-950/20 dark:hover:border-indigo-800 dark:hover:bg-indigo-950/40"
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
-                <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                <h3 className="text-base font-semibold text-[var(--foreground)]">
                   {flow.title}
                 </h3>
                 {excerpt !== null ? (
@@ -100,12 +100,12 @@ export function KnowledgeFlowsPanel({
                 ) : null}
               </div>
               {flow.description !== null && flow.description.length > 0 ? (
-                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                <p className="mt-2 text-sm text-[var(--muted)]">
                   {flow.description}
                 </p>
               ) : null}
               {excerpt !== null ? (
-                <p className="mt-2 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                <p className="mt-2 text-sm leading-relaxed text-[var(--foreground)]">
                   {excerpt}
                 </p>
               ) : null}

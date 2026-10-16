@@ -24,7 +24,7 @@ export function KnowledgeNarrativePanel(
       ? 'border-indigo-200 bg-indigo-50/60 dark:border-indigo-900/50 dark:bg-indigo-950/25'
       : variant === 'step'
         ? 'border-violet-200 bg-violet-50/50 dark:border-violet-900/40 dark:bg-violet-950/20'
-        : 'border-zinc-200 bg-zinc-50/80 dark:border-zinc-800 dark:bg-zinc-900/40';
+        : 'border-[var(--border)] bg-[var(--surface)]/80';
 
   return (
     <section

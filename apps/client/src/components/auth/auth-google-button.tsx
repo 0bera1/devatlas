@@ -16,7 +16,7 @@ export function AuthGoogleButton(): ReactNode {
     <button
       type="button"
       onClick={handleClick}
-      className="flex w-full items-center justify-center gap-3 rounded-xl border border-zinc-600 bg-zinc-900/80 px-4 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:border-zinc-500 hover:bg-zinc-800/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70"
+      className="flex w-full items-center justify-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--foreground)]/80 px-4 py-3 text-sm font-medium text-[var(--background)] shadow-sm transition-colors hover:border-[var(--border)] hover:bg-[var(--foreground)]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70"
     >
       <GoogleGlyph className="h-5 w-5 shrink-0" aria-hidden />
       {t('auth.social.google')}

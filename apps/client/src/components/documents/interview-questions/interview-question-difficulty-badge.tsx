@@ -15,7 +15,7 @@ function pickClassName(difficulty: string): string {
     case 'hard':
       return 'bg-rose-100 text-rose-900 dark:bg-rose-950/50 dark:text-rose-200';
     default:
-      return 'bg-zinc-200 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200';
+      return 'bg-[var(--border)] text-[var(--foreground)]';
   }
 }
 

@@ -40,9 +40,9 @@ export function KnowledgeInterviewDetailView({
   if (isPending) {
     return (
       <div className="animate-pulse space-y-6">
-        <div className="h-4 w-24 rounded bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-10 w-3/4 rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-40 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
+        <div className="h-4 w-24 rounded bg-[var(--border)]" />
+        <div className="h-10 w-3/4 rounded-lg bg-[var(--border)]" />
+        <div className="h-40 rounded-2xl bg-[var(--border)]" />
       </div>
     );
   }
@@ -53,7 +53,7 @@ export function KnowledgeInterviewDetailView({
         <p className="text-sm text-red-700 dark:text-red-300">
           {errorMessage ?? t('knowledge.interview.notFound')}
         </p>
-        <KnowledgeBackLink className="text-sm font-medium text-zinc-800 underline dark:text-zinc-200" />
+        <KnowledgeBackLink className="text-sm font-medium text-[var(--foreground)] underline" />
       </div>
     );
   }
@@ -76,28 +76,28 @@ export function KnowledgeInterviewDetailView({
         <article className="flex min-w-0 flex-col gap-6">
           <header className="flex flex-col gap-4">
             <KnowledgeBackLink />
-            <div className="overflow-hidden rounded-2xl border border-zinc-200/80 bg-gradient-to-br from-white via-white to-zinc-50 p-6 shadow-sm dark:border-zinc-800 dark:from-zinc-950 dark:via-zinc-950 dark:to-zinc-900/80">
+            <div className="overflow-hidden rounded-2xl border border-[var(--border)]/80 bg-gradient-to-br from-[var(--surface)] via-[var(--surface)] to-[var(--background)] p-6 shadow-sm">
               <div className="mb-4 flex flex-wrap items-center gap-2">
-                <span className="inline-flex rounded-full bg-zinc-900 px-2.5 py-0.5 text-xs font-medium text-white dark:bg-zinc-100 dark:text-zinc-900">
+                <span className="inline-flex rounded-full bg-[var(--foreground)] px-2.5 py-0.5 text-xs font-medium text-[var(--background)]">
                   {categoryLabel(data.category)}
                 </span>
                 <InterviewDifficultyBadge difficulty={data.difficulty} />
               </div>
-              <h1 className="text-xl font-semibold leading-snug tracking-tight text-zinc-950 sm:text-2xl dark:text-zinc-50">
+              <h1 className="font-serif text-2xl font-medium leading-snug tracking-tight text-[var(--foreground)] sm:text-3xl">
                 {data.question}
               </h1>
             </div>
           </header>
 
-          <section className="rounded-2xl border border-zinc-200/80 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950/50">
-            <div className="flex items-center justify-between gap-4 border-b border-zinc-100 px-5 py-4 dark:border-zinc-800/80">
-              <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          <section className="rounded-2xl border border-[var(--border)]/80 bg-[var(--surface)] shadow-sm">
+            <div className="flex items-center justify-between gap-4 border-b border-[var(--border)] px-5 py-4">
+              <h2 className="text-sm font-semibold text-[var(--foreground)]">
                 {t('knowledge.interview.modelAnswer')}
               </h2>
               <button
                 type="button"
                 onClick={(): void => setAnswerVisible((prev) => !prev)}
-                className="shrink-0 rounded-lg bg-zinc-900 px-3.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+                className="shrink-0 rounded-lg bg-[var(--foreground)] px-3.5 py-1.5 text-xs font-medium text-[var(--background)] transition-colors hover:opacity-90"
               >
                 {answerVisible
                   ? t('knowledge.interview.hideAnswer')
@@ -105,12 +105,12 @@ export function KnowledgeInterviewDetailView({
               </button>
             </div>
             <SmoothCollapse open={!answerVisible}>
-              <p className="px-5 py-5 text-sm text-zinc-500 dark:text-zinc-400">
+              <p className="px-5 py-5 text-sm text-[var(--muted)]">
                 {t('knowledge.interview.answerHiddenHint')}
               </p>
             </SmoothCollapse>
             <SmoothCollapse open={answerVisible}>
-              <p className="whitespace-pre-wrap px-5 py-5 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+              <p className="whitespace-pre-wrap px-5 py-5 text-sm leading-relaxed text-[var(--foreground)]">
                 {data.answer}
               </p>
             </SmoothCollapse>

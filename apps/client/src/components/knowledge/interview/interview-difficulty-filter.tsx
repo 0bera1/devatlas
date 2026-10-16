@@ -32,7 +32,7 @@ export function InterviewDifficultyFilter({
         className={
           selected === null
             ? 'rounded-full bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white dark:bg-indigo-500'
-            : 'rounded-full border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900'
+            : 'rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--foreground)] hover:bg-[var(--surface)]'
         }
       >
         {t('knowledge.interview.allDifficulties')}
@@ -48,7 +48,7 @@ export function InterviewDifficultyFilter({
             className={
               selected === difficulty
                 ? 'rounded-full bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white dark:bg-indigo-500'
-                : 'rounded-full border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900'
+                : 'rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--foreground)] hover:bg-[var(--surface)]'
             }
           >
             {difficultyLabel(difficulty)}

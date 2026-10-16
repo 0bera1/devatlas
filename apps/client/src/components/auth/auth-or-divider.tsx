@@ -9,10 +9,10 @@ export function AuthOrDivider(): ReactNode {
   return (
     <div className="relative py-4">
       <div className="absolute inset-0 flex items-center" aria-hidden>
-        <span className="w-full border-t border-zinc-700" />
+        <span className="w-full border-t border-[var(--border)]" />
       </div>
       <div className="relative flex justify-center text-xs font-medium">
-        <span className="bg-[#121212] px-3 text-zinc-500">{t('auth.or')}</span>
+        <span className="bg-[#121212] px-3 text-[var(--muted)]">{t('auth.or')}</span>
       </div>
     </div>
   );

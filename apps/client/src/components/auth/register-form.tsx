@@ -82,7 +82,7 @@ export function RegisterForm() {
         variant="authImmersive"
         passwordToggleable
       />
-      <p className="-mt-2 text-xs text-zinc-500">{t('auth.register.passwordHint')}</p>
+      <p className="-mt-2 text-xs text-[var(--muted)]">{t('auth.register.passwordHint')}</p>
       <AuthTextField
         id="firstName"
         label={t('auth.register.firstName')}
@@ -135,7 +135,7 @@ export function RegisterForm() {
       <button
         type="submit"
         disabled={submitDisabled}
-        className="flex w-full justify-center rounded-xl bg-amber-500 px-4 py-3.5 text-sm font-semibold text-zinc-900 shadow-lg shadow-amber-500/15 transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-55"
+        className="flex w-full justify-center rounded-xl bg-amber-500 px-4 py-3.5 text-sm font-semibold text-[var(--foreground)] shadow-lg shadow-amber-500/15 transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-55"
       >
         {busy ? t('auth.register.submitting') : t('auth.register.submit')}
       </button>

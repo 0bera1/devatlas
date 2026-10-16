@@ -54,8 +54,8 @@ export function KnowledgeDocumentsPanel({
   if (isPending) {
     return (
       <div className="animate-pulse space-y-3">
-        <div className="h-20 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
-        <div className="h-20 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
+        <div className="h-20 rounded-2xl bg-[var(--border)]" />
+        <div className="h-20 rounded-2xl bg-[var(--border)]" />
       </div>
     );
   }
@@ -70,7 +70,7 @@ export function KnowledgeDocumentsPanel({
 
   if (items.length === 0) {
     return (
-      <p className="rounded-2xl border border-dashed border-zinc-300 px-6 py-10 text-center text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-400">
+      <p className="rounded-2xl border border-dashed border-[var(--border)] px-6 py-10 text-center text-sm text-[var(--muted)]">
         {searchQuery.length > 0
           ? t('knowledge.search.noResults')
           : t('knowledge.documents.empty')}
@@ -84,17 +84,17 @@ export function KnowledgeDocumentsPanel({
         <li key={doc.id}>
           <Link
             href={`/knowledge/documents/${doc.slug}`}
-            className="block rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950/50 dark:hover:border-zinc-700 dark:hover:bg-zinc-900/50"
+            className="block rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm transition-colors hover:border-[var(--border)] hover:bg-[var(--surface)]"
           >
-            <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+            <h2 className="text-base font-semibold text-[var(--foreground)]">
               {doc.title}
             </h2>
             {doc.summary !== null && doc.summary.length > 0 ? (
-              <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+              <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
                 {doc.summary}
               </p>
             ) : null}
-            <span className="mt-3 inline-block text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            <span className="mt-3 inline-block text-xs font-medium text-[var(--muted)]">
               {t('knowledge.readOnly')}
             </span>
           </Link>
