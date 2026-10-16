@@ -1,4 +1,7 @@
-import { Controller, Get, Headers, Inject, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Headers, Inject, Query, Req, UseGuards } from '@nestjs/common';
+import type { Request } from 'express';
+import { LibrarySearchService, type LibrarySearchHit } from './library-search.service';
+import { LibrarySearchQueryDto } from './dto/library-search-query.dto';
 import { Public } from '../auth/decorators/public.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import type { PublicSearchHit } from '../documents/interfaces/public-search-hit.interface';
@@ -27,7 +30,20 @@ export class SearchController {
     private readonly diagramsService: IDiagramsService,
     @Inject(KNOWLEDGE_SERVICE)
     private readonly knowledgeService: IKnowledgeService,
+    private readonly librarySearch: LibrarySearchService,
   ) {}
+
+  /**
+   * Kullanıcının erişebildiği doküman ve diyagramlarda tam metin araması.
+   * Tür, kategori, etiket ve tarih filtreleri ile sıralama desteklenir.
+   */
+  @Get('library')
+  public async searchLibrary(
+    @Req() req: Request,
+    @Query() query: LibrarySearchQueryDto,
+  ): Promise<LibrarySearchHit[]> {
+    return this.librarySearch.search(req.user!.id, query);
+  }
 
   /**
    * Herkese açık doküman, diyagram ve bilgi tabanı içeriklerinde metin araması.

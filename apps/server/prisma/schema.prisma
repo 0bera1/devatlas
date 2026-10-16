@@ -42,6 +42,12 @@ model Diagram {
   title      String
   visibility Visibility @default(PRIVATE)
   shareLinks DiagramShareLink[]
+  /// Tam metin arama vektörü (title). Veritabanında üretilen (GENERATED) sütun.
+  /// Sütun ve indeksler migration SQL ile yönetilir; şema diff'inde DROP DEFAULT görünmesi beklenir.
+  searchVector Unsupported("tsvector")? @map("searchVector")
+
+  @@index([searchVector], type: Gin, map: "Diagram_searchVector_idx")
+  @@index([title(ops: raw("gin_trgm_ops"))], type: Gin, map: "Diagram_title_trgm_idx")
 
   ownerId String
   owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
@@ -134,6 +140,12 @@ model Document {
   favorites Favorite[]
   viewBuckets DocumentViewBucket[]
   documentTags DocumentTag[]
+  /// Tam metin arama vektörü (title A, content B). Veritabanında üretilen (GENERATED) sütun.
+  /// Sütun ve indeksler migration SQL ile yönetilir; şema diff'inde DROP DEFAULT görünmesi beklenir.
+  searchVector Unsupported("tsvector")? @map("searchVector")
+
+  @@index([searchVector], type: Gin, map: "Document_searchVector_idx")
+  @@index([title(ops: raw("gin_trgm_ops"))], type: Gin, map: "Document_title_trgm_idx")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
