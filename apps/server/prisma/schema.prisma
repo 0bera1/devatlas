@@ -20,6 +20,8 @@ model User {
   password      String
   birthDate     DateTime
   createdAt     DateTime       @default(now())
+  emailVerifiedAt DateTime?
+  authTokens    AuthToken[]
   documents     Document[]
   diagrams      Diagram[]
   favorites     Favorite[]
@@ -27,6 +29,11 @@ model User {
   refreshTokens RefreshToken[]
   diagramCollaborations DiagramCollaborator[]
   activityBuckets UserActivityBucket[]
+  avatarUrl       String?
+  preferences     UserPreference?
+  studyLists      StudyList[]
+  questionReviews QuestionReview[]
+  notifications   Notification[]
 }
 
 /// Node tabanlı bilgi haritası (graph); dokümanla birlikte arama / keşif için.
@@ -34,6 +41,7 @@ model Diagram {
   id         String     @id @default(cuid())
   title      String
   visibility Visibility @default(PRIVATE)
+  shareLinks DiagramShareLink[]
 
   ownerId String
   owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
@@ -365,6 +373,8 @@ model InterviewQuestion {
   parent      InterviewQuestion?          @relation("InterviewFollowUps", fields: [parentId], references: [id], onDelete: Cascade)
   followUps   InterviewQuestion[]         @relation("InterviewFollowUps")
   knowledgeLinks InterviewQuestionKnowledgeLink[]
+  reviews        QuestionReview[]
+  studyListItems StudyListItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -391,12 +401,118 @@ model InterviewQuestionKnowledgeLink {
 }
 
 model RefreshToken {
-  id        String   @id @default(cuid())
-  tokenHash String   @unique
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// Aynı oturumdan döndürülen (rotasyon zinciri) token'ları gruplar.
+  familyId  String?
+  /// Rotasyonda kullanılmış token'ın iptal zamanı. Tekrar gelirse oturum ailesi kapatılır.
+  revokedAt DateTime?
   expiresAt DateTime
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 
   @@index([userId])
+  @@index([familyId])
+}
+
+enum AuthTokenPurpose {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+/// E-posta doğrulama ve şifre sıfırlama için tek kullanımlık token'lar (yalnızca hash saklanır).
+model AuthToken {
+  id        String           @id @default(cuid())
+  tokenHash String           @unique
+  purpose   AuthTokenPurpose
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, purpose])
+}
+
+/// Diyagram için süreli ve isteğe bağlı şifreli paylaşım bağlantısı (yalnızca token hash'i saklanır).
+model DiagramShareLink {
+  id           String    @id @default(cuid())
+  tokenHash    String    @unique
+  diagramId    String
+  diagram      Diagram   @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+  createdById  String
+  passwordHash String?
+  expiresAt    DateTime
+  revokedAt    DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([diagramId])
+}
+
+enum NotificationType {
+  COLLABORATION_INVITE
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  payload   Json
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, readAt])
+}
+
+/// Kullanıcının tercihleri: dil, tema ve yazı boyutu. Özel temalar JSON olarak saklanır.
+model UserPreference {
+  userId       String  @id
+  user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  locale       String  @default("tr")
+  themeKey     String  @default("light-default")
+  fontScale    String  @default("normal")
+  customThemes Json?
+  updatedAt    DateTime @updatedAt
+}
+
+/// Kullanıcının kendi oluşturduğu çalışma listeleri (mülakat soruları).
+model StudyList {
+  id        String          @id @default(cuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  items     StudyListItem[]
+  createdAt DateTime        @default(now())
+
+  @@index([userId])
+}
+
+model StudyListItem {
+  listId     String
+  list       StudyList         @relation(fields: [listId], references: [id], onDelete: Cascade)
+  questionId String
+  question   InterviewQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  createdAt  DateTime          @default(now())
+
+  @@id([listId, questionId])
+}
+
+/// SM-2 tabanlı tekrar durumu: kullanıcı × mülakat sorusu.
+model QuestionReview {
+  id           String            @id @default(cuid())
+  userId       String
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId   String
+  question     InterviewQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  easeFactor   Float             @default(2.5)
+  intervalDays Int               @default(0)
+  repetitions  Int               @default(0)
+  lastRating   Int?
+  dueAt        DateTime
+  updatedAt    DateTime          @updatedAt
+
+  @@unique([userId, questionId])
+  @@index([userId, dueAt])
 }

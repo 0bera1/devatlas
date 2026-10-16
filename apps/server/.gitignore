@@ -4,5 +4,6 @@ node_modules
 
 /generated/prisma
 
-/prisma
 /dist
+# Yüklenen dosyalar (avatarlar vb.)
+/uploads
