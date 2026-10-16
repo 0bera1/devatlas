@@ -2,6 +2,8 @@
 
 import { useAuth } from '@/components/providers/auth-provider';
 import { NotificationsMenu } from '@/components/notifications/notifications-menu';
+import { CommandPalette, OPEN_PALETTE_EVENT } from '@/components/shell/command-palette';
+import { useAuthProfileQuery } from '@/features/auth/queries/useAuthProfile';
 import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { MessageKey } from '@/i18n';
 import Link from 'next/link';
@@ -29,6 +31,12 @@ export function AppShell({ children }: { children: ReactNode }): ReactNode {
 
   return (
     <div className="flex min-h-full flex-1 flex-col bg-[var(--background)] text-[var(--foreground)]">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-[var(--foreground)] focus:px-3 focus:py-2 focus:text-[var(--background)]"
+      >
+        {t('shell.skipToContent')}
+      </a>
       <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--background)]/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6">
           <Link href="/today" className="flex items-center gap-2 font-semibold tracking-tight">
@@ -55,14 +63,15 @@ export function AppShell({ children }: { children: ReactNode }): ReactNode {
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
-            <Link
-              href="/search"
-              aria-label={t('shell.search')}
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event(OPEN_PALETTE_EVENT))}
+              aria-keyshortcuts="Control+K Meta+K"
               className="hidden h-9 items-center gap-2 rounded-full border border-[var(--border)] px-3 text-sm text-[var(--muted)] hover:text-[var(--foreground)] md:flex"
             >
               {t('shell.search')}
               <kbd className="rounded border border-[var(--border)] px-1 font-mono text-[10px]">⌘K</kbd>
-            </Link>
+            </button>
             <Link href="/study" className="hidden text-sm text-[var(--muted)] hover:text-[var(--foreground)] md:inline">
               {t('nav.study')}
             </Link>
@@ -72,7 +81,9 @@ export function AppShell({ children }: { children: ReactNode }): ReactNode {
         </div>
       </header>
 
-      <main className="flex flex-1 flex-col pb-20 sm:pb-0">{children}</main>
+      <main id="main-content" className="flex flex-1 flex-col pb-20 sm:pb-0">
+        {children}
+      </main>
 
       <nav
         aria-label="modes"
@@ -84,6 +95,7 @@ export function AppShell({ children }: { children: ReactNode }): ReactNode {
             <Link
               key={mode.href}
               href={mode.href}
+              aria-current={active ? 'page' : undefined}
               className={`text-center text-xs ${active ? 'font-semibold text-[var(--accent)]' : 'text-[var(--muted)]'}`}
             >
               {t(mode.label)}
@@ -91,13 +103,21 @@ export function AppShell({ children }: { children: ReactNode }): ReactNode {
           );
         })}
       </nav>
+
+      <CommandPalette />
     </div>
   );
 }
 
+function initialsOf(firstName: string | undefined, lastName: string | undefined): string {
+  const letters: string = `${firstName?.trim().charAt(0) ?? ''}${lastName?.trim().charAt(0) ?? ''}`;
+  return letters.length > 0 ? letters.toLocaleUpperCase() : '?';
+}
+
 function AccountMenu(): ReactNode {
   const { t } = useTranslations();
-  const { logout } = useAuth();
+  const { token, logout } = useAuth();
+  const profileQuery = useAuthProfileQuery(token !== null);
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -115,30 +135,37 @@ function AccountMenu(): ReactNode {
     return () => document.removeEventListener('mousedown', onClick);
   }, [open]);
 
+  const initials: string = initialsOf(profileQuery.data?.firstName, profileQuery.data?.lastName);
+
   return (
     <div ref={rootRef} className="relative">
       <button
         type="button"
         aria-label={t('shell.account')}
         aria-expanded={open}
+        aria-haspopup="menu"
         onClick={() => setOpen((value) => !value)}
         className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--surface)] text-xs font-semibold ring-1 ring-[var(--border)]"
       >
-        AD
+        {initials}
       </button>
       {open ? (
-        <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-1.5 shadow-xl">
-          <Link href="/profile" onClick={() => setOpen(false)} className="block rounded-xl px-3 py-2 text-sm hover:bg-[var(--background)]">
+        <div role="menu" className="absolute right-0 top-full z-50 mt-2 w-48 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-1.5 shadow-xl">
+          <Link role="menuitem" href="/profile" onClick={() => setOpen(false)} className="block rounded-xl px-3 py-2 text-sm hover:bg-[var(--background)]">
             {t('nav.profile')}
           </Link>
-          <Link href="/settings" onClick={() => setOpen(false)} className="block rounded-xl px-3 py-2 text-sm hover:bg-[var(--background)]">
+          <Link role="menuitem" href="/progress" onClick={() => setOpen(false)} className="block rounded-xl px-3 py-2 text-sm hover:bg-[var(--background)]">
+            {t('nav.progress')}
+          </Link>
+          <Link role="menuitem" href="/settings" onClick={() => setOpen(false)} className="block rounded-xl px-3 py-2 text-sm hover:bg-[var(--background)]">
             {t('nav.settings')}
           </Link>
-          <Link href="/study/lists" onClick={() => setOpen(false)} className="block rounded-xl px-3 py-2 text-sm hover:bg-[var(--background)]">
+          <Link role="menuitem" href="/study/lists" onClick={() => setOpen(false)} className="block rounded-xl px-3 py-2 text-sm hover:bg-[var(--background)]">
             {t('study.lists.link')}
           </Link>
           <button
             type="button"
+            role="menuitem"
             onClick={() => {
               setOpen(false);
               logout();
