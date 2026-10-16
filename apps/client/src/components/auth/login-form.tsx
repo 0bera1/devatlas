@@ -3,15 +3,15 @@
 import { AuthGoogleButton } from '@/components/auth/auth-google-button';
 import { AuthOrDivider } from '@/components/auth/auth-or-divider';
 import { AuthTextField } from '@/components/auth/auth-text-field';
-import { useToast } from '@/components/providers/toast-provider';
 import { useLogin } from '@/hooks/auth/use-login';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 
 export function LoginForm() {
   const { t } = useTranslations();
-  const { showSuccess } = useToast();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { submit, status, errorMessage, clearError } = useLogin();
@@ -24,7 +24,7 @@ export function LoginForm() {
   };
 
   const handleForgotClick = (): void => {
-    showSuccess(t('auth.forgotPasswordSoon'));
+    router.push('/forgot-password');
   };
 
   return (
