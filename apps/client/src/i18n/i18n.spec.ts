@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getMessages, locales, rtlLocales, isLocale, localeNames } from './index';
+import { getMessages, locales, rtlLocales, isLocale, localeNames, type MessageKey } from './index';
 
 describe('dil desteği', () => {
   it('Türkçe ve on popüler dil desteklenir', () => {
@@ -18,7 +18,18 @@ describe('dil desteği', () => {
     expect(isLocale('tr')).toBe(true);
   });
 
-  it('çevirisi olmayan dil İngilizce mesajları kullanır', () => {
-    expect(getMessages('zh')).toBe(getMessages('en'));
+  it('her dilin çeviri tablosu tüm anahtarları içerir', () => {
+    const referenceKeys = Object.keys(getMessages('tr')).sort();
+    for (const code of locales) {
+      const table = getMessages(code);
+      expect(Object.keys(table).sort(), code).toEqual(referenceKeys);
+      for (const key of referenceKeys) {
+        expect(table[key as MessageKey], `${code}:${key}`).toBeTruthy();
+      }
+    }
+  });
+
+  it('Çince mesajlar İngilizce tablodan ayrıdır', () => {
+    expect(getMessages('zh')).not.toBe(getMessages('en'));
   });
 });

@@ -1,4 +1,13 @@
 import { enMessages } from './en';
+import { arMessages } from './locales/ar';
+import { bnMessages } from './locales/bn';
+import { esMessages } from './locales/es';
+import { frMessages } from './locales/fr';
+import { hiMessages } from './locales/hi';
+import { ptMessages } from './locales/pt';
+import { ruMessages } from './locales/ru';
+import { urMessages } from './locales/ur';
+import { zhMessages } from './locales/zh';
 import { trMessages, type MessageKey } from './tr';
 
 export type { MessageKey };
@@ -61,10 +70,20 @@ export function isLocale(value: unknown): value is Locale {
   return typeof value === 'string' && (locales as string[]).includes(value);
 }
 
+const messageTables: Record<Locale, Record<MessageKey, string>> = {
+  tr: trMessages,
+  en: enMessages,
+  zh: zhMessages,
+  hi: hiMessages,
+  es: esMessages,
+  ar: arMessages,
+  fr: frMessages,
+  bn: bnMessages,
+  pt: ptMessages,
+  ru: ruMessages,
+  ur: urMessages,
+};
+
 export function getMessages(locale: Locale): Record<MessageKey, string> {
-  if (locale === 'tr') {
-    return trMessages as Record<MessageKey, string>;
-  }
-  // Çevirisi olmayan diller için İngilizce metin kullanılır.
-  return enMessages as Record<MessageKey, string>;
+  return messageTables[locale] ?? enMessages;
 }
