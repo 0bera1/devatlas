@@ -37,29 +37,31 @@ export function KnowledgeSectionTabs(props: KnowledgeSectionTabsProps): ReactNod
     <div
       role="radiogroup"
       aria-label={t('knowledge.section.label')}
-      className="inline-flex flex-wrap rounded-xl border border-zinc-200 bg-zinc-100 p-1 dark:border-zinc-700 dark:bg-zinc-900"
+      className="flex flex-wrap gap-x-6 gap-y-2 border-b border-[var(--border)]"
     >
       {SECTIONS.map((section: KnowledgeSection) => {
         const selected: boolean = value === section;
         return (
           <label
             key={section}
-            className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+            className={`relative -mb-px cursor-pointer border-b-2 pb-3 text-[15px] transition-colors focus-within:text-[var(--foreground)] ${
               selected
-                ? 'bg-white text-zinc-900 shadow-sm dark:bg-zinc-800 dark:text-zinc-50'
-                : 'text-zinc-600 hover:bg-zinc-200/60 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-100'
+                ? 'border-[var(--foreground)] font-semibold text-[var(--foreground)]'
+                : 'border-transparent text-[var(--muted)] hover:text-[var(--foreground)]'
             }`}
           >
             <input
               type="radio"
               name="knowledge-section"
-              className="sr-only"
+              className="peer sr-only"
               checked={selected}
               onChange={() => {
                 onChange(section);
               }}
             />
-            {labelFor(section)}
+            <span className="rounded peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-4 peer-focus-visible:outline-[var(--accent)]">
+              {labelFor(section)}
+            </span>
           </label>
         );
       })}

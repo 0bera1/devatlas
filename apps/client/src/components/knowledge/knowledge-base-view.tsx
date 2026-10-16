@@ -36,23 +36,23 @@ export function KnowledgeBaseView(): ReactNode {
   const debouncedSearch: string = useDebouncedValue(searchInput, 300);
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-10 lg:py-14">
-      <header className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <h1 className="font-sans text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50">
+    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
+      <header className="flex flex-col gap-6">
+        <div>
+          <h1 className="font-serif text-4xl font-medium leading-tight tracking-tight sm:text-5xl">
             {t('knowledge.title')}
           </h1>
-          <p className="max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-[var(--muted)]">
             {t('knowledge.intro')}
           </p>
         </div>
-        <KnowledgeSectionTabs value={section} onChange={setSection} />
-        <KnowledgeSectionSearch value={searchInput} onChange={setSearchInput} />
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">
-          {t('knowledge.search.hint')}
-        </p>
+        <div className="flex flex-col gap-4">
+          <KnowledgeSectionTabs value={section} onChange={setSection} />
+          <KnowledgeSectionSearch value={searchInput} onChange={setSearchInput} />
+          <p className="text-xs text-[var(--muted)]">{t('knowledge.search.hint')}</p>
+        </div>
       </header>
       {renderSection(section, debouncedSearch.trim())}
-    </main>
+    </div>
   );
 }

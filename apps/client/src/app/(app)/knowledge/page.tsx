@@ -7,9 +7,9 @@ import { Suspense, type ReactNode } from 'react';
 function KnowledgeFallback(): ReactNode {
   const { t } = useTranslations();
   return (
-    <main className="mx-auto flex max-w-3xl flex-1 flex-col px-6 py-16 text-zinc-500 dark:text-zinc-400">
+    <div className="mx-auto flex max-w-5xl flex-1 flex-col px-6 py-16 text-[var(--muted)]">
       {t('common.loading')}
-    </main>
+    </div>
   );
 }
 
