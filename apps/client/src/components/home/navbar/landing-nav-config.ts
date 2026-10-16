@@ -33,4 +33,14 @@ export const landingNavLinks: readonly LandingNavLinkConfig[] = [
     labelKey: 'nav.documents',
     isActive: (pathname: string): boolean => pathname.startsWith('/documents'),
   },
+  {
+    href: '/study',
+    labelKey: 'nav.study',
+    isActive: (pathname: string): boolean => pathname.startsWith('/study'),
+  },
+  {
+    href: '/settings',
+    labelKey: 'nav.settings',
+    isActive: (pathname: string): boolean => pathname.startsWith('/settings'),
+  },
 ];
