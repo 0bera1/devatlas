@@ -75,9 +75,8 @@ Yerel çalıştırma: `docker compose up -d` (proje kökünde). API: http://loca
 - [ ] Uygulama kabuğu: üst mod çubuğu (Bugün, Kitaplık, Keşif, Bilgi) ve komut paleti. Şu an eski gezinme korunuyor, Tekrar ve Ayarlar bağlantıları eklendi.
 - [ ] Ana sayfa (Bugün): günün planı, haftalık çubuk grafik, önce bunlar. Şu an yalnızca tasarım panelinde var.
 - [ ] Diyagram tuvali: yüzen araçlar, bağlam araç çubuğu, durum çubuğu. Şu an eski düzen; dışa aktarma, yerleşim ve paylaşım düğmeleri eklendi.
-- [ ] Doküman düzenleyici: odak modu, satır içi özellikler, ilgili içerikler
-- [ ] Keşif ve bilgi tabanı sayfalarının yeniden stillenmesi
-- [ ] Mobil uyum (duyarlı düzen) ve kontrast denetimi
+- [x] Doküman düzenleyici: başlık, meta çubuğu, seri yazı yüzeyi ve kenar sütunu yeniden stillendi (odak modu henüz yok)
+- [x] Keşif ve bilgi tabanı ana ekranları yeniden stillendi (bilgi tabanı detay sayfaları ve kartları bekliyor)- [ ] Mobil uyum (duyarlı düzen) ve kontrast denetimi
 - [ ] Yeni ekranların (ayarlar, tekrar, arama, kurtarma) Opsiyon B diline göre sadeleştirilmesi
 
 ### Test
