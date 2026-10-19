@@ -28,7 +28,7 @@ import Link from 'next/link';
 import { useMemo, useRef, type ReactNode, type RefObject } from 'react';
 
 /** Kaydırma alanının yüksekliği (viewport yüzdesi). Sahne bu alan boyunca sabit kalır. */
-const TRACK_VH = 640;
+const TRACK_VH = 900;
 
 /** Her bölümün başladığı ilerleme değeri; bölüm noktalarının hedefi. */
 const CHAPTER_STARTS: readonly number[] = [
@@ -42,7 +42,7 @@ const CHAPTER_STARTS: readonly number[] = [
 const CHAPTER_COUNT: number = CHAPTER_STARTS.length;
 
 /** Veri noktalarının bağlantı üzerinde akmaya başladığı ilerleme değeri. */
-const PULSE_FROM: number = 0.5;
+const PULSE_FROM: number = CHAPTERS.transition[1];
 
 const FEATURE_KEYS: ReadonlyArray<{ title: MessageKey; body: MessageKey }> = [
   { title: 'home.story.feature1.title', body: 'home.story.feature1.body' },

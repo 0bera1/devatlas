@@ -46,12 +46,12 @@ export const FEATURE_NODE_IDS: readonly string[] = ['api', 'cache', 'worker', 'q
 
 /** Hikâyenin bölüm aralıkları (ilerleme ölçeğinde). */
 export const CHAPTERS = {
-  hero: [-0.2, 0.12],
-  problem: [0.12, 0.26],
-  transition: [0.26, 0.4],
-  features: [0.4, 0.66],
-  terminal: [0.66, 0.84],
-  demo: [0.84, 1.2],
+  hero: [-0.2, 0.1],
+  problem: [0.1, 0.2],
+  transition: [0.2, 0.32],
+  features: [0.32, 0.52],
+  terminal: [0.52, 0.66],
+  demo: [0.66, 1.2],
 } as const;
 
 export const FEATURE_COUNT: number = FEATURE_NODE_IDS.length;
@@ -87,7 +87,7 @@ export function lerp(from: number, to: number, t: number): number {
 }
 
 /** Bir bölümün görünürlüğü: giriş ve çıkışta yumuşak geçiş, dışında 0. */
-export function chapterOpacity(progress: number, start: number, end: number, fade: number = 0.05): number {
+export function chapterOpacity(progress: number, start: number, end: number, fade: number = 0.03): number {
   if (progress < start || progress > end) {
     return 0;
   }
@@ -165,12 +165,12 @@ export function layerOpacities(progress: number): LayerOpacities {
 
 /** Düğüm ve kenar konumlarını hikâyenin o anki ilerlemesine göre hesaplar. */
 export function computeGraphFrame(progress: number): GraphFrame {
-  const organize: number = smoothstep(segment(progress, 0.2, 0.36));
-  const drawEdges: number = segment(progress, 0.3, 0.44);
+  const organize: number = smoothstep(segment(progress, CHAPTERS.problem[1] - 0.04, CHAPTERS.transition[1] - 0.04));
+  const drawEdges: number = segment(progress, CHAPTERS.transition[0] + 0.03, CHAPTERS.transition[1]);
   const featureIndex: number = activeFeatureIndex(progress);
   const highlightedId: string | null = featureIndex >= 0 ? (FEATURE_NODE_IDS[featureIndex] ?? null) : null;
-  const cursorVisible: number = segment(progress, 0.84, 0.9);
-  const cursorT: number = smoothstep(segment(progress, 0.84, 1));
+  const cursorVisible: number = segment(progress, CHAPTERS.demo[0], CHAPTERS.demo[0] + 0.06);
+  const cursorT: number = smoothstep(segment(progress, CHAPTERS.demo[0], 1));
 
   const positions: Map<string, Point> = new Map();
   const nodes: GraphNodeFrame[] = STORY_NODES.map((node: StoryNode): GraphNodeFrame => {
@@ -250,9 +250,11 @@ export interface TerminalFrame {
 /** Terminal penceresinin o andaki görünümü. Bölüm içindeki ilerleme satırlara eşit paylaştırılır. */
 export function terminalFrame(progress: number): TerminalFrame {
   const [start, end] = CHAPTERS.terminal;
-  const appear: number = smoothstep(segment(progress, start, start + 0.04));
-  const typingStart: number = start + 0.05;
-  const typingEnd: number = end - 0.02;
+  // Zamanlama bölüm uzunluğuna oranlıdır: pencere ilk %20'de gelir, yazı %25 ile %90 arasında akar.
+  const span: number = end - start;
+  const appear: number = smoothstep(segment(progress, start, start + span * 0.2));
+  const typingStart: number = start + span * 0.25;
+  const typingEnd: number = start + span * 0.9;
   const slot: number = (typingEnd - typingStart) / TERMINAL_LOG.length;
 
   const lines: TerminalLine[] = TERMINAL_LOG.map((entry, index): TerminalLine => {

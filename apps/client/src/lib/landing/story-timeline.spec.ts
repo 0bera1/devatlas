@@ -61,7 +61,7 @@ describe('bölüm görünürlüğü', () => {
   });
 
   it('bölüm ortasında tam görünür', () => {
-    expect(chapterOpacity(0.19, CHAPTERS.problem[0], CHAPTERS.problem[1])).toBeCloseTo(1);
+    expect(chapterOpacity((CHAPTERS.problem[0] + CHAPTERS.problem[1]) / 2, CHAPTERS.problem[0], CHAPTERS.problem[1])).toBeCloseTo(1);
   });
 
   it('hikâye başında ilk bölüm tam görünür', () => {
