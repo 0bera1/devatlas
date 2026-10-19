@@ -2,13 +2,36 @@
 
 import { useAuth } from '@/components/providers/auth-provider';
 import { useTranslations } from '@/hooks/i18n/use-translations';
+import type { MessageKey } from '@/i18n';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 
-/** Giriş yapmamış ziyaretçiler için üst çubuk. Oturumu açık kullanıcılar zaten /today'e yönlendirilir. */
+/** Misafirlerin görebildiği iki bölüm. Diğer sayfalar giriş gerektirir. */
+const GUEST_LINKS: ReadonlyArray<{ href: string; label: MessageKey }> = [
+  { href: '/explore', label: 'nav.explore' },
+  { href: '/knowledge', label: 'nav.knowledge' },
+];
+
+/** Giriş yapmamış ziyaretçiler için üst çubuk: ana sayfa, Keşif ve Bilgi tabanında ortak. */
 export function LandingHeader(): ReactNode {
   const { t } = useTranslations();
   const { isReady } = useAuth();
+  const pathname: string = usePathname() ?? '';
+
+  const links = GUEST_LINKS.map((link) => {
+    const active: boolean = pathname.startsWith(link.href);
+    return (
+      <Link
+        key={link.href}
+        href={link.href}
+        aria-current={active ? 'page' : undefined}
+        className={active ? 'font-semibold text-[var(--foreground)]' : 'text-[var(--muted)] hover:text-[var(--foreground)]'}
+      >
+        {t(link.label)}
+      </Link>
+    );
+  });
 
   return (
     <header className="relative z-40 border-b border-[var(--border)] bg-[var(--background)]">
@@ -18,14 +41,7 @@ export function LandingHeader(): ReactNode {
           {t('nav.brand')}
         </Link>
 
-        <nav className="ml-auto hidden items-center gap-6 text-sm text-[var(--muted)] sm:flex">
-          <Link href="/explore" className="hover:text-[var(--foreground)]">
-            {t('nav.explore')}
-          </Link>
-          <Link href="/knowledge" className="hover:text-[var(--foreground)]">
-            {t('nav.knowledge')}
-          </Link>
-        </nav>
+        <nav className="ml-auto hidden items-center gap-6 text-sm sm:flex">{links}</nav>
 
         <div className="ml-auto flex items-center gap-2 sm:ml-0">
           {!isReady ? (
@@ -48,6 +64,8 @@ export function LandingHeader(): ReactNode {
           )}
         </div>
       </div>
+
+      <nav className="mx-auto flex max-w-6xl gap-6 px-4 pb-3 text-sm sm:hidden">{links}</nav>
     </header>
   );
 }

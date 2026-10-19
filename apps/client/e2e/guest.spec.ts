@@ -15,6 +15,17 @@ test('şifre sıfırlama isteği her zaman aynı onay mesajını gösterir', asy
   await expect(page.getByText('Adresin kayıtlıysa bir bağlantı gönderildi')).toBeVisible();
 });
 
+test('misafir bilgi tabanında yalnızca keşif ve bilgi tabanı bağlantılarını görür', async ({ page }) => {
+  await page.goto('/knowledge');
+  await expect(page.getByRole('heading', { name: 'Bilgi tabanı' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Keşif' }).first()).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Kayıt ol' })).toBeVisible();
+  // Giriş gerektiren bölümler ve hesap menüsü misafire gösterilmez.
+  await expect(page.getByRole('link', { name: 'Bugün' })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Kitaplık' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Hesap' })).toHaveCount(0);
+});
+
 test('doğrulanmamış token ile doğrulama sayfası hata gösterir', async ({ page }) => {
   await page.goto('/verify-email?token=gecersiz-token-gecersiz-token');
   await expect(page.getByText('Bağlantı geçersiz veya süresi dolmuş')).toBeVisible();

@@ -1,5 +1,6 @@
 'use client';
 
+import { LandingHeader } from '@/components/home/landing-header';
 import { useAuth } from '@/components/providers/auth-provider';
 import { NotificationsMenu } from '@/components/notifications/notifications-menu';
 import { CommandPalette, OPEN_PALETTE_EVENT } from '@/components/shell/command-palette';
@@ -28,6 +29,26 @@ const MODES: readonly ModeLink[] = [
 export function AppShell({ children }: { children: ReactNode }): ReactNode {
   const { t } = useTranslations();
   const pathname: string = usePathname() ?? '';
+  const { token, isReady } = useAuth();
+
+  // Oturum yokken (ya da henüz bilinmiyorken) yalnızca misafir başlığı gösterilir: Keşif ve Bilgi tabanı.
+  // Giriş gerektiren sayfalar kendi içinde /login'e yönlendirir.
+  if (!isReady || token === null) {
+    return (
+      <div className="flex min-h-full flex-1 flex-col bg-[var(--background)] text-[var(--foreground)]">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-[var(--foreground)] focus:px-3 focus:py-2 focus:text-[var(--background)]"
+        >
+          {t('shell.skipToContent')}
+        </a>
+        <LandingHeader />
+        <main id="main-content" className="flex flex-1 flex-col">
+          {children}
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-full flex-1 flex-col bg-[var(--background)] text-[var(--foreground)]">
