@@ -142,11 +142,25 @@ export function activeFeatureIndex(progress: number): number {
 }
 
 /** Grafik ve terminal katmanlarının opaklığı. Terminal, özellikler ile demo arasında grafiğin yerini alır. */
-export function layerOpacities(progress: number): { readonly graph: number; readonly terminal: number } {
+export interface LayerOpacities {
+  /** Hikâye grafiği (dağınıktan düzenliye geçiş ve özellik vurguları). */
+  readonly graph: number;
+  /** Terminal penceresi. */
+  readonly terminal: number;
+  /** Bilgi tabanından gerçek diyagram önizlemesi (demo bölümü). */
+  readonly live: number;
+}
+
+/**
+ * Sahnedeki üç katmanın opaklığı. Grafik başlangıçta ve özellik bölümlerinde görünür; terminal kendi
+ * bölümünde; canlı önizleme demo bölümünde. Canlı veri yoksa demo bölümünde grafik yerine geçer.
+ */
+export function layerOpacities(progress: number): LayerOpacities {
   const terminalIn: number = smoothstep(segment(progress, CHAPTERS.terminal[0] - 0.02, CHAPTERS.terminal[0] + 0.03));
   const terminalOut: number = smoothstep(segment(progress, CHAPTERS.terminal[1] - 0.02, CHAPTERS.terminal[1] + 0.03));
   const terminal: number = clamp01(terminalIn - terminalOut);
-  return { graph: clamp01(1 - terminal), terminal };
+  const live: number = smoothstep(segment(progress, CHAPTERS.demo[0] - 0.02, CHAPTERS.demo[0] + 0.03));
+  return { graph: clamp01(1 - terminal - live), terminal, live };
 }
 
 /** Düğüm ve kenar konumlarını hikâyenin o anki ilerlemesine göre hesaplar. */

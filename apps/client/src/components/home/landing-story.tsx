@@ -2,8 +2,11 @@
 
 import { LandingFooter } from '@/components/home/landing-footer';
 import { LandingHeader } from '@/components/home/landing-header';
+import { LandingLiveDiagram } from '@/components/home/landing-live-diagram';
+import { useLandingLiveData, type LandingLiveData } from '@/components/home/use-landing-live-data';
 import { useStoryProgress } from '@/components/home/use-story-progress';
 import { useTranslations } from '@/hooks/i18n/use-translations';
+import type { KnowledgeDocumentSummary } from '@/domains/knowledge/knowledgeDomains';
 import type { MessageKey } from '@/i18n';
 import {
   CHAPTERS,
@@ -18,6 +21,7 @@ import {
   layerOpacities,
   terminalFrame,
   type GraphFrame,
+  type LayerOpacities,
   type TerminalFrame,
 } from '@/lib/landing/story-timeline';
 import Link from 'next/link';
@@ -51,14 +55,20 @@ function chapterLabel(index: number, total: number): string {
   return `${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
 }
 
-/** Kaydırmaya bağlı tanıtım: bölümler sırayla açılır, grafik ve terminal sahnede birbirinin yerine geçer. */
+/** Kaydırmaya bağlı tanıtım. Grafik, terminal ve demo katmanları sahnede sırayla birbirinin yerine geçer. */
 export function LandingStory(): ReactNode {
   const { t } = useTranslations();
   const trackRef = useRef<HTMLDivElement>(null);
   const progress: number = useStoryProgress(trackRef);
+  const live: LandingLiveData = useLandingLiveData();
   const frame: GraphFrame = useMemo((): GraphFrame => computeGraphFrame(progress), [progress]);
   const terminal: TerminalFrame = useMemo((): TerminalFrame => terminalFrame(progress), [progress]);
-  const layers = useMemo(() => layerOpacities(progress), [progress]);
+  const layers: LayerOpacities = useMemo((): LayerOpacities => layerOpacities(progress), [progress]);
+
+  // Canlı veri yoksa demo bölümünde hikâye grafiği gösterilir.
+  const hasLive: boolean = live.diagram !== null;
+  const graphOpacity: number = hasLive ? layers.graph : 1 - layers.terminal;
+  const liveOpacity: number = hasLive ? layers.live : 0;
 
   const activeChapter: number = CHAPTER_STARTS.reduce((current: number, start: number, index: number): number => (progress >= start - 0.001 ? index : current), 0);
 
@@ -69,14 +79,19 @@ export function LandingStory(): ReactNode {
       <div ref={trackRef} className="relative" style={{ height: `${TRACK_VH}vh` }}>
         <div className="sticky top-0 flex h-dvh flex-col overflow-hidden">
           <div className="mx-auto grid w-full max-w-6xl flex-1 content-center gap-8 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center lg:gap-12">
-            <StoryCopy progress={progress} t={t} />
+            <StoryCopy progress={progress} t={t} documents={live.documents} />
             <div className="grid min-w-0 [&>*]:col-start-1 [&>*]:row-start-1">
-              <div style={{ opacity: layers.graph }} aria-hidden={layers.graph < 0.01}>
+              <div style={{ opacity: graphOpacity }} aria-hidden={graphOpacity < 0.01}>
                 <StoryGraph frame={frame} showPulses={progress >= PULSE_FROM} />
               </div>
               <div style={{ opacity: layers.terminal, visibility: layers.terminal < 0.01 ? 'hidden' : 'visible' }} aria-hidden={layers.terminal < 0.01}>
                 <TerminalWindow frame={terminal} />
               </div>
+              {hasLive && live.diagram !== null ? (
+                <div style={{ opacity: liveOpacity, visibility: liveOpacity < 0.01 ? 'hidden' : 'visible' }} aria-hidden={liveOpacity < 0.01}>
+                  <LandingLiveDiagram diagram={live.diagram} progress={progress} />
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -156,11 +171,12 @@ function ChapterDots(props: { readonly trackRef: RefObject<HTMLElement | null>; 
 interface StoryCopyProps {
   readonly progress: number;
   readonly t: (key: MessageKey) => string;
+  readonly documents: readonly KnowledgeDocumentSummary[];
 }
 
 /** Tüm bölüm metinleri aynı hücrede üst üste durur; görünürlük ilerlemeye göre değişir. */
 function StoryCopy(props: StoryCopyProps): ReactNode {
-  const { progress, t } = props;
+  const { progress, t, documents } = props;
   const eyebrowClass = 'text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]';
   const titleClass = 'mt-4 font-serif text-4xl font-medium leading-tight tracking-tight sm:text-5xl';
   const bodyClass = 'mt-5 max-w-lg text-[15px] leading-relaxed text-[var(--muted)]';
@@ -217,11 +233,31 @@ function StoryCopy(props: StoryCopyProps): ReactNode {
         <p className={eyebrowClass}>{chapterLabel(5, CHAPTER_COUNT)}</p>
         <h2 className={titleClass}>{t('home.story.demo.title')}</h2>
         <p className={bodyClass}>{t('home.story.demo.body')}</p>
-        <div className="mt-8 flex flex-wrap items-center gap-4">
-          <Link href="/register" className="rounded-full bg-[var(--foreground)] px-6 py-3 text-sm font-semibold text-[var(--background)] transition-opacity hover:opacity-90">
+        {documents.length > 0 ? (
+          <ul className="mt-6 hidden divide-y divide-[var(--border)] border-y border-[var(--border)] md:block">
+            {documents.map((doc) => (
+              <li key={doc.id}>
+                <Link
+                  href={`/knowledge/documents/${encodeURIComponent(doc.slug)}`}
+                  className="flex items-baseline justify-between gap-4 py-3 transition-colors hover:text-[var(--accent)]"
+                >
+                  <span className="font-serif text-lg leading-snug">{doc.title}</span>
+                  <span className="shrink-0 text-xs text-[var(--muted)]">{t('knowledge.section.documents')}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <Link href="/explore" className="rounded-full bg-[var(--foreground)] px-6 py-3 text-sm font-semibold text-[var(--background)] transition-opacity hover:opacity-90">
+            {t('nav.explore')}
+          </Link>
+          <Link href="/knowledge" className="rounded-full border border-[var(--border)] px-6 py-3 text-sm text-[var(--foreground)] transition-colors hover:bg-[var(--surface)]">
+            {t('knowledge.title')}
+          </Link>
+          <Link href="/register" className="px-2 py-3 text-sm font-medium text-[var(--muted)] underline-offset-4 hover:text-[var(--foreground)] hover:underline">
             {t('home.story.cta.button')}
           </Link>
-          <span className="text-sm text-[var(--muted)]">{t('home.story.cta.title')}</span>
         </div>
       </Chapter>
     </div>

@@ -143,10 +143,17 @@ describe('katmanlar', () => {
     expect(mid.graph).toBeCloseTo(0);
   });
 
-  it('başlangıçta ve demo bölümünde grafik görünür', () => {
+  it('başlangıçta grafik görünür, canlı önizleme ve terminal gizlidir', () => {
     expect(layerOpacities(0).graph).toBeCloseTo(1);
-    expect(layerOpacities(1).graph).toBeCloseTo(1);
     expect(layerOpacities(0).terminal).toBeCloseTo(0);
+    expect(layerOpacities(0).live).toBeCloseTo(0);
+  });
+
+  it('demo bölümünde canlı önizleme grafiğin yerini alır', () => {
+    const demo = layerOpacities(0.95);
+    expect(demo.live).toBeCloseTo(1);
+    expect(demo.graph).toBeCloseTo(0);
+    expect(demo.terminal).toBeCloseTo(0);
   });
 });
 
