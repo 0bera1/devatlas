@@ -735,4 +735,7 @@ export const hiMessages: Record<MessageKey, string> = {
   'explore.recent': 'हाल ही में जोड़े गए',
   'documents.toc': 'इस पृष्ठ पर',
   'explore.read': 'पढ़ें',
+  'knowledge.progress.eyebrow': 'साक्षात्कार की तैयारी',
+  'knowledge.progress.completed': 'पूर्ण किए गए प्रश्न',
+  'knowledge.progress.loginHint': 'अपनी प्रगति देखने के लिए साइन इन करें।',
 };

@@ -728,4 +728,7 @@ export const bnMessages: Record<MessageKey, string> = {
   'explore.recent': 'সম্প্রতি যোগ করা',
   'documents.toc': 'এই পৃষ্ঠায়',
   'explore.read': 'পড়ুন',
+  'knowledge.progress.eyebrow': 'সাক্ষাৎকার প্রস্তুতি',
+  'knowledge.progress.completed': 'সম্পন্ন প্রশ্ন',
+  'knowledge.progress.loginHint': 'আপনার অগ্রগতি দেখতে সাইন ইন করুন।',
 };

@@ -723,4 +723,7 @@ export const zhMessages: Record<MessageKey, string> = {
   'explore.recent': '最近添加',
   'documents.toc': '本页内容',
   'explore.read': '阅读',
+  'knowledge.progress.eyebrow': '面试准备',
+  'knowledge.progress.completed': '已完成的问题',
+  'knowledge.progress.loginHint': '登录以跟踪您的进度。',
 };

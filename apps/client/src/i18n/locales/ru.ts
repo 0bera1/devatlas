@@ -784,4 +784,7 @@ export const ruMessages: Record<MessageKey, string> = {
   'explore.recent': 'Недавно добавленные',
   'documents.toc': 'На этой странице',
   'explore.read': 'Читать',
+  'knowledge.progress.eyebrow': 'Подготовка к собеседованию',
+  'knowledge.progress.completed': 'Пройденные вопросы',
+  'knowledge.progress.loginHint': 'Войдите, чтобы отслеживать прогресс.',
 };

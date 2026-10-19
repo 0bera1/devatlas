@@ -782,6 +782,9 @@ export const trMessages = {
   'explore.recent': 'Yeni eklenenler',
   'documents.toc': 'Bu sayfada',
   'explore.read': 'Oku',
+  'knowledge.progress.eyebrow': 'Mülakat hazırlığı',
+  'knowledge.progress.completed': 'Tamamlanan sorular',
+  'knowledge.progress.loginHint': 'İlerlemenizi takip etmek için giriş yapın.',
 } as const;
 
 export type MessageKey = keyof typeof trMessages;

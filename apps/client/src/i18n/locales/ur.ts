@@ -727,4 +727,7 @@ export const urMessages: Record<MessageKey, string> = {
   'explore.recent': 'حال ہی میں شامل',
   'documents.toc': 'اس صفحے پر',
   'explore.read': 'پڑھیں',
+  'knowledge.progress.eyebrow': 'انٹرویو کی تیاری',
+  'knowledge.progress.completed': 'مکمل سوالات',
+  'knowledge.progress.loginHint': 'اپنی پیش رفت دیکھنے کے لیے سائن ان کریں۔',
 };

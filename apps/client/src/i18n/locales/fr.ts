@@ -784,4 +784,7 @@ export const frMessages: Record<MessageKey, string> = {
   'explore.recent': 'Ajouts récents',
   'documents.toc': 'Sur cette page',
   'explore.read': 'Lire',
+  'knowledge.progress.eyebrow': 'Préparation aux entretiens',
+  'knowledge.progress.completed': 'Questions terminées',
+  'knowledge.progress.loginHint': 'Connectez-vous pour suivre votre progression.',
 };

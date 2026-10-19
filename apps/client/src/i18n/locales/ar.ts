@@ -730,4 +730,7 @@ export const arMessages: Record<MessageKey, string> = {
   'explore.recent': 'أضيف مؤخرًا',
   'documents.toc': 'في هذه الصفحة',
   'explore.read': 'اقرأ',
+  'knowledge.progress.eyebrow': 'التحضير للمقابلات',
+  'knowledge.progress.completed': 'الأسئلة المكتملة',
+  'knowledge.progress.loginHint': 'سجّل الدخول لمتابعة تقدمك.',
 };

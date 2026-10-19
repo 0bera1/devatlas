@@ -4,6 +4,7 @@ import { KnowledgeDiagramsPanel } from '@/components/knowledge/knowledge-diagram
 import { KnowledgeFlowsPanel } from '@/components/knowledge/knowledge-flows-panel';
 import { KnowledgeDocumentsPanel } from '@/components/knowledge/knowledge-documents-panel';
 import { KnowledgeInterviewPanel } from '@/components/knowledge/interview/knowledge-interview-panel';
+import { KnowledgeProgressCard } from '@/components/knowledge/knowledge-progress-card';
 import { KnowledgeSectionSearch } from '@/components/knowledge/knowledge-section-search';
 import { KnowledgeSectionTabs } from '@/components/knowledge/knowledge-section-tabs';
 import type { KnowledgeSection } from '@/domains/knowledge/knowledgeDomains';
@@ -46,10 +47,13 @@ export function KnowledgeBaseView(): ReactNode {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
       <header className="flex flex-col gap-6">
-        <div>
-          <p className="text-sm text-[var(--muted)]">{t(SECTION_LABELS[section])}</p>
-          <h1 className="mt-1.5 font-serif text-4xl font-medium leading-tight tracking-tight sm:text-5xl">{t('knowledge.title')}</h1>
-          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-[var(--muted)]">{t('knowledge.intro')}</p>
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-6 md:grid-cols-[minmax(0,1fr)_260px] md:items-end">
+          <div>
+            <p className="text-sm text-[var(--muted)]">{section === 'interview' ? t('knowledge.progress.eyebrow') : t(SECTION_LABELS[section])}</p>
+            <h1 className="mt-1.5 font-serif text-4xl font-medium leading-tight tracking-tight sm:text-5xl">{t('knowledge.title')}</h1>
+            <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-[var(--muted)]">{t('knowledge.intro')}</p>
+          </div>
+          <KnowledgeProgressCard />
         </div>
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <KnowledgeSectionTabs value={section} onChange={setSection} />

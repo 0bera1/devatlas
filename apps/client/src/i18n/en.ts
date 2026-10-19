@@ -784,4 +784,7 @@ export const enMessages: Record<MessageKey, string> = {
   'explore.recent': 'Recently added',
   'documents.toc': 'On this page',
   'explore.read': 'Read',
+  'knowledge.progress.eyebrow': 'Interview preparation',
+  'knowledge.progress.completed': 'Completed questions',
+  'knowledge.progress.loginHint': 'Sign in to track your progress.',
 };

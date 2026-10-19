@@ -784,4 +784,7 @@ export const ptMessages: Record<MessageKey, string> = {
   'explore.recent': 'Adicionados recentemente',
   'documents.toc': 'Nesta página',
   'explore.read': 'Ler',
+  'knowledge.progress.eyebrow': 'Preparação para entrevistas',
+  'knowledge.progress.completed': 'Perguntas concluídas',
+  'knowledge.progress.loginHint': 'Entre para acompanhar seu progresso.',
 };
