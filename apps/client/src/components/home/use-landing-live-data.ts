@@ -2,14 +2,22 @@
 
 import { knowledgeApi } from '@/api/knowledge/knowledgeApi';
 import { useTranslations } from '@/hooks/i18n/use-translations';
-import type { KnowledgeDiagramRecord, KnowledgeDocumentSummary } from '@/domains/knowledge/knowledgeDomains';
+import type { KnowledgeDiagramRecord } from '@/domains/knowledge/knowledgeDomains';
 import { useQuery } from '@tanstack/react-query';
+
+export type LandingExampleKind = 'document' | 'diagram' | 'flow';
+
+export interface LandingExample {
+  readonly kind: LandingExampleKind;
+  readonly slug: string;
+  readonly title: string;
+}
 
 export interface LandingLiveData {
   /** Bilgi tabanından, en az üç düğümü olan bir diyagramın tam kaydı. Yüklenemezse null. */
   readonly diagram: KnowledgeDiagramRecord | null;
-  /** Bilgi tabanından üç doküman özeti. */
-  readonly documents: readonly KnowledgeDocumentSummary[];
+  /** Demo altındaki örnekler: bir doküman, bir diyagram (canlı çizilen) ve bir akış; bulunanlar sırayla. */
+  readonly examples: readonly LandingExample[];
   readonly isLoading: boolean;
 }
 
@@ -36,19 +44,35 @@ export function useLandingLiveData(): LandingLiveData {
     retry: 1,
   });
 
-  const documentsQuery = useQuery({
-    queryKey: ['landing', 'live-documents', locale],
-    queryFn: async (): Promise<readonly KnowledgeDocumentSummary[]> => {
-      const list = await knowledgeApi.listDocuments(1);
-      return list.items.slice(0, 3);
+  const documentQuery = useQuery({
+    queryKey: ['landing', 'live-document', locale],
+    queryFn: async (): Promise<LandingExample | null> => {
+      const first = (await knowledgeApi.listDocuments(1)).items[0];
+      return first === undefined ? null : { kind: 'document', slug: first.slug, title: first.title };
     },
     staleTime: 5 * 60_000,
     retry: 1,
   });
 
+  const flowQuery = useQuery({
+    queryKey: ['landing', 'live-flow', locale],
+    queryFn: async (): Promise<LandingExample | null> => {
+      const first = (await knowledgeApi.listFlows(locale, 1)).items[0];
+      return first === undefined ? null : { kind: 'flow', slug: first.slug, title: first.title };
+    },
+    staleTime: 5 * 60_000,
+    retry: 1,
+  });
+
+  const diagram: KnowledgeDiagramRecord | null = diagramQuery.data?.nodes.length ? diagramQuery.data : null;
+  const diagramExample: LandingExample | null = diagram === null ? null : { kind: 'diagram', slug: diagram.slug, title: diagram.title };
+  const examples: LandingExample[] = [documentQuery.data ?? null, diagramExample, flowQuery.data ?? null].filter(
+    (item): item is LandingExample => item !== null,
+  );
+
   return {
-    diagram: diagramQuery.data?.nodes.length ? diagramQuery.data : null,
-    documents: documentsQuery.data ?? [],
-    isLoading: diagramQuery.isPending || documentsQuery.isPending,
+    diagram,
+    examples,
+    isLoading: diagramQuery.isPending || documentQuery.isPending || flowQuery.isPending,
   };
 }

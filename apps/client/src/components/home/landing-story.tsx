@@ -6,7 +6,7 @@ import { LandingLiveDiagram } from '@/components/home/landing-live-diagram';
 import { useLandingLiveData, type LandingLiveData } from '@/components/home/use-landing-live-data';
 import { useStoryProgress } from '@/components/home/use-story-progress';
 import { useTranslations } from '@/hooks/i18n/use-translations';
-import type { KnowledgeDocumentSummary } from '@/domains/knowledge/knowledgeDomains';
+import type { LandingExample, LandingExampleKind } from '@/components/home/use-landing-live-data';
 import type { MessageKey } from '@/i18n';
 import {
   CHAPTERS,
@@ -51,6 +51,19 @@ const FEATURE_KEYS: ReadonlyArray<{ title: MessageKey; body: MessageKey }> = [
   { title: 'home.story.feature4.title', body: 'home.story.feature4.body' },
 ];
 
+/** Demo örneklerinin bilgi tabanındaki sayfaları ve tekil tür etiketleri. */
+const EXAMPLE_ROUTES: Readonly<Record<LandingExampleKind, string>> = {
+  document: '/knowledge/documents',
+  diagram: '/knowledge/diagrams',
+  flow: '/knowledge/flows',
+};
+
+const EXAMPLE_LABELS: Readonly<Record<LandingExampleKind, MessageKey>> = {
+  document: 'knowledge.interview.resourceKind.document',
+  diagram: 'knowledge.interview.resourceKind.diagram',
+  flow: 'knowledge.interview.resourceKind.flow',
+};
+
 function chapterLabel(index: number, total: number): string {
   return `${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
 }
@@ -79,7 +92,7 @@ export function LandingStory(): ReactNode {
       <div ref={trackRef} className="relative" style={{ height: `${TRACK_VH}vh` }}>
         <div className="sticky top-0 flex h-dvh flex-col overflow-hidden">
           <div className="mx-auto grid w-full max-w-6xl flex-1 content-center gap-8 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center lg:gap-12">
-            <StoryCopy progress={progress} t={t} documents={live.documents} />
+            <StoryCopy progress={progress} t={t} examples={live.examples} />
             <div className="grid min-w-0 [&>*]:col-start-1 [&>*]:row-start-1">
               <div style={{ opacity: graphOpacity }} aria-hidden={graphOpacity < 0.01}>
                 <StoryGraph frame={frame} showPulses={progress >= PULSE_FROM} />
@@ -171,12 +184,12 @@ function ChapterDots(props: { readonly trackRef: RefObject<HTMLElement | null>; 
 interface StoryCopyProps {
   readonly progress: number;
   readonly t: (key: MessageKey) => string;
-  readonly documents: readonly KnowledgeDocumentSummary[];
+  readonly examples: readonly LandingExample[];
 }
 
 /** Tüm bölüm metinleri aynı hücrede üst üste durur; görünürlük ilerlemeye göre değişir. */
 function StoryCopy(props: StoryCopyProps): ReactNode {
-  const { progress, t, documents } = props;
+  const { progress, t, examples } = props;
   const eyebrowClass = 'text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]';
   const titleClass = 'mt-4 font-serif text-4xl font-medium leading-tight tracking-tight sm:text-5xl';
   const bodyClass = 'mt-5 max-w-lg text-[15px] leading-relaxed text-[var(--muted)]';
@@ -233,16 +246,16 @@ function StoryCopy(props: StoryCopyProps): ReactNode {
         <p className={eyebrowClass}>{chapterLabel(5, CHAPTER_COUNT)}</p>
         <h2 className={titleClass}>{t('home.story.demo.title')}</h2>
         <p className={bodyClass}>{t('home.story.demo.body')}</p>
-        {documents.length > 0 ? (
+        {examples.length > 0 ? (
           <ul className="mt-6 hidden divide-y divide-[var(--border)] border-y border-[var(--border)] md:block">
-            {documents.map((doc) => (
-              <li key={doc.id}>
+            {examples.map((example) => (
+              <li key={`${example.kind}-${example.slug}`}>
                 <Link
-                  href={`/knowledge/documents/${encodeURIComponent(doc.slug)}`}
+                  href={`${EXAMPLE_ROUTES[example.kind]}/${encodeURIComponent(example.slug)}`}
                   className="flex items-baseline justify-between gap-4 py-3 transition-colors hover:text-[var(--accent)]"
                 >
-                  <span className="font-serif text-lg leading-snug">{doc.title}</span>
-                  <span className="shrink-0 text-xs text-[var(--muted)]">{t('knowledge.section.documents')}</span>
+                  <span className="font-serif text-lg leading-snug">{example.title}</span>
+                  <span className="shrink-0 text-xs text-[var(--muted)]">{t(EXAMPLE_LABELS[example.kind])}</span>
                 </Link>
               </li>
             ))}
