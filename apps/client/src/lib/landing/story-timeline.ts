@@ -25,9 +25,9 @@ export interface StoryNode {
 
 export const STORY_NODES: readonly StoryNode[] = [
   { id: 'api', label: 'API', scatter: { x: 300, y: 24 }, layout: { x: 70, y: 200 }, accent: true },
-  { id: 'cache', label: 'Cache', scatter: { x: 24, y: 318 }, layout: { x: 240, y: 100 }, accent: false },
+  { id: 'cache', label: 'Cache', scatter: { x: 70, y: 318 }, layout: { x: 240, y: 100 }, accent: false },
   { id: 'queue', label: 'Queue', scatter: { x: 456, y: 318 }, layout: { x: 240, y: 300 }, accent: false },
-  { id: 'worker', label: 'Worker', scatter: { x: 40, y: 70 }, layout: { x: 410, y: 200 }, accent: false },
+  { id: 'worker', label: 'Worker', scatter: { x: 96, y: 70 }, layout: { x: 410, y: 200 }, accent: false },
   { id: 'store', label: 'Store', scatter: { x: 400, y: 24 }, layout: { x: 530, y: 100 }, accent: false },
   { id: 'search', label: 'Search', scatter: { x: 260, y: 330 }, layout: { x: 530, y: 300 }, accent: false },
 ];
