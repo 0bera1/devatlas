@@ -12,7 +12,7 @@ const buttonClass =
   'w-full rounded-full bg-[var(--foreground)] px-5 py-3 text-sm font-semibold text-[var(--background)] disabled:opacity-60';
 
 function Notice(props: { tone: 'ok' | 'error'; text: string }): ReactNode {
-  const toneClass = props.tone === 'ok' ? 'border-emerald-500/40 text-emerald-700' : 'border-red-500/40 text-red-700';
+  const toneClass = props.tone === 'ok' ? 'border-emerald-600/40 text-emerald-800 dark:text-emerald-300' : 'border-red-500/40 text-red-700 dark:text-red-300';
   return (
     <div role={props.tone === 'error' ? 'alert' : 'status'} className={`rounded-xl border px-4 py-3 text-sm ${toneClass}`}>
       {props.text}

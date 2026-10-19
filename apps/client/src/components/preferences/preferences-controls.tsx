@@ -34,17 +34,11 @@ export function PreferencesControls(
   const isAuth: boolean = variant === 'auth';
   const isCompact: boolean = compact === true;
 
-  const shell: string = isAuth
-    ? `inline-flex max-w-full flex-wrap items-center rounded-full border border-white/15 bg-[var(--surface)]/[0] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md ${
-        isCompact ? 'gap-0.5 px-1 py-0.5' : 'gap-1 px-1.5 py-1'
-      }`
-    : `inline-flex max-w-full flex-wrap items-center rounded-full border border-[var(--border)]/90 bg-[var(--surface)]/55 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] backdrop-blur-sm dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] ${
-        isCompact ? 'gap-0.5 px-0.5 py-0.5 sm:px-1' : 'gap-1 px-1 py-1'
-      }`;
+  const shell: string = `inline-flex max-w-full flex-wrap items-center rounded-full border border-[var(--border)] bg-[var(--surface)] ${
+    isCompact ? 'gap-0.5 px-0.5 py-0.5 sm:px-1' : 'gap-1 px-1 py-1'
+  }`;
 
-  const divider: string = isAuth
-    ? 'mx-0.5 hidden h-4 w-px shrink-0 bg-[var(--surface)]/15 sm:block'
-    : 'mx-0.5 hidden h-4 w-px shrink-0 bg-[var(--border)]/80 sm:block';
+  const divider: string = 'mx-0.5 hidden h-4 w-px shrink-0 bg-[var(--border)] sm:block';
 
   return (
     <div className={shell}>
@@ -57,7 +51,7 @@ export function PreferencesControls(
             setLocale(next);
           }
         }}
-        className="min-w-0 rounded-full border-0 bg-transparent px-3 py-1.5 text-xs font-medium text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/50 sm:text-[13px]"
+        className="min-w-0 rounded-full border-0 bg-transparent px-3 py-1.5 text-xs font-medium text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] sm:text-[13px]"
       >
         {locales.map((code: Locale) => (
           <option key={code} value={code}>
@@ -71,7 +65,7 @@ export function PreferencesControls(
       <div
         role="radiogroup"
         aria-label={t('preferences.theme')}
-        className="min-w-0 shrink-0 rounded-2xl bg-[var(--foreground)]/[0.04] p-0.5 dark:bg-black/[0]"
+        className="min-w-0 shrink-0 rounded-2xl bg-[var(--background)] p-0.5"
       >
         <div className="relative flex min-w-0 overflow-hidden rounded-lg">
           <SlidingGlider
@@ -155,9 +149,7 @@ function SlidingGlider(props: SlidingGliderProps): ReactNode {
   );
   const widthPct: number = 100 / safeCount;
 
-  const surface: string = isAuth
-    ? `pointer-events-none absolute inset-y-0 left-0 rounded-lg bg-amber-400/22 shadow-[0_0_0_1px_rgba(251,191,36,0.28)] ${gliderEase}`
-    : `pointer-events-none absolute inset-y-0 left-0 rounded-lg bg-[var(--surface)]/95 shadow-sm dark:shadow-md ${gliderEase}`;
+  const surface: string = `pointer-events-none absolute inset-y-0 left-0 rounded-lg bg-[var(--surface)] shadow-sm ring-1 ring-[var(--border)] ${gliderEase}`;
 
   return (
     <span
@@ -181,15 +173,9 @@ function localeButtonClass(
     : 'min-w-0 flex-1 px-3 py-1.5 text-xs sm:text-[13px]';
   const base: string = `relative z-10 rounded-lg font-medium tabular-nums tracking-tight ${pad} ${pressEase} focus-visible:outline-none focus-visible:ring-2`;
 
-  if (isAuth) {
-    return selected
-      ? `${base} text-amber-50 focus-visible:ring-amber-400/60`
-      : `${base} text-[var(--muted)] hover:text-[var(--foreground)] focus-visible:ring-amber-400/45`;
-  }
-
   return selected
-    ? `${base} text-violet-800 focus-visible:ring-violet-400/55 dark:text-violet-100`
-    : `${base} text-[var(--muted)] hover:text-[var(--foreground)] focus-visible:ring-violet-400/50`;
+    ? `${base} font-semibold text-[var(--foreground)] focus-visible:ring-[var(--accent)]`
+    : `${base} text-[var(--muted)] hover:text-[var(--foreground)] focus-visible:ring-[var(--accent)]`;
 }
 
 interface ThemeModeButtonProps {
@@ -212,16 +198,9 @@ function ThemeModeButton(props: ThemeModeButtonProps): ReactNode {
 
   const base: string = `relative z-10 inline-flex ${size} items-center justify-center rounded-lg ${pressEase} focus-visible:outline-none focus-visible:ring-2`;
 
-  const className: string = (() => {
-    if (isAuth) {
-      return selected
-        ? `${base} text-amber-50 focus-visible:ring-amber-400/55`
-        : `${base} text-[var(--muted)] hover:text-[var(--foreground)] focus-visible:ring-amber-400/45`;
-    }
-    return selected
-      ? `${base} text-violet-800 focus-visible:ring-violet-400/55 dark:text-violet-100`
-      : `${base} text-[var(--muted)] hover:text-[var(--foreground)] focus-visible:ring-violet-400/50`;
-  })();
+  const className: string = selected
+    ? `${base} font-semibold text-[var(--foreground)] focus-visible:ring-[var(--accent)]`
+    : `${base} text-[var(--muted)] hover:text-[var(--foreground)] focus-visible:ring-[var(--accent)]`;
 
   return (
     <button

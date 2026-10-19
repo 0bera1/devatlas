@@ -4,8 +4,6 @@ import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { ChangeEvent } from 'react';
 import { useState } from 'react';
 
-export type AuthTextFieldVariant = 'default' | 'authImmersive';
-
 export interface AuthTextFieldProps {
   id: string;
   label: string;
@@ -16,7 +14,6 @@ export interface AuthTextFieldProps {
   disabled?: boolean;
   required?: boolean;
   minLength?: number;
-  variant?: AuthTextFieldVariant;
   /** Şifre alanında göz ikonu ile metin / nokta görünümü arasında geçiş */
   passwordToggleable?: boolean;
   /** İstemci doğrulama hatası (ör. kayıt formu). */
@@ -33,7 +30,6 @@ export function AuthTextField({
   disabled,
   required,
   minLength,
-  variant = 'default',
   passwordToggleable = false,
   errorText,
 }: AuthTextFieldProps) {
@@ -44,27 +40,18 @@ export function AuthTextField({
     onChange(event.target.value);
   };
 
-  const isImmersive: boolean = variant === 'authImmersive';
-  const showToggle: boolean =
-    type === 'password' && passwordToggleable === true;
+  const showToggle: boolean = type === 'password' && passwordToggleable === true;
   const inputType: 'email' | 'password' | 'text' | 'date' =
     type === 'password' && passwordVisible ? 'text' : type;
 
-  const immersiveInputClass: string = showToggle
-    ? 'block w-full rounded-xl border border-[var(--border)] bg-[var(--foreground)]/90 py-3.5 pl-4 pr-12 text-sm text-[var(--background)] shadow-inner transition-colors placeholder:text-[var(--muted)] focus:border-amber-500/80 focus:outline-none focus:ring-2 focus:ring-amber-500/25 disabled:cursor-not-allowed disabled:opacity-50'
-    : 'block w-full rounded-xl border border-[var(--border)] bg-[var(--foreground)]/90 px-4 py-3.5 text-sm text-[var(--background)] shadow-inner transition-colors placeholder:text-[var(--muted)] focus:border-amber-500/80 focus:outline-none focus:ring-2 focus:ring-amber-500/25 disabled:cursor-not-allowed disabled:opacity-50';
+  const inputClassName: string = `block w-full rounded-lg border bg-[var(--surface)] py-2.5 text-sm text-[var(--foreground)] transition-colors placeholder:text-[var(--muted)] focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-60 ${
+    errorText !== null && errorText !== undefined && errorText.length > 0
+      ? 'border-red-500/70 focus:border-red-500 focus:ring-red-500/20'
+      : 'border-[var(--border)] focus:border-[var(--accent)] focus:ring-[var(--accent)]/25'
+  } ${showToggle ? 'pl-3 pr-11' : 'px-3'}`;
 
-  const defaultInputClass: string = showToggle
-    ? 'block w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] py-2 pl-3 pr-11 text-[var(--foreground)] shadow-sm transition-colors placeholder:text-[var(--muted)] focus:border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--border)]/20 disabled:cursor-not-allowed disabled:opacity-60 dark:focus:border-[var(--border)] dark:focus:ring-[var(--border)]/20'
-    : 'block w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-[var(--foreground)] shadow-sm transition-colors placeholder:text-[var(--muted)] focus:border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--border)]/20 disabled:cursor-not-allowed disabled:opacity-60 dark:focus:border-[var(--border)] dark:focus:ring-[var(--border)]/20';
-
-  const inputClassName: string = isImmersive
-    ? immersiveInputClass
-    : defaultInputClass;
-
-  const toggleButtonClass: string = isImmersive
-    ? 'absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-[var(--muted)] transition-colors hover:bg-[var(--surface)]/5 hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 disabled:pointer-events-none disabled:opacity-40'
-    : 'absolute right-1.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-[var(--muted)] transition-colors hover:bg-[var(--surface)] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border)] dark:focus-visible:ring-[var(--border)] disabled:pointer-events-none disabled:opacity-40';
+  const toggleButtonClass =
+    'absolute right-1.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-[var(--muted)] transition-colors hover:bg-[var(--background)] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] disabled:pointer-events-none disabled:opacity-40';
 
   const inputEl = (
     <input
@@ -72,7 +59,6 @@ export function AuthTextField({
       name={id}
       type={inputType}
       autoComplete={autoComplete}
-      placeholder={isImmersive ? label : undefined}
       value={value}
       onChange={handleChange}
       disabled={disabled}
@@ -83,15 +69,8 @@ export function AuthTextField({
   );
 
   return (
-    <div className={isImmersive ? 'space-y-0' : 'space-y-1.5'}>
-      <label
-        htmlFor={id}
-        className={
-          isImmersive
-            ? 'sr-only'
-            : 'block text-sm font-medium text-[var(--foreground)]'
-        }
-      >
+    <div className="space-y-1.5">
+      <label htmlFor={id} className="block text-sm font-medium text-[var(--foreground)]">
         {label}
       </label>
       {showToggle ? (
@@ -104,23 +83,17 @@ export function AuthTextField({
               setPasswordVisible((previous: boolean) => !previous);
             }}
             disabled={disabled}
-            aria-label={
-              passwordVisible ? t('auth.password.hide') : t('auth.password.show')
-            }
+            aria-label={passwordVisible ? t('auth.password.hide') : t('auth.password.show')}
             aria-pressed={passwordVisible}
           >
-            {passwordVisible ? (
-              <EyeSlashIcon className="h-5 w-5" />
-            ) : (
-              <EyeIcon className="h-5 w-5" />
-            )}
+            {passwordVisible ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
           </button>
         </div>
       ) : (
         inputEl
       )}
       {errorText !== null && errorText !== undefined && errorText.length > 0 ? (
-        <p className="mt-1.5 text-xs text-red-400" role="alert">
+        <p className="text-xs text-red-700 dark:text-red-300" role="alert">
           {errorText}
         </p>
       ) : null}
@@ -144,11 +117,7 @@ function EyeIcon(props: { readonly className?: string }) {
         strokeLinejoin="round"
         d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
       />
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
     </svg>
   );
 }

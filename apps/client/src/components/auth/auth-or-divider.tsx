@@ -12,7 +12,7 @@ export function AuthOrDivider(): ReactNode {
         <span className="w-full border-t border-[var(--border)]" />
       </div>
       <div className="relative flex justify-center text-xs font-medium">
-        <span className="bg-[#121212] px-3 text-[var(--muted)]">{t('auth.or')}</span>
+        <span className="bg-[var(--background)] px-3 text-[var(--muted)]">{t('auth.or')}</span>
       </div>
     </div>
   );

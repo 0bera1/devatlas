@@ -32,7 +32,7 @@ export function LoginForm() {
       {errorMessage !== null ? (
         <div
           role="alert"
-          className="rounded-xl border border-red-500/35 bg-red-950/50 px-4 py-3 text-sm text-red-100"
+          className="rounded-xl border border-red-300/60 px-4 py-3 text-sm text-red-700 dark:text-red-300"
         >
           {errorMessage}
         </div>
@@ -46,7 +46,6 @@ export function LoginForm() {
         onChange={setEmail}
         disabled={busy}
         required
-        variant="authImmersive"
       />
       <AuthTextField
         id="password"
@@ -58,14 +57,13 @@ export function LoginForm() {
         disabled={busy}
         required
         minLength={1}
-        variant="authImmersive"
         passwordToggleable
       />
       <div className="-mt-1 flex justify-end">
         <button
           type="button"
           onClick={handleForgotClick}
-          className="text-sm font-medium text-amber-400 transition-colors hover:text-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60 rounded"
+          className="text-sm font-medium text-[var(--foreground)] underline underline-offset-4 transition-colors hover:text-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded"
         >
           {t('auth.login.forgotPassword')}
         </button>
@@ -78,7 +76,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={busy}
-        className="flex w-full justify-center rounded-xl bg-amber-500 px-4 py-3.5 text-sm font-semibold text-[var(--foreground)] shadow-lg shadow-amber-500/15 transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-55"
+        className="flex w-full justify-center rounded-xl bg-[var(--foreground)] px-4 py-3 text-sm font-semibold text-[var(--background)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-55"
       >
         {busy ? t('auth.login.submitting') : t('auth.login.submit')}
       </button>

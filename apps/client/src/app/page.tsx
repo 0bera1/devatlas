@@ -1,15 +1,16 @@
 'use client';
 
 import { useAuth } from '@/components/providers/auth-provider';
-import { HomeShell } from '@/components/home/home-shell';
-import { SceneController } from '@/components/scene/SceneController';
-import { SceneViewport } from '@/components/scene/SceneViewport';
+import { LandingPage } from '@/components/home/landing-page';
+import { LandingStory } from '@/components/home/landing-story';
+import { usePrefersReducedMotion } from '@/components/home/use-prefers-reduced-motion';
 import { useRouter } from 'next/navigation';
 import { useEffect, type ReactNode } from 'react';
 
 export default function Home(): ReactNode {
   const { token, isReady } = useAuth();
   const router = useRouter();
+  const reducedMotion: boolean = usePrefersReducedMotion();
 
   // Giriş yapmış kullanıcı doğrudan günün ekranına gider.
   useEffect(() => {
@@ -22,11 +23,6 @@ export default function Home(): ReactNode {
     return null;
   }
 
-  return (
-    <HomeShell variant="cinematic">
-      <SceneController>
-        <SceneViewport />
-      </SceneController>
-    </HomeShell>
-  );
+  // Hareket azaltma tercihi açıksa kaydırmalı sahne yerine sade, sabit tanıtım gösterilir.
+  return reducedMotion ? <LandingPage /> : <LandingStory />;
 }

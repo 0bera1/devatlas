@@ -53,7 +53,7 @@ export function RegisterForm() {
       {errorMessage !== null ? (
         <div
           role="alert"
-          className="rounded-xl border border-red-500/35 bg-red-950/50 px-4 py-3 text-sm text-red-100"
+          className="rounded-xl border border-red-300/60 px-4 py-3 text-sm text-red-700 dark:text-red-300"
         >
           {errorMessage}
         </div>
@@ -67,7 +67,6 @@ export function RegisterForm() {
         onChange={setEmail}
         disabled={busy}
         required
-        variant="authImmersive"
       />
       <AuthTextField
         id="password"
@@ -79,7 +78,6 @@ export function RegisterForm() {
         disabled={busy}
         required
         minLength={8}
-        variant="authImmersive"
         passwordToggleable
       />
       <p className="-mt-2 text-xs text-[var(--muted)]">{t('auth.register.passwordHint')}</p>
@@ -97,7 +95,6 @@ export function RegisterForm() {
         }}
         disabled={busy}
         required
-        variant="authImmersive"
         errorText={firstNameError}
       />
       <AuthTextField
@@ -114,7 +111,6 @@ export function RegisterForm() {
         }}
         disabled={busy}
         required
-        variant="authImmersive"
         errorText={lastNameError}
       />
       <AuthTextField
@@ -125,7 +121,6 @@ export function RegisterForm() {
         onChange={setBirthDate}
         disabled={busy}
         required
-        variant="authImmersive"
       />
 
       <AuthOrDivider />
@@ -135,7 +130,7 @@ export function RegisterForm() {
       <button
         type="submit"
         disabled={submitDisabled}
-        className="flex w-full justify-center rounded-xl bg-amber-500 px-4 py-3.5 text-sm font-semibold text-[var(--foreground)] shadow-lg shadow-amber-500/15 transition-colors hover:bg-amber-400 disabled:cursor-not-allowed disabled:opacity-55"
+        className="flex w-full justify-center rounded-xl bg-[var(--foreground)] px-4 py-3 text-sm font-semibold text-[var(--background)] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-55"
       >
         {busy ? t('auth.register.submitting') : t('auth.register.submit')}
       </button>
