@@ -771,6 +771,8 @@ export const trMessages = {
   'documents.editor.format.code': 'Kod',
   'documents.editor.format.list': 'Liste',
   'documents.editor.format.quote': 'Alıntı',
+  'home.story.terminal.title': 'Her adım tek bir akışta',
+  'home.story.terminal.body': 'Diyagram kaydı, arama ve tekrar akışı canlı bir günlükte birlikte ilerler.',
 } as const;
 
 export type MessageKey = keyof typeof trMessages;

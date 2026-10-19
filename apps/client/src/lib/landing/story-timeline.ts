@@ -16,7 +16,7 @@ export const NODE_HEIGHT = 40;
 export interface StoryNode {
   readonly id: string;
   readonly label: string;
-  /** Dağınık haldeki merkez noktası. */
+  /** Dağınık haldeki merkez noktası. Kutular birbirine değmeyecek şekilde yerleştirilmiştir. */
   readonly scatter: Point;
   /** Düzenli mimaridaki merkez noktası. */
   readonly layout: Point;
@@ -24,12 +24,12 @@ export interface StoryNode {
 }
 
 export const STORY_NODES: readonly StoryNode[] = [
-  { id: 'api', label: 'API', scatter: { x: 300, y: 24 }, layout: { x: 70, y: 200 }, accent: true },
-  { id: 'cache', label: 'Cache', scatter: { x: 70, y: 318 }, layout: { x: 240, y: 100 }, accent: false },
-  { id: 'queue', label: 'Queue', scatter: { x: 456, y: 318 }, layout: { x: 240, y: 300 }, accent: false },
-  { id: 'worker', label: 'Worker', scatter: { x: 96, y: 70 }, layout: { x: 410, y: 200 }, accent: false },
-  { id: 'store', label: 'Store', scatter: { x: 400, y: 24 }, layout: { x: 530, y: 100 }, accent: false },
-  { id: 'search', label: 'Search', scatter: { x: 260, y: 330 }, layout: { x: 530, y: 300 }, accent: false },
+  { id: 'api', label: 'API', scatter: { x: 300, y: 50 }, layout: { x: 70, y: 200 }, accent: true },
+  { id: 'cache', label: 'Cache', scatter: { x: 90, y: 150 }, layout: { x: 240, y: 100 }, accent: false },
+  { id: 'queue', label: 'Queue', scatter: { x: 420, y: 320 }, layout: { x: 240, y: 300 }, accent: false },
+  { id: 'worker', label: 'Worker', scatter: { x: 500, y: 160 }, layout: { x: 410, y: 200 }, accent: false },
+  { id: 'store', label: 'Store', scatter: { x: 150, y: 300 }, layout: { x: 530, y: 100 }, accent: false },
+  { id: 'search', label: 'Search', scatter: { x: 300, y: 210 }, layout: { x: 530, y: 300 }, accent: false },
 ];
 
 export const STORY_EDGES: readonly (readonly [string, string])[] = [
@@ -46,10 +46,11 @@ export const FEATURE_NODE_IDS: readonly string[] = ['api', 'cache', 'worker', 'q
 
 /** Hikâyenin bölüm aralıkları (ilerleme ölçeğinde). */
 export const CHAPTERS = {
-  hero: [-0.2, 0.16],
-  problem: [0.16, 0.36],
-  transition: [0.36, 0.56],
-  features: [0.56, 0.84],
+  hero: [-0.2, 0.12],
+  problem: [0.12, 0.26],
+  transition: [0.26, 0.4],
+  features: [0.4, 0.66],
+  terminal: [0.66, 0.84],
   demo: [0.84, 1.2],
 } as const;
 
@@ -129,7 +130,7 @@ export interface GraphFrame {
   readonly cursors: readonly CursorFrame[];
 }
 
-/** Hangi özellik bölümündeyiz; kapsam dışındaysa -1. */
+/** Hangi özellik bölümündeyiz; özellik bölümü dışındaysa -1. */
 export function activeFeatureIndex(progress: number): number {
   for (let index = 0; index < FEATURE_COUNT; index += 1) {
     const [start, end] = featureRange(index);
@@ -137,13 +138,21 @@ export function activeFeatureIndex(progress: number): number {
       return index;
     }
   }
-  return progress >= CHAPTERS.features[1] && progress <= 1 ? FEATURE_COUNT - 1 : -1;
+  return -1;
+}
+
+/** Grafik ve terminal katmanlarının opaklığı. Terminal, özellikler ile demo arasında grafiğin yerini alır. */
+export function layerOpacities(progress: number): { readonly graph: number; readonly terminal: number } {
+  const terminalIn: number = smoothstep(segment(progress, CHAPTERS.terminal[0] - 0.02, CHAPTERS.terminal[0] + 0.03));
+  const terminalOut: number = smoothstep(segment(progress, CHAPTERS.terminal[1] - 0.02, CHAPTERS.terminal[1] + 0.03));
+  const terminal: number = clamp01(terminalIn - terminalOut);
+  return { graph: clamp01(1 - terminal), terminal };
 }
 
 /** Düğüm ve kenar konumlarını hikâyenin o anki ilerlemesine göre hesaplar. */
 export function computeGraphFrame(progress: number): GraphFrame {
-  const organize: number = smoothstep(segment(progress, 0.3, 0.5));
-  const drawEdges: number = segment(progress, 0.42, 0.6);
+  const organize: number = smoothstep(segment(progress, 0.2, 0.36));
+  const drawEdges: number = segment(progress, 0.3, 0.44);
   const featureIndex: number = activeFeatureIndex(progress);
   const highlightedId: string | null = featureIndex >= 0 ? (FEATURE_NODE_IDS[featureIndex] ?? null) : null;
   const cursorVisible: number = segment(progress, 0.84, 0.9);
@@ -162,7 +171,7 @@ export function computeGraphFrame(progress: number): GraphFrame {
       x: point.x,
       y: point.y,
       accent: node.accent,
-      opacity: 0.4 + 0.6 * organize,
+      opacity: 0.55 + 0.45 * organize,
       highlighted: node.id === highlightedId,
     };
   });
@@ -182,7 +191,7 @@ export function computeGraphFrame(progress: number): GraphFrame {
     };
   });
 
-  // İki imleç, son bölümde iki farklı kenar üzerinde akar.
+  // İki imleç, demo bölümünde iki farklı kenar üzerinde akar.
   const cursorEdges: readonly number[] = [1, 4];
   const cursors: CursorFrame[] = cursorEdges.map((edgeIndex: number): CursorFrame => {
     const edge: GraphEdgeFrame | undefined = edges[edgeIndex];
@@ -197,4 +206,57 @@ export function computeGraphFrame(progress: number): GraphFrame {
   });
 
   return { nodes, edges, cursors };
+}
+
+/** Terminal günlüğü. Komutlar harf harf yazılır; çıktılar komut bittiğinde belirir. Metinler teknik olduğu için çevrilmez. */
+export const TERMINAL_LOG: readonly { readonly kind: 'command' | 'output'; readonly text: string }[] = [
+  { kind: 'command', text: '$ save diagram  order-service' },
+  { kind: 'output', text: '  ✓ 6 nodes · 6 edges · saved' },
+  { kind: 'command', text: '$ search  "kafka partition"' },
+  { kind: 'output', text: '  → 3 documents · 2 diagrams' },
+  { kind: 'command', text: '$ review --due' },
+  { kind: 'output', text: '  → 4 cards due · next in 10 min' },
+];
+
+export interface TerminalLine {
+  readonly kind: 'command' | 'output';
+  /** Şu ana kadar yazılmış kısım. */
+  readonly text: string;
+  readonly complete: boolean;
+  /** Bu satır şu an yazılıyor mu (imleç burada görünür). */
+  readonly typing: boolean;
+  readonly visible: boolean;
+}
+
+export interface TerminalFrame {
+  readonly appear: number;
+  readonly lines: readonly TerminalLine[];
+}
+
+/** Terminal penceresinin o andaki görünümü. Bölüm içindeki ilerleme satırlara eşit paylaştırılır. */
+export function terminalFrame(progress: number): TerminalFrame {
+  const [start, end] = CHAPTERS.terminal;
+  const appear: number = smoothstep(segment(progress, start, start + 0.04));
+  const typingStart: number = start + 0.05;
+  const typingEnd: number = end - 0.02;
+  const slot: number = (typingEnd - typingStart) / TERMINAL_LOG.length;
+
+  const lines: TerminalLine[] = TERMINAL_LOG.map((entry, index): TerminalLine => {
+    const lineStart: number = typingStart + slot * index;
+    const lineProgress: number = segment(progress, lineStart, lineStart + slot * 0.85);
+    const typedLength: number = Math.round(lineProgress * entry.text.length);
+    const isCommand: boolean = entry.kind === 'command';
+    // Çıktılar komut bitince ani belirir; komutlar harf harf yazılır.
+    const visible: boolean = isCommand ? typedLength > 0 : progress >= lineStart + slot * 0.85;
+    const text: string = isCommand ? entry.text.slice(0, typedLength) : entry.text;
+    return {
+      kind: entry.kind,
+      text,
+      complete: text.length === entry.text.length,
+      typing: isCommand && typedLength > 0 && typedLength < entry.text.length,
+      visible: visible && appear > 0,
+    };
+  });
+
+  return { appear, lines };
 }

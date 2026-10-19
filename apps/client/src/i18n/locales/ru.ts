@@ -773,4 +773,6 @@ export const ruMessages: Record<MessageKey, string> = {
   'documents.editor.format.code': 'Код',
   'documents.editor.format.list': 'Список',
   'documents.editor.format.quote': 'Цитата',
+  'home.story.terminal.title': 'Каждый шаг в одном потоке',
+  'home.story.terminal.body': 'Сохранения диаграмм, поиск и повторение идут вместе в одном живом журнале.',
 };

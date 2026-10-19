@@ -773,4 +773,6 @@ export const esMessages: Record<MessageKey, string> = {
   'documents.editor.format.code': 'Código',
   'documents.editor.format.list': 'Lista',
   'documents.editor.format.quote': 'Cita',
+  'home.story.terminal.title': 'Cada paso en un solo flujo',
+  'home.story.terminal.body': 'Guardados de diagramas, búsquedas y repasos avanzan juntos en un registro en vivo.',
 };

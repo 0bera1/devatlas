@@ -773,4 +773,6 @@ export const ptMessages: Record<MessageKey, string> = {
   'documents.editor.format.code': 'Código',
   'documents.editor.format.list': 'Lista',
   'documents.editor.format.quote': 'Citação',
+  'home.story.terminal.title': 'Cada etapa em um só fluxo',
+  'home.story.terminal.body': 'Salvamentos de diagramas, buscas e revisões avançam juntos em um registro ao vivo.',
 };

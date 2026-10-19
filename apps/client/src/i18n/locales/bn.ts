@@ -717,4 +717,6 @@ export const bnMessages: Record<MessageKey, string> = {
   'documents.editor.format.code': 'কোড',
   'documents.editor.format.list': 'তালিকা',
   'documents.editor.format.quote': 'উদ্ধৃতি',
+  'home.story.terminal.title': 'প্রতিটি ধাপ একটি প্রবাহে',
+  'home.story.terminal.body': 'ডায়াগ্রাম সংরক্ষণ, অনুসন্ধান ও পর্যালোচনা একটি লাইভ লগে একসাথে চলে।',
 };

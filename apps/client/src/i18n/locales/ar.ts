@@ -719,4 +719,6 @@ export const arMessages: Record<MessageKey, string> = {
   'documents.editor.format.code': 'كود',
   'documents.editor.format.list': 'قائمة',
   'documents.editor.format.quote': 'اقتباس',
+  'home.story.terminal.title': 'كل خطوة في تدفق واحد',
+  'home.story.terminal.body': 'حفظ المخططات والبحث والمراجعة تسير معًا في سجل حي واحد.',
 };

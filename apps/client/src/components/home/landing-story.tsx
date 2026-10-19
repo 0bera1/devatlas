@@ -15,16 +15,26 @@ import {
   chapterOpacity,
   computeGraphFrame,
   featureRange,
+  layerOpacities,
+  terminalFrame,
   type GraphFrame,
+  type TerminalFrame,
 } from '@/lib/landing/story-timeline';
 import Link from 'next/link';
 import { useMemo, useRef, type ReactNode, type RefObject } from 'react';
 
 /** Kaydırma alanının yüksekliği (viewport yüzdesi). Sahne bu alan boyunca sabit kalır. */
-const TRACK_VH = 560;
+const TRACK_VH = 640;
 
 /** Her bölümün başladığı ilerleme değeri; bölüm noktalarının hedefi. */
-const CHAPTER_STARTS: readonly number[] = [0, CHAPTERS.problem[0], CHAPTERS.transition[0], CHAPTERS.features[0], CHAPTERS.demo[0]];
+const CHAPTER_STARTS: readonly number[] = [
+  0,
+  CHAPTERS.problem[0],
+  CHAPTERS.transition[0],
+  CHAPTERS.features[0],
+  CHAPTERS.terminal[0],
+  CHAPTERS.demo[0],
+];
 const CHAPTER_COUNT: number = CHAPTER_STARTS.length;
 
 /** Veri noktalarının bağlantı üzerinde akmaya başladığı ilerleme değeri. */
@@ -41,12 +51,14 @@ function chapterLabel(index: number, total: number): string {
   return `${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
 }
 
-/** Kaydırmaya bağlı tanıtım: bölümler sırayla açılır, grafik dağınık halden düzenli mimariye geçer. */
+/** Kaydırmaya bağlı tanıtım: bölümler sırayla açılır, grafik ve terminal sahnede birbirinin yerine geçer. */
 export function LandingStory(): ReactNode {
   const { t } = useTranslations();
   const trackRef = useRef<HTMLDivElement>(null);
   const progress: number = useStoryProgress(trackRef);
   const frame: GraphFrame = useMemo((): GraphFrame => computeGraphFrame(progress), [progress]);
+  const terminal: TerminalFrame = useMemo((): TerminalFrame => terminalFrame(progress), [progress]);
+  const layers = useMemo(() => layerOpacities(progress), [progress]);
 
   const activeChapter: number = CHAPTER_STARTS.reduce((current: number, start: number, index: number): number => (progress >= start - 0.001 ? index : current), 0);
 
@@ -58,7 +70,14 @@ export function LandingStory(): ReactNode {
         <div className="sticky top-0 flex h-dvh flex-col overflow-hidden">
           <div className="mx-auto grid w-full max-w-6xl flex-1 content-center gap-8 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center lg:gap-12">
             <StoryCopy progress={progress} t={t} />
-            <StoryGraph frame={frame} showPulses={progress >= PULSE_FROM} />
+            <div className="grid min-w-0 [&>*]:col-start-1 [&>*]:row-start-1">
+              <div style={{ opacity: layers.graph }} aria-hidden={layers.graph < 0.01}>
+                <StoryGraph frame={frame} showPulses={progress >= PULSE_FROM} />
+              </div>
+              <div style={{ opacity: layers.terminal, visibility: layers.terminal < 0.01 ? 'hidden' : 'visible' }} aria-hidden={layers.terminal < 0.01}>
+                <TerminalWindow frame={terminal} />
+              </div>
+            </div>
           </div>
 
           <ScrollCue progress={progress} label={t('home.story.scrollHint')} />
@@ -142,6 +161,9 @@ interface StoryCopyProps {
 /** Tüm bölüm metinleri aynı hücrede üst üste durur; görünürlük ilerlemeye göre değişir. */
 function StoryCopy(props: StoryCopyProps): ReactNode {
   const { progress, t } = props;
+  const eyebrowClass = 'text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]';
+  const titleClass = 'mt-4 font-serif text-4xl font-medium leading-tight tracking-tight sm:text-5xl';
+  const bodyClass = 'mt-5 max-w-lg text-[15px] leading-relaxed text-[var(--muted)]';
 
   return (
     <div className="grid min-w-0 [&>*]:col-start-1 [&>*]:row-start-1">
@@ -153,53 +175,50 @@ function StoryCopy(props: StoryCopyProps): ReactNode {
         <h1 className="font-serif text-5xl font-medium leading-[1.05] tracking-tight sm:text-6xl">{t('home.story.hero.headline')}</h1>
         <p className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--muted)]">{t('home.story.hero.sub')}</p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link
-            href="/register"
-            className="rounded-full bg-[var(--foreground)] px-6 py-3 text-sm font-semibold text-[var(--background)] transition-opacity hover:opacity-90"
-          >
+          <Link href="/register" className="rounded-full bg-[var(--foreground)] px-6 py-3 text-sm font-semibold text-[var(--background)] transition-opacity hover:opacity-90">
             {t('home.story.cta.button')}
           </Link>
-          <Link
-            href="/explore"
-            className="rounded-full border border-[var(--border)] px-6 py-3 text-sm text-[var(--foreground)] transition-colors hover:bg-[var(--surface)]"
-          >
+          <Link href="/explore" className="rounded-full border border-[var(--border)] px-6 py-3 text-sm text-[var(--foreground)] transition-colors hover:bg-[var(--surface)]">
             {t('nav.explore')}
           </Link>
         </div>
       </Chapter>
 
       <Chapter progress={progress} range={CHAPTERS.problem}>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">{chapterLabel(1, CHAPTER_COUNT)}</p>
-        <h2 className="mt-4 font-serif text-4xl font-medium leading-tight tracking-tight sm:text-5xl">{t('home.story.problem.title')}</h2>
-        <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-[var(--muted)]">{t('home.story.problem.body')}</p>
+        <p className={eyebrowClass}>{chapterLabel(1, CHAPTER_COUNT)}</p>
+        <h2 className={titleClass}>{t('home.story.problem.title')}</h2>
+        <p className={bodyClass}>{t('home.story.problem.body')}</p>
       </Chapter>
 
       <Chapter progress={progress} range={CHAPTERS.transition}>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">{chapterLabel(2, CHAPTER_COUNT)}</p>
-        <h2 className="mt-4 font-serif text-4xl font-medium leading-tight tracking-tight sm:text-5xl">{t('home.story.transition.title')}</h2>
-        <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-[var(--muted)]">{t('home.story.transition.body')}</p>
+        <p className={eyebrowClass}>{chapterLabel(2, CHAPTER_COUNT)}</p>
+        <h2 className={titleClass}>{t('home.story.transition.title')}</h2>
+        <p className={bodyClass}>{t('home.story.transition.body')}</p>
       </Chapter>
 
       {FEATURE_KEYS.slice(0, FEATURE_COUNT).map((item, index) => {
         const [start, end] = featureRange(index);
         return (
           <Chapter key={item.title} progress={progress} range={[start, end]} fade={0.03}>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">{chapterLabel(index, FEATURE_COUNT)}</p>
-            <h2 className="mt-4 font-serif text-4xl font-medium leading-tight tracking-tight sm:text-5xl">{t(item.title)}</h2>
-            <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-[var(--muted)]">{t(item.body)}</p>
+            <p className={eyebrowClass}>{chapterLabel(index, FEATURE_COUNT)}</p>
+            <h2 className={titleClass}>{t(item.title)}</h2>
+            <p className={bodyClass}>{t(item.body)}</p>
           </Chapter>
         );
       })}
 
+      <Chapter progress={progress} range={CHAPTERS.terminal} fade={0.03}>
+        <p className={eyebrowClass}>{chapterLabel(4, CHAPTER_COUNT)}</p>
+        <h2 className={titleClass}>{t('home.story.terminal.title')}</h2>
+        <p className={bodyClass}>{t('home.story.terminal.body')}</p>
+      </Chapter>
+
       <Chapter progress={progress} range={CHAPTERS.demo} fade={0.06}>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">{chapterLabel(4, CHAPTER_COUNT)}</p>
-        <h2 className="mt-4 font-serif text-4xl font-medium leading-tight tracking-tight sm:text-5xl">{t('home.story.demo.title')}</h2>
-        <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-[var(--muted)]">{t('home.story.demo.body')}</p>
+        <p className={eyebrowClass}>{chapterLabel(5, CHAPTER_COUNT)}</p>
+        <h2 className={titleClass}>{t('home.story.demo.title')}</h2>
+        <p className={bodyClass}>{t('home.story.demo.body')}</p>
         <div className="mt-8 flex flex-wrap items-center gap-4">
-          <Link
-            href="/register"
-            className="rounded-full bg-[var(--foreground)] px-6 py-3 text-sm font-semibold text-[var(--background)] transition-opacity hover:opacity-90"
-          >
+          <Link href="/register" className="rounded-full bg-[var(--foreground)] px-6 py-3 text-sm font-semibold text-[var(--background)] transition-opacity hover:opacity-90">
             {t('home.story.cta.button')}
           </Link>
           <span className="text-sm text-[var(--muted)]">{t('home.story.cta.title')}</span>
@@ -231,6 +250,50 @@ function Chapter(props: ChapterProps): ReactNode {
       aria-hidden={!visible}
     >
       {children}
+    </div>
+  );
+}
+
+interface TerminalWindowProps {
+  readonly frame: TerminalFrame;
+}
+
+/** Terminal penceresi: scroll ile yukarı süzülür, komutlar harf harf yazılır, çıktılar komut bitince belirir. */
+function TerminalWindow(props: TerminalWindowProps): ReactNode {
+  const { frame } = props;
+  const appear: number = frame.appear;
+  const allDone: boolean = frame.lines.every((line) => line.complete && line.visible);
+
+  return (
+    <div
+      className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--foreground)] shadow-xl"
+      style={{ transform: `translateY(${(1 - appear) * 48}px) scale(${0.96 + 0.04 * appear})` }}
+    >
+      <div className="flex items-center gap-2 border-b border-[var(--background)]/15 px-4 py-3" aria-hidden>
+        <span className="h-2.5 w-2.5 rounded-full bg-[var(--accent)]" />
+        <span className="h-2.5 w-2.5 rounded-full bg-[var(--background)]/40" />
+        <span className="h-2.5 w-2.5 rounded-full bg-[var(--background)]/40" />
+        <span className="ml-3 font-mono text-xs text-[var(--background)]/60">DevAtlas</span>
+      </div>
+      <div className="min-h-[260px] space-y-2 px-5 py-5 font-mono text-[13px] leading-relaxed sm:text-sm">
+        {frame.lines.map((line, index) =>
+          line.visible ? (
+            <p key={index} className={line.kind === 'command' ? 'text-[var(--background)]' : 'text-[var(--accent)]'}>
+              {line.text}
+              {line.typing ? (
+                <span className="ml-0.5 inline-block w-2 animate-pulse text-[var(--background)]" aria-hidden>
+                  ▍
+                </span>
+              ) : null}
+            </p>
+          ) : null,
+        )}
+        {allDone && appear > 0.9 ? (
+          <p className="text-[var(--background)]/60">
+            $ <span className="inline-block w-2 animate-pulse" aria-hidden>▍</span>
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }

@@ -716,4 +716,6 @@ export const urMessages: Record<MessageKey, string> = {
   'documents.editor.format.code': 'کوڈ',
   'documents.editor.format.list': 'فہرست',
   'documents.editor.format.quote': 'اقتباس',
+  'home.story.terminal.title': 'ہر قدم ایک ہی سلسلے میں',
+  'home.story.terminal.body': 'ڈائیاگرام کی بچت، تلاش اور دہرائی ایک لائیو لاگ میں ساتھ چلتی ہے۔',
 };

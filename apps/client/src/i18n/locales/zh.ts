@@ -712,4 +712,6 @@ export const zhMessages: Record<MessageKey, string> = {
   'documents.editor.format.code': '代码',
   'documents.editor.format.list': '列表',
   'documents.editor.format.quote': '引用',
+  'home.story.terminal.title': '每一步都在同一条流中',
+  'home.story.terminal.body': '图表保存、搜索和复习会在同一条实时日志中同步呈现。',
 };

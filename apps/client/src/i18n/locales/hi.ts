@@ -724,4 +724,6 @@ export const hiMessages: Record<MessageKey, string> = {
   'documents.editor.format.code': 'कोड',
   'documents.editor.format.list': 'सूची',
   'documents.editor.format.quote': 'उद्धरण',
+  'home.story.terminal.title': 'हर कदम एक ही प्रवाह में',
+  'home.story.terminal.body': 'आरेख सेव, खोज और समीक्षा एक ही लाइव लॉग में साथ चलते हैं।',
 };

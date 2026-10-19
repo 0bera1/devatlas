@@ -773,4 +773,6 @@ export const enMessages: Record<MessageKey, string> = {
   'documents.editor.format.code': 'Code',
   'documents.editor.format.list': 'List',
   'documents.editor.format.quote': 'Quote',
+  'home.story.terminal.title': 'Every step in one stream',
+  'home.story.terminal.body': 'Diagram saves, searches and review sessions move together in one live log.',
 };
