@@ -3,7 +3,7 @@
 import { useTranslations } from '@/hooks/i18n/use-translations';
 import type { MessageKey } from '@/i18n';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
 interface PaletteItem {
   readonly href: string;
@@ -29,12 +29,7 @@ export const OPEN_PALETTE_EVENT = 'devatlas:open-palette';
 
 /** Ctrl/⌘K ile açılan sayfa ve arama paleti. */
 export function CommandPalette(): ReactNode {
-  const { t } = useTranslations();
-  const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
-  const [query, setQuery] = useState<string>('');
-  const [active, setActive] = useState<number>(0);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent): void => {
@@ -54,14 +49,16 @@ export function CommandPalette(): ReactNode {
     };
   }, []);
 
-  useEffect(() => {
-    if (open) {
-      inputRef.current?.focus();
-    } else {
-      setQuery('');
-      setActive(0);
-    }
-  }, [open]);
+  // Diyalog kapanınca kaldırılır; her açılışta arama metni ve seçim temiz başlar.
+  return open ? <PaletteDialog onClose={() => setOpen(false)} /> : null;
+}
+
+function PaletteDialog(props: { readonly onClose: () => void }): ReactNode {
+  const { onClose } = props;
+  const { t } = useTranslations();
+  const router = useRouter();
+  const [query, setQuery] = useState<string>('');
+  const [active, setActive] = useState<number>(0);
 
   const trimmed: string = query.trim();
   const matches: readonly PaletteItem[] = useMemo((): readonly PaletteItem[] => {
@@ -74,19 +71,15 @@ export function CommandPalette(): ReactNode {
   const rows: readonly PaletteItem[] = trimmed.length > 0 ? [...matches, searchRow] : PAGES;
 
   const go = (href: string): void => {
-    setOpen(false);
+    onClose();
     router.push(href);
   };
-
-  if (!open) {
-    return null;
-  }
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 px-4 pt-[12vh]"
       onMouseDown={(event) => {
-        if (event.target === event.currentTarget) setOpen(false);
+        if (event.target === event.currentTarget) onClose();
       }}
     >
       <div
@@ -96,7 +89,7 @@ export function CommandPalette(): ReactNode {
         className="w-full max-w-lg overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-2xl"
       >
         <input
-          ref={inputRef}
+          autoFocus
           type="text"
           role="combobox"
           aria-expanded="true"
@@ -128,9 +121,7 @@ export function CommandPalette(): ReactNode {
           ) : (
             rows.map((row, index) => {
               const isActive: boolean = index === active;
-              const label: string = row.label === 'shell.palette.searchFor'
-                ? t(row.label).replace('{{query}}', trimmed)
-                : t(row.label);
+              const label: string = row.label === 'shell.palette.searchFor' ? t(row.label).replace('{{query}}', trimmed) : t(row.label);
               return (
                 <li
                   key={`${row.href}-${index}`}
@@ -151,7 +142,7 @@ export function CommandPalette(): ReactNode {
         </ul>
         <div className="flex items-center justify-between border-t border-[var(--border)] px-5 py-2.5 text-xs text-[var(--muted)]">
           <span>{t('shell.palette.hint')}</span>
-          <button type="button" onClick={() => setOpen(false)} className="rounded px-2 py-1 hover:text-[var(--foreground)]">
+          <button type="button" onClick={onClose} className="rounded px-2 py-1 hover:text-[var(--foreground)]">
             {t('common.close')}
           </button>
         </div>
