@@ -11,50 +11,32 @@ interface InterviewDifficultyFilterProps {
   readonly onChange: (difficulty: InterviewPrepDifficulty | null) => void;
 }
 
-export function InterviewDifficultyFilter({
-  selected,
-  onChange,
-}: InterviewDifficultyFilterProps): ReactNode {
+/** Zorluk çipleri: seçili olan koyu çerçeveli ve kalın. Seçili çipe tekrar basmak filtreyi kaldırır. */
+export function InterviewDifficultyFilter({ selected, onChange }: InterviewDifficultyFilterProps): ReactNode {
   const { t } = useTranslations();
   const difficultyLabel = useInterviewPrepDifficultyLabel();
 
   return (
-    <div
-      className="flex flex-wrap gap-2"
-      role="tablist"
-      aria-label={t('knowledge.interview.difficultyFilter')}
-    >
-      <button
-        type="button"
-        role="tab"
-        aria-selected={selected === null}
-        onClick={(): void => onChange(null)}
-        className={
-          selected === null
-            ? 'rounded-full bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white dark:bg-indigo-500'
-            : 'rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--foreground)] hover:bg-[var(--surface)]'
-        }
-      >
-        {t('knowledge.interview.allDifficulties')}
-      </button>
-      {INTERVIEW_DIFFICULTY_OPTIONS.map(
-        (difficulty: InterviewPrepDifficulty) => (
-          <button
-            key={difficulty}
-            type="button"
-            role="tab"
-            aria-selected={selected === difficulty}
-            onClick={(): void => onChange(difficulty)}
-            className={
-              selected === difficulty
-                ? 'rounded-full bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white dark:bg-indigo-500'
-                : 'rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--foreground)] hover:bg-[var(--surface)]'
-            }
-          >
-            {difficultyLabel(difficulty)}
-          </button>
-        ),
-      )}
+    <div>
+      <p className="mb-2 text-xs font-semibold text-[var(--muted)]">{t('knowledge.table.difficulty')}</p>
+      <div className="flex flex-wrap gap-1.5" role="group" aria-label={t('knowledge.interview.difficultyFilter')}>
+        {INTERVIEW_DIFFICULTY_OPTIONS.map((difficulty: InterviewPrepDifficulty) => {
+          const active: boolean = selected === difficulty;
+          return (
+            <button
+              key={difficulty}
+              type="button"
+              aria-pressed={active}
+              onClick={(): void => onChange(active ? null : difficulty)}
+              className={`rounded-full border px-3 py-1 text-[13px] transition-colors ${
+                active ? 'border-[var(--foreground)] font-semibold text-[var(--foreground)]' : 'border-[var(--border)] text-[var(--foreground)] hover:border-[var(--muted)]'
+              }`}
+            >
+              {difficultyLabel(difficulty)}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

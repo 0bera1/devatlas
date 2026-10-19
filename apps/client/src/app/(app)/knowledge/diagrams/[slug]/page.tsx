@@ -10,7 +10,7 @@ export default function KnowledgeDiagramPage(): ReactNode {
     typeof params.slug === 'string' ? params.slug : '';
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-6 py-10 lg:py-14">
+    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
       <KnowledgeDiagramReadonlyView slug={slug} />
     </div>
   );

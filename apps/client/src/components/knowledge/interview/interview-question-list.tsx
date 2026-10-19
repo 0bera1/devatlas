@@ -13,46 +13,43 @@ interface InterviewQuestionListProps {
   readonly emptyMessage: string;
 }
 
-export function InterviewQuestionList({
-  questions,
-  footer,
-  emptyMessage,
-}: InterviewQuestionListProps): ReactNode {
+const ROW_GRID = 'md:grid md:grid-cols-[minmax(0,1fr)_150px_110px] md:items-center md:gap-4';
+
+/** Soru tablosu: geniş ekranda Soru · Konu · Zorluk sütunları, telefonda başlık ve altında meta satırı. */
+export function InterviewQuestionList({ questions, footer, emptyMessage }: InterviewQuestionListProps): ReactNode {
   const { t } = useTranslations();
   const categoryLabel = useInterviewPrepCategoryLabel();
 
   if (questions.length === 0) {
-    return (
-      <p className="rounded-2xl border border-dashed border-[var(--border)] px-6 py-10 text-center text-sm text-[var(--muted)]">
-        {emptyMessage}
-      </p>
-    );
+    return <p className="border-y border-[var(--border)] py-12 text-center text-sm text-[var(--muted)]">{emptyMessage}</p>;
   }
 
   return (
-    <ul className="flex flex-col gap-3">
-      {questions.map((item: InterviewPrepQuestionSummary) => (
-        <li key={item.id}>
-          <Link
-            href={`/knowledge/interview/${item.slug}`}
-            className="block rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm transition-colors hover:border-[var(--border)] hover:bg-[var(--surface)]"
-          >
-            <div className="mb-2 flex flex-wrap items-center gap-2">
-              <span className="rounded-full bg-[var(--surface)] px-2.5 py-0.5 text-xs font-medium text-[var(--foreground)]">
+    <div className="flex flex-col">
+      <div className={`hidden border-b border-[var(--border)] pb-2.5 text-xs text-[var(--muted)] ${ROW_GRID}`}>
+        <span>{t('knowledge.table.question')}</span>
+        <span>{t('knowledge.table.topic')}</span>
+        <span>{t('knowledge.table.difficulty')}</span>
+      </div>
+      <ul>
+        {questions.map((item: InterviewPrepQuestionSummary) => (
+          <li key={item.id} className="border-b border-[var(--border)]">
+            <Link href={`/knowledge/interview/${item.slug}`} className={`group block py-4 ${ROW_GRID}`}>
+              <span className="font-serif text-lg leading-snug group-hover:underline group-hover:underline-offset-4">{item.question}</span>
+              <span className="mt-1 block text-sm text-[var(--muted)] md:mt-0">
                 {categoryLabel(item.category)}
+                <span className="md:hidden">
+                  {item.followUpCount > 0 ? ` · ${item.followUpCount} ${t('knowledge.interview.followUpLabel')}` : ''}
+                </span>
               </span>
-              <InterviewDifficultyBadge difficulty={item.difficulty} />
-              <span className="text-xs text-[var(--muted)]">
-                {item.followUpCount} {t('knowledge.interview.followUpLabel')}
+              <span className="mt-1 block md:mt-0">
+                <InterviewDifficultyBadge difficulty={item.difficulty} />
               </span>
-            </div>
-            <h2 className="text-base font-semibold leading-snug text-[var(--foreground)]">
-              {item.question}
-            </h2>
-          </Link>
-        </li>
-      ))}
-      {footer !== undefined ? <li>{footer}</li> : null}
-    </ul>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      {footer !== undefined ? <div className="pt-4">{footer}</div> : null}
+    </div>
   );
 }

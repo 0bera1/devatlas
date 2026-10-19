@@ -721,4 +721,13 @@ export const arMessages: Record<MessageKey, string> = {
   'documents.editor.format.quote': 'اقتباس',
   'home.story.terminal.title': 'كل خطوة في تدفق واحد',
   'home.story.terminal.body': 'حفظ المخططات والبحث والمراجعة تسير معًا في سجل حي واحد.',
+  'knowledge.topics': 'المواضيع',
+  'knowledge.table.question': 'السؤال',
+  'knowledge.table.topic': 'الموضوع',
+  'knowledge.table.difficulty': 'الصعوبة',
+  'explore.eyebrow': 'محتوى المجتمع',
+  'explore.featured': 'مميز',
+  'explore.recent': 'أضيف مؤخرًا',
+  'documents.toc': 'في هذه الصفحة',
+  'explore.read': 'اقرأ',
 };

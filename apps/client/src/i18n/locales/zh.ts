@@ -714,4 +714,13 @@ export const zhMessages: Record<MessageKey, string> = {
   'documents.editor.format.quote': '引用',
   'home.story.terminal.title': '每一步都在同一条流中',
   'home.story.terminal.body': '图表保存、搜索和复习会在同一条实时日志中同步呈现。',
+  'knowledge.topics': '主题',
+  'knowledge.table.question': '问题',
+  'knowledge.table.topic': '主题',
+  'knowledge.table.difficulty': '难度',
+  'explore.eyebrow': '社区内容',
+  'explore.featured': '精选',
+  'explore.recent': '最近添加',
+  'documents.toc': '本页内容',
+  'explore.read': '阅读',
 };

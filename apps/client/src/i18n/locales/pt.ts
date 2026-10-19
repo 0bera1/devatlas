@@ -775,4 +775,13 @@ export const ptMessages: Record<MessageKey, string> = {
   'documents.editor.format.quote': 'Citação',
   'home.story.terminal.title': 'Cada etapa em um só fluxo',
   'home.story.terminal.body': 'Salvamentos de diagramas, buscas e revisões avançam juntos em um registro ao vivo.',
+  'knowledge.topics': 'Tópicos',
+  'knowledge.table.question': 'Pergunta',
+  'knowledge.table.topic': 'Tópico',
+  'knowledge.table.difficulty': 'Dificuldade',
+  'explore.eyebrow': 'Conteúdo da comunidade',
+  'explore.featured': 'Destaque',
+  'explore.recent': 'Adicionados recentemente',
+  'documents.toc': 'Nesta página',
+  'explore.read': 'Ler',
 };

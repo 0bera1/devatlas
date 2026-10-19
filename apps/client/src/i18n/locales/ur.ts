@@ -718,4 +718,13 @@ export const urMessages: Record<MessageKey, string> = {
   'documents.editor.format.quote': 'اقتباس',
   'home.story.terminal.title': 'ہر قدم ایک ہی سلسلے میں',
   'home.story.terminal.body': 'ڈائیاگرام کی بچت، تلاش اور دہرائی ایک لائیو لاگ میں ساتھ چلتی ہے۔',
+  'knowledge.topics': 'موضوعات',
+  'knowledge.table.question': 'سوال',
+  'knowledge.table.topic': 'موضوع',
+  'knowledge.table.difficulty': 'مشکل',
+  'explore.eyebrow': 'کمیونٹی کا مواد',
+  'explore.featured': 'نمایاں',
+  'explore.recent': 'حال ہی میں شامل',
+  'documents.toc': 'اس صفحے پر',
+  'explore.read': 'پڑھیں',
 };

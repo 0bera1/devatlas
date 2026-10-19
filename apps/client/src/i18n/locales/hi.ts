@@ -726,4 +726,13 @@ export const hiMessages: Record<MessageKey, string> = {
   'documents.editor.format.quote': 'उद्धरण',
   'home.story.terminal.title': 'हर कदम एक ही प्रवाह में',
   'home.story.terminal.body': 'आरेख सेव, खोज और समीक्षा एक ही लाइव लॉग में साथ चलते हैं।',
+  'knowledge.topics': 'विषय',
+  'knowledge.table.question': 'प्रश्न',
+  'knowledge.table.topic': 'विषय',
+  'knowledge.table.difficulty': 'कठिनाई',
+  'explore.eyebrow': 'समुदाय की सामग्री',
+  'explore.featured': 'विशेष',
+  'explore.recent': 'हाल ही में जोड़े गए',
+  'documents.toc': 'इस पृष्ठ पर',
+  'explore.read': 'पढ़ें',
 };

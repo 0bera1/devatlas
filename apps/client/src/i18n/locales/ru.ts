@@ -775,4 +775,13 @@ export const ruMessages: Record<MessageKey, string> = {
   'documents.editor.format.quote': 'Цитата',
   'home.story.terminal.title': 'Каждый шаг в одном потоке',
   'home.story.terminal.body': 'Сохранения диаграмм, поиск и повторение идут вместе в одном живом журнале.',
+  'knowledge.topics': 'Темы',
+  'knowledge.table.question': 'Вопрос',
+  'knowledge.table.topic': 'Тема',
+  'knowledge.table.difficulty': 'Сложность',
+  'explore.eyebrow': 'Материалы сообщества',
+  'explore.featured': 'Рекомендуемое',
+  'explore.recent': 'Недавно добавленные',
+  'documents.toc': 'На этой странице',
+  'explore.read': 'Читать',
 };

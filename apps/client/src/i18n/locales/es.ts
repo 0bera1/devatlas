@@ -775,4 +775,13 @@ export const esMessages: Record<MessageKey, string> = {
   'documents.editor.format.quote': 'Cita',
   'home.story.terminal.title': 'Cada paso en un solo flujo',
   'home.story.terminal.body': 'Guardados de diagramas, búsquedas y repasos avanzan juntos en un registro en vivo.',
+  'knowledge.topics': 'Temas',
+  'knowledge.table.question': 'Pregunta',
+  'knowledge.table.topic': 'Tema',
+  'knowledge.table.difficulty': 'Dificultad',
+  'explore.eyebrow': 'Contenido de la comunidad',
+  'explore.featured': 'Destacado',
+  'explore.recent': 'Añadidos recientemente',
+  'documents.toc': 'En esta página',
+  'explore.read': 'Leer',
 };

@@ -7,7 +7,6 @@ import {
   BackgroundVariant,
   Controls,
   type Edge,
-  MiniMap,
   ReactFlow,
   ReactFlowProvider,
 } from '@xyflow/react';
@@ -82,7 +81,7 @@ function KnowledgeDiagramCanvas(props: KnowledgeDiagramCanvasProps): ReactNode {
   );
 
   return (
-    <div className="relative h-[min(70vh,560px)] overflow-hidden rounded-2xl border border-[var(--border)]">
+    <div className="relative h-[min(76vh,680px)] overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--background)]">
       {hydrated ? (
         <ReactFlow
           nodes={presentedNodes as AtlasFlowNode[]}
@@ -99,21 +98,20 @@ function KnowledgeDiagramCanvas(props: KnowledgeDiagramCanvasProps): ReactNode {
           fitView
           proOptions={{ hideAttribution: true }}
         >
-          <Background variant={BackgroundVariant.Dots} gap={16} size={1} />
+          <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="var(--border)" />
           <Controls showInteractive={false} />
-          <MiniMap pannable zoomable />
-          <DiagramCanvasToolbar
-            selectedNodeId={selectedNodeId}
-            isReadOnlyCanvas={isReadOnlyCanvas}
-          />
+          <DiagramCanvasToolbar selectedNodeId={selectedNodeId} isReadOnlyCanvas={isReadOnlyCanvas} />
           <DiagramCanvasHoverCard graph={graph} />
           <DiagramEdgeLabelsOverlay edges={presentedEdges} />
         </ReactFlow>
       ) : (
-        <div className="flex h-full items-center justify-center text-sm text-[var(--muted)]">
-          {t('diagrams.editor.loading')}
-        </div>
+        <div className="flex h-full items-center justify-center text-sm text-[var(--muted)]">{t('diagrams.editor.loading')}</div>
       )}
+      {hydrated ? (
+        <span className="pointer-events-none absolute right-4 top-4 z-10 rounded-full bg-[var(--surface)]/90 px-3 py-1 text-xs tabular-nums text-[var(--muted)] ring-1 ring-[var(--border)]">
+          {graph.nodes.length} {t('knowledge.diagrams.nodesLabel')} · {graph.edges.length} {t('diagrams.editor.edgeSettings').toLocaleLowerCase()}
+        </span>
+      ) : null}
     </div>
   );
 }
@@ -192,20 +190,24 @@ export function KnowledgeDiagramReadonlyView(
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-2">
-        <KnowledgeBackLink className="text-sm font-medium text-[var(--muted)] hover:text-[var(--foreground)]" />
-        <h1 className="font-serif text-3xl font-medium leading-tight tracking-tight sm:text-4xl">
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-wrap items-center justify-between gap-3 text-[13px] text-[var(--muted)]">
+        <span className="flex min-w-0 items-center gap-2">
+          <KnowledgeBackLink className="text-[var(--muted)] hover:text-[var(--foreground)]" />
+          <span aria-hidden>/</span>
+          <span className="truncate text-[var(--foreground)]">{record.title}</span>
+        </span>
+        <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1">{t('knowledge.readOnly')}</span>
+      </div>
+      <header className="flex flex-col gap-3">
+        <p className="text-[13px] text-[var(--muted)]">{t('knowledge.interview.resourceKind.diagram')}</p>
+        <h1 className="flex items-center gap-3 font-serif text-4xl font-medium leading-[1.05] tracking-tight sm:text-5xl">
+          <span className="h-3 w-3 shrink-0 rounded-full bg-[var(--accent)]" aria-hidden />
           {record.title}
         </h1>
         {data.description !== null && data.description.length > 0 ? (
-          <p className="text-sm text-[var(--muted)]">
-            {data.description}
-          </p>
+          <p className="max-w-2xl text-[15px] leading-relaxed text-[var(--muted)]">{data.description}</p>
         ) : null}
-        <span className="inline-flex w-fit rounded-full bg-[var(--surface)] px-2.5 py-0.5 text-xs font-medium text-[var(--foreground)]">
-          {t('knowledge.readOnly')}
-        </span>
       </header>
       {body}
       <RelatedInterviewQuestions questions={data.relatedInterviewQuestions} />

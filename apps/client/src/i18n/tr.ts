@@ -309,7 +309,7 @@ export const trMessages = {
   'knowledge.interview.difficulty.easy': 'Kolay',
   'knowledge.interview.difficulty.medium': 'Orta',
   'knowledge.interview.difficulty.hard': 'Zor',
-  'knowledge.interview.difficulty.expert': 'Expert',
+  'knowledge.interview.difficulty.expert': 'Uzman',
   'knowledge.interview.empty': 'Bu kategoride henüz soru yok.',
   'knowledge.interview.notFound': 'Soru bulunamadı.',
   'knowledge.interview.showAnswer': 'Cevabı göster',
@@ -773,6 +773,15 @@ export const trMessages = {
   'documents.editor.format.quote': 'Alıntı',
   'home.story.terminal.title': 'Her adım tek bir akışta',
   'home.story.terminal.body': 'Diyagram kaydı, arama ve tekrar akışı canlı bir günlükte birlikte ilerler.',
+  'knowledge.topics': 'Konular',
+  'knowledge.table.question': 'Soru',
+  'knowledge.table.topic': 'Konu',
+  'knowledge.table.difficulty': 'Zorluk',
+  'explore.eyebrow': 'Topluluk içeriği',
+  'explore.featured': 'Öne çıkan',
+  'explore.recent': 'Yeni eklenenler',
+  'documents.toc': 'Bu sayfada',
+  'explore.read': 'Oku',
 } as const;
 
 export type MessageKey = keyof typeof trMessages;

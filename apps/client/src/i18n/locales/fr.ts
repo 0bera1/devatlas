@@ -775,4 +775,13 @@ export const frMessages: Record<MessageKey, string> = {
   'documents.editor.format.quote': 'Citation',
   'home.story.terminal.title': 'Chaque étape dans un seul flux',
   'home.story.terminal.body': 'Enregistrements de diagrammes, recherches et révisions avancent ensemble dans un journal en direct.',
+  'knowledge.topics': 'Sujets',
+  'knowledge.table.question': 'Question',
+  'knowledge.table.topic': 'Sujet',
+  'knowledge.table.difficulty': 'Difficulté',
+  'explore.eyebrow': 'Contenu de la communauté',
+  'explore.featured': 'À la une',
+  'explore.recent': 'Ajouts récents',
+  'documents.toc': 'Sur cette page',
+  'explore.read': 'Lire',
 };

@@ -719,4 +719,13 @@ export const bnMessages: Record<MessageKey, string> = {
   'documents.editor.format.quote': 'উদ্ধৃতি',
   'home.story.terminal.title': 'প্রতিটি ধাপ একটি প্রবাহে',
   'home.story.terminal.body': 'ডায়াগ্রাম সংরক্ষণ, অনুসন্ধান ও পর্যালোচনা একটি লাইভ লগে একসাথে চলে।',
+  'knowledge.topics': 'বিষয়সমূহ',
+  'knowledge.table.question': 'প্রশ্ন',
+  'knowledge.table.topic': 'বিষয়',
+  'knowledge.table.difficulty': 'কঠিনতা',
+  'explore.eyebrow': 'কমিউনিটির কনটেন্ট',
+  'explore.featured': 'বিশেষ',
+  'explore.recent': 'সম্প্রতি যোগ করা',
+  'documents.toc': 'এই পৃষ্ঠায়',
+  'explore.read': 'পড়ুন',
 };

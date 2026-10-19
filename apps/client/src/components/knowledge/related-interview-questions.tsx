@@ -10,9 +10,8 @@ interface RelatedInterviewQuestionsProps {
   readonly questions: readonly InterviewQuestionRef[];
 }
 
-export function RelatedInterviewQuestions({
-  questions,
-}: RelatedInterviewQuestionsProps): ReactNode {
+/** Sayfanın altındaki "İlgili" bölümü: bağlı mülakat soruları çip olarak listelenir. */
+export function RelatedInterviewQuestions({ questions }: RelatedInterviewQuestionsProps): ReactNode {
   const { t } = useTranslations();
   const categoryLabel = useInterviewPrepCategoryLabel();
 
@@ -21,28 +20,17 @@ export function RelatedInterviewQuestions({
   }
 
   return (
-    <section className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
-      <header className="flex flex-col gap-1">
-        <h2 className="text-sm font-semibold text-[var(--foreground)]">
-          {t('knowledge.relatedInterviewQuestions')}
-        </h2>
-        <p className="text-xs text-[var(--muted)]">
-          {t('knowledge.relatedInterviewQuestionsHint')}
-        </p>
-      </header>
-      <ul className="flex flex-col gap-2">
+    <section className="flex flex-col gap-3 border-t border-[var(--border)] pt-5">
+      <h2 className="text-xs font-medium uppercase tracking-[0.08em] text-[var(--muted)]">{t('knowledge.relatedInterviewQuestions')}</h2>
+      <ul className="flex flex-wrap gap-2">
         {questions.map((item: InterviewQuestionRef) => (
           <li key={item.slug}>
             <Link
               href={`/knowledge/interview/${item.slug}`}
-              className="flex flex-col gap-1 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 transition-colors hover:border-indigo-300 hover:bg-indigo-50 dark:hover:border-indigo-600 dark:hover:bg-indigo-950/40"
+              className="inline-flex max-w-full items-baseline gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3.5 py-1.5 text-[13px] transition-colors hover:border-[var(--foreground)]"
             >
-              <span className="inline-flex w-fit rounded-full bg-[var(--surface)] px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-[var(--muted)]">
-                {categoryLabel(item.category)}
-              </span>
-              <span className="text-sm font-medium leading-snug text-[var(--foreground)]">
-                {item.question}
-              </span>
+              <span className="truncate">{item.question}</span>
+              <span className="shrink-0 text-[11px] text-[var(--muted)]">{categoryLabel(item.category)}</span>
             </Link>
           </li>
         ))}

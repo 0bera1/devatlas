@@ -10,6 +10,7 @@ import type { KnowledgeSection } from '@/domains/knowledge/knowledgeDomains';
 import { useKnowledgeSection } from '@/hooks/knowledge/use-knowledge-section';
 import { useDebouncedValue } from '@/hooks/ui/use-debounced-value';
 import { useTranslations } from '@/hooks/i18n/use-translations';
+import type { MessageKey } from '@/i18n';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 
@@ -29,6 +30,13 @@ function renderSection(
   }
 }
 
+const SECTION_LABELS: Readonly<Record<KnowledgeSection, MessageKey>> = {
+  interview: 'knowledge.section.interview',
+  documents: 'knowledge.section.documents',
+  diagrams: 'knowledge.section.diagrams',
+  flows: 'knowledge.section.flows',
+};
+
 export function KnowledgeBaseView(): ReactNode {
   const { t } = useTranslations();
   const { section, setSection } = useKnowledgeSection();
@@ -36,23 +44,21 @@ export function KnowledgeBaseView(): ReactNode {
   const debouncedSearch: string = useDebouncedValue(searchInput, 300);
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
+    <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10">
       <header className="flex flex-col gap-6">
         <div>
-          <h1 className="font-serif text-4xl font-medium leading-tight tracking-tight sm:text-5xl">
-            {t('knowledge.title')}
-          </h1>
-          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-[var(--muted)]">
-            {t('knowledge.intro')}
-          </p>
+          <p className="text-sm text-[var(--muted)]">{t(SECTION_LABELS[section])}</p>
+          <h1 className="mt-1.5 font-serif text-4xl font-medium leading-tight tracking-tight sm:text-5xl">{t('knowledge.title')}</h1>
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-[var(--muted)]">{t('knowledge.intro')}</p>
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <KnowledgeSectionTabs value={section} onChange={setSection} />
-          <KnowledgeSectionSearch value={searchInput} onChange={setSearchInput} />
-          <p className="text-xs text-[var(--muted)]">{t('knowledge.search.hint')}</p>
+          <div className="w-full md:max-w-xs">
+            <KnowledgeSectionSearch value={searchInput} onChange={setSearchInput} />
+          </div>
         </div>
       </header>
-      {renderSection(section, debouncedSearch.trim())}
+      <div className="pt-2">{renderSection(section, debouncedSearch.trim())}</div>
     </div>
   );
 }

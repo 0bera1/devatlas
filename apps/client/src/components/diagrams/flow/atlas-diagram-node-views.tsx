@@ -52,15 +52,12 @@ function AtlasDiagramNodeViewInner(
       ? data.description.trim()
       : undefined;
 
+  // Tasarım: nötr yüzey, ince kenarlık, küçük büyük harfli tür etiketi ve serif başlık. Seçili düğüm koyu kenarlıkla belirir.
   return (
     <div
-      className={`relative min-w-[148px] max-w-[220px] rounded-xl border-2 bg-[var(--surface)] px-3 py-2 shadow-md transition-shadow ${style.border} ${
-        selected ? 'ring-2 ring-violet-500/80 ring-offset-2 ring-offset-[var(--background)]' : ''
-      } ${
-        linkedDiagramId !== undefined
-          ? 'shadow-[0_0_0_1px_rgba(139,92,246,0.35)] ring-1 ring-violet-400/60 dark:ring-violet-500/50'
-          : ''
-      }`}
+      className={`relative min-w-[160px] max-w-[230px] rounded-xl bg-[var(--surface)] px-4 py-3 transition-[border-color,box-shadow] ${
+        selected ? 'border-2 border-[var(--foreground)] shadow-md' : 'border border-[var(--border)] shadow-sm'
+      } ${linkedDiagramId !== undefined && !selected ? 'border-[var(--accent)]' : ''}`}
       onMouseEnter={(): void => {
         setHoverNodeId(id);
       }}
@@ -72,11 +69,11 @@ function AtlasDiagramNodeViewInner(
         type="target"
         position={Position.Left}
         isConnectable={isConnectable}
-        className={`!z-20 !h-3 !w-3 !border-2 !border-white dark:!border-[var(--border)] ${style.accent}`}
+        className="!z-20 !h-2.5 !w-2.5 !border-2 !border-[var(--surface)] !bg-[var(--foreground)]"
       />
       {linkedDiagramId !== undefined ? (
         <span
-          className="pointer-events-none absolute -right-1.5 -top-1.5 z-30 flex h-6 min-w-6 items-center justify-center rounded-full border border-violet-300 bg-gradient-to-br from-violet-600 to-fuchsia-600 px-1.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-lg shadow-violet-900/25"
+          className="pointer-events-none absolute -right-2 -top-2 z-30 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--accent)] px-1 text-[10px] font-bold text-[var(--background)] shadow"
           title={t('diagrams.editor.nodeLinkedBadgeTooltip')}
           aria-label={t('diagrams.editor.nodeLinkedBadgeTooltip')}
         >
@@ -87,29 +84,21 @@ function AtlasDiagramNodeViewInner(
         type="source"
         position={Position.Right}
         isConnectable={isConnectable}
-        className={`!z-20 !h-3 !w-3 !border-2 !border-white dark:!border-[var(--border)] ${style.accent}`}
+        className="!z-20 !h-2.5 !w-2.5 !border-2 !border-[var(--surface)] !bg-[var(--foreground)]"
       />
       <div className="flex items-center gap-2">
-        <div
-          className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${style.badge}`}
-        >
+        <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${style.accent}`} aria-hidden />
+        {/* Tür adı İngilizce bir koddur; Türkçe büyük harf kuralı "İ" üretmesin diye dil ayrıca belirtilir. */}
+        <span lang="en" className="text-[11px] uppercase tracking-[0.06em] text-[var(--muted)]">
           {data.type}
-        </div>
+        </span>
         {data.status !== undefined && data.status !== 'default' ? (
-          <span
-            className={`h-2 w-2 shrink-0 rounded-full ${statusDotClass(data.status)}`}
-            title={data.status}
-            aria-hidden
-          />
+          <span className={`ml-auto h-2 w-2 shrink-0 rounded-full ${statusDotClass(data.status)}`} title={data.status} aria-hidden />
         ) : null}
       </div>
-      <div className="mt-1 line-clamp-2 text-sm font-semibold text-[var(--foreground)]">
-        {data.title}
-      </div>
+      <div className="mt-1 line-clamp-2 font-serif text-[19px] leading-tight text-[var(--foreground)]">{data.title}</div>
       {subtitle !== undefined ? (
-        <div className="mt-1 line-clamp-2 text-[11px] leading-snug text-[var(--muted)]">
-          {subtitle}
-        </div>
+        <div className="mt-1.5 line-clamp-2 font-mono text-[11px] leading-snug text-[var(--muted)]">{subtitle}</div>
       ) : null}
     </div>
   );

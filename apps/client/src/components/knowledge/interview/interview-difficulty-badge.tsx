@@ -9,16 +9,17 @@ export interface InterviewDifficultyBadgeProps {
   readonly difficulty: string | null;
 }
 
+/** Zorluk metnin rengiyle anlatılır: kolay yeşil, orta nötr, zor ve uzman kırmızı. */
 function pickClassName(difficulty: InterviewPrepDifficulty): string {
   switch (difficulty) {
     case 'EASY':
-      return 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-200';
+      return 'text-emerald-700 dark:text-emerald-400';
     case 'MEDIUM':
-      return 'bg-amber-100 text-amber-900 dark:bg-amber-950/50 dark:text-amber-200';
+      return 'text-[var(--muted)]';
     case 'HARD':
-      return 'bg-orange-100 text-orange-900 dark:bg-orange-950/50 dark:text-orange-200';
+      return 'text-red-700 dark:text-red-400';
     case 'EXPERT':
-      return 'bg-rose-100 text-rose-900 dark:bg-rose-950/50 dark:text-rose-200';
+      return 'font-semibold text-red-800 dark:text-red-300';
     default: {
       const _exhaustive: never = difficulty;
       return _exhaustive;
@@ -26,20 +27,12 @@ function pickClassName(difficulty: InterviewPrepDifficulty): string {
   }
 }
 
-export function InterviewDifficultyBadge({
-  difficulty,
-}: InterviewDifficultyBadgeProps): ReactNode {
+export function InterviewDifficultyBadge({ difficulty }: InterviewDifficultyBadgeProps): ReactNode {
   const difficultyLabel = useInterviewPrepDifficultyLabel();
 
   if (difficulty === null || !isInterviewPrepDifficulty(difficulty)) {
     return null;
   }
 
-  return (
-    <span
-      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${pickClassName(difficulty)}`}
-    >
-      {difficultyLabel(difficulty)}
-    </span>
-  );
+  return <span className={`text-sm ${pickClassName(difficulty)}`}>{difficultyLabel(difficulty)}</span>;
 }
