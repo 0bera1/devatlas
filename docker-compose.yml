@@ -4,60 +4,7 @@ services:
       context: ./apps/client
       dockerfile: DockerFile
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:3500
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3500}
     container_name: devatlas-web
     ports:
       - "3000:3000"
-    depends_on:
-      - api
-
-  api:
-    build:
-      context: ./apps/server
-      dockerfile: DockerFile
-    container_name: devatlas-api
-    ports:
-      - "3500:3500"
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/devatlas?schema=public
-      PORT: "3500"
-      # Yerel Compose geliştirme ortamıdır. Üretimde bu satır kaldırılır ve SMTP_HOST zorunlu olur.
-      NODE_ENV: development
-      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
-      APP_URL: ${APP_URL:-http://localhost:3000}
-      UPLOAD_DIR: /app/uploads
-      JWT_SECRET: ${JWT_SECRET:-dev-docker-change-me-use-long-secret-key-min-32-chars}
-      JWT_ACCESS_EXPIRES_IN: ${JWT_ACCESS_EXPIRES_IN:-10m}
-      REFRESH_TOKEN_EXPIRES_DAYS: ${REFRESH_TOKEN_EXPIRES_DAYS:-7}
-      SMTP_HOST: ${SMTP_HOST:-}
-      SMTP_PORT: ${SMTP_PORT:-587}
-      SMTP_USER: ${SMTP_USER:-}
-      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
-      MAIL_FROM: ${MAIL_FROM:-DevAtlas <no-reply@devatlas.local>}
-    volumes:
-      - uploads:/app/uploads
-
-  db:
-    image: postgres:16
-    container_name: devatlas-db
-    restart: always
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: devatlas
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d devatlas"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
-volumes:
-  pgdata:
-  uploads:
